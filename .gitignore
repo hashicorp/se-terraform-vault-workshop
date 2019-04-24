@@ -10,3 +10,6 @@
 
 # Remote state file
 remote_state.tf
+
+# Inspec
+inspec.lock
