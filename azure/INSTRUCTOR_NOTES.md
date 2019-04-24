@@ -64,6 +64,9 @@ vault token create -policy=se-workshop-creds -ttl 2160h
 # Fetch dynamic Azure credentials for the workshop.
 # Uses https://cam-vault.hashidemos.io:8200 and the Sales/SE namespace
 
+# Fix git line ending settings on Windows
+Set-Content -Path 'C:\Users\hashicorp\.gitconfig' -Value "[core]`n        autocrlf = false"
+
 $VAULT_TOKEN = $env:SETUP_VAULT_TOKEN 
 $VAULT_ADDR = $env:SETUP_VAULT_ADDR
 
@@ -84,7 +87,7 @@ Write-Host -ForegroundColor Yellow "Storing credentials as system environment va
 
 Write-Host -ForegroundColor DarkGreen "Dynamic credentials are good for 8 hours. You may proceed with the workshop."
 
-# This is just for fun, add some ASCII Art
+# This is just for fun
 # Get-Content -Path C:\Users\Public\banner.txt
 
 Read-Host -Prompt "Press Enter to Continue..."

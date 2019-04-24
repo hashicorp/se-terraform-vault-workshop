@@ -13,6 +13,6 @@ control 'check-azure-api-credentials' do
     its('stdout') { should match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/) }
   end
   describe powershell('Get-ChildItem Env:ARM_CLIENT_SECRET | select -ExpandProperty Value') do
-    its('stdout') { should match(/[0-9a-zA-Z]{43}=/) }
+    its('stdout') { should match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/) }
   end
 end
