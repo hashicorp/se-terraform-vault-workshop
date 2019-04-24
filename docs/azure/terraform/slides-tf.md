@@ -518,12 +518,21 @@ Run the setup.ps1 script
 
 Right click on the file called 'setup' on your desktop and select 'Run with Powershell'. Type Y for Yes when it asks about changing your execution policy.
 
-**WARNING:** Do not skip this step. It fixes a known issue with line endings on Windows.
+**WARNING:** Do not skip this step.
 
 ???
-If anyone is curious what this powershell script does, it's disabling windows line endings for git clone, and installing the posh-git powershell extension. We may add more setup steps to this script as time goes by. If you see an error with the remote-exec provisioner later in the deck, it is usually because the student skipped this step.
+If anyone is curious what this powershell script does, it's disabling windows line endings for git clone. It also fetches dynamic Azure credentials that are good for 8 hours.
 
-**This handy script does a few setup and housekeeping commands for us. Right click on the setup.ps1 file and select the "Run with Powershell" option. It may take a minute or two to finish.**
+**This handy script does some setup and fetches dynamic Azure credentials from our training Vault server. Right click on the setup.ps1 file and select the "Run with Powershell" option. It may take a minute or two to finish.**
+
+---
+name: workstation-setup-2a
+Run the setup.ps1 script
+-------------------------
+<br><br>
+.center[![:scale 80%](images/ready_to_terraform.png)]
+
+You should see this banner if the script ran successfully.
 
 ---
 name: workstation-setup-3
