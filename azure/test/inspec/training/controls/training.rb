@@ -11,6 +11,14 @@ control 'cd-desktop' do
   end
 end
 
+control 'run-setup-script' do
+  impact 1.0
+  desc 'Run the setup.ps1 script'
+  describe powershell('C:\Users\hashicorp\Desktop\setup.ps1') do
+    its('stdout') { should match(/foo/) }
+  end
+end
+
 control 'git-clone' do
   impact 1.0
   desc 'Clone the training repository'

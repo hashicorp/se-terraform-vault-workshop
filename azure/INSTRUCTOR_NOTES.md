@@ -49,32 +49,45 @@ $Shortcut.Save()
 ```
 3. Install vault and terraform in C:\windows\system32. That's right, just toss the binaries in there.
 4. Install the Azure CLI
-5. Make a service principal.  https://www.terraform.io/docs/providers/azurerm/authenticating_via_service_principal.html
-6. Run these powershell commands (as admin) with your credentials:
+5. Generate a token on the CAM vault server scoped to the following policy. This needs to be in the `Sales/SE` namespace:
 ```
-[Environment]::SetEnvironmentVariable("ARM_SUBSCRIPTION_ID", "c0a607b2-6372-4ef3-abdb-dbe52a7b56ba", "Machine")
-[Environment]::SetEnvironmentVariable("ARM_CLIENT_ID", "e8e56057-d294-4540-8235-22064e1b3179", "Machine")
-[Environment]::SetEnvironmentVariable("ARM_CLIENT_SECRET", "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", "Machine")
+vault token create -policy=se-workshop-creds -ttl 2160h
+```
+6. Bake the token and CAM Vault URL into *system* environment variables:
+```
+[Environment]::SetEnvironmentVariable("SETUP_VAULT_TOKEN", "YOURTOKENHERE", "Machine")
+[Environment]::SetEnvironmentVariable("SETUP_VAULT_ADDR", "https://cam-vault.hashidemos.io:8200", "Machine")
+```
+7. Add a file called setup.ps1 inside of `C:\Users\Public\Public Desktop`. This will ensure that it shows up on your users desktop when you deploy new workstations. This script fetches Azure credentials that are good for eight hours.
+
+```
+# Fetch dynamic Azure credentials for the workshop.
+# Uses https://cam-vault.hashidemos.io:8200 and the Sales/SE namespace
+
+$VAULT_TOKEN = $env:SETUP_VAULT_TOKEN 
+$VAULT_ADDR = $env:SETUP_VAULT_ADDR
+
+Write-Host -ForegroundColor Magenta "Fetching dynamic Azure credentials from HashiCorp Vault..."
+
+$CREDS=(Invoke-RestMethod -Headers @{"X-Vault-Token" = ${VAULT_TOKEN}; "X-Vault-Namespace" = "Sales/SE"} -Method GET -Uri ${VAULT_ADDR}/v1/azure/creds/se-training-workstation-payg).data
+
+#write-output $CREDS
+$CLIENT_ID=$CREDS.client_id
+$CLIENT_SECRET=$CREDS.client_secret
+
+Write-Host -ForegroundColor Yellow "Storing credentials as system environment variables..."
+
+[Environment]::SetEnvironmentVariable("ARM_SUBSCRIPTION_ID", "8708baf2-0a54-4bb4-905b-78d21ac150da", "Machine")
 [Environment]::SetEnvironmentVariable("ARM_TENANT_ID", "0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec", "Machine")
-```
-7. Alteratively, manually configure these environment variables as *system* and not *user* env vars
+[Environment]::SetEnvironmentVariable("ARM_CLIENT_ID", "${CLIENT_ID}", "Machine")
+[Environment]::SetEnvironmentVariable("ARM_CLIENT_SECRET", "${CLIENT_SECRET}", "Machine")
 
-```
-ARM_SUBSCRIPTION_ID
-ARM_CLIENT_ID
-ARM_CLIENT_SECRET
-ARM_TENANT_ID
-```
+Write-Host -ForegroundColor DarkGreen "Dynamic credentials are good for 8 hours. You may proceed with the workshop."
 
-8. Add a file called setup.ps1 inside of C:\Users\Public\Desktop. This will ensure that it shows up on your users desktop when you deploy new workstations:
+# This is just for fun, add some ASCII Art
+# Get-Content -Path C:\Users\Public\banner.txt
 
-```
-# Post-install steps for HashiCorp training workstation
-git config --global core.autocrlf false
-Set-ExecutionPolicy Undefined -scope Process
-Set-ExecutionPolicy Unrestricted -scope CurrentUser
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
-Install-Module posh-git -Force -SkipPublisherCheck -AllowClobber
+Read-Host -Prompt "Press Enter to Continue..."
 ```
 
 9.  Run this to sysprep and "Generalize" the machine:
