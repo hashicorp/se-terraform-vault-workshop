@@ -26,3 +26,6 @@ workflows:
   build-and-deploy:
     jobs:
       - validate-code
+      - run-functional-tests-inspec
+        requires:
+          - validate-code

@@ -155,4 +155,3 @@ end
 #   describe powershell(
 #     '$VAULT_ADDR=https://'
 #   )
-#
