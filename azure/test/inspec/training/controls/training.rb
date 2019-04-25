@@ -46,7 +46,7 @@ control 'terraform-init' do
   impact 1.0
   desc 'Run terraform init.'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\azure-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\se-azure-terraform-vault-workshop\azure;
     terraform init'
   ) do
     its('exit_status') { should eq 0 }
@@ -59,7 +59,7 @@ control 'terraform-plan' do
   impact 1.0
   desc 'Run terraform plan.'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\azure-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\se-azure-terraform-vault-workshop\azure;
     terraform plan -var "prefix=inspectest"'
   ) do
     its('exit_status') { should eq 0 }
@@ -71,7 +71,7 @@ control 'terraform-destroy' do
   impact 1.0
   desc 'Run terraform destroy.'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\azure-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\se-azure-terraform-vault-workshop\azure;
     terraform destroy -force -var "prefix=uat-tf-vault"'
   ) do
     its('exit_status') { should eq 0 }
@@ -83,7 +83,7 @@ control 'terraform-apply' do
   impact 1.0
   desc 'Run terraform apply.'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\azure-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\se-azure-terraform-vault-workshop\azure;
     terraform apply -auto-approve -var "prefix=uat-tf-vault"'
   ) do
     its('exit_status') { should eq 0 }
