@@ -90,3 +90,15 @@ control 'terraform-apply' do
     its('stdout') { should match(/name:     "" => "uat-tf-vault-workshop"/) }
   end
 end
+
+control 'terraform-change-variable' do
+  impact 1.0
+  desc 'Re-run terraform apply with a different variable.'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    terraform apply -auto-approve -var "prefix=uat-tf-vault" -var "location=eastus"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/1 added, 0 changed, 1 destroyed/) }
+  end
+end
