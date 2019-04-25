@@ -88,6 +88,7 @@ control 'terraform-apply' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/name:     "" => "uat-tf-vault-workshop"/) }
+    its('stderr') { should match(/foo/) }
   end
 end
 
