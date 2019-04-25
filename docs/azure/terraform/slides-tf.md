@@ -518,7 +518,7 @@ Run the setup.ps1 script
 
 Right click on the file called 'setup' on your desktop and select 'Run with Powershell'. Type Y for Yes when it asks about changing your execution policy.
 
-**WARNING:** Do not skip this step.
+**WARNING:** Do not skip this step. It is required to set up your connection to Azure Cloud.
 
 ???
 If anyone is curious what this powershell script does, it's disabling windows line endings for git clone. It also fetches dynamic Azure credentials that are good for 8 hours.
