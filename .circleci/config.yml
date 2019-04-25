@@ -17,6 +17,7 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Run Inspec Tests
+          no_output_timeout: 30m
           command: |
             # Run inspec tests on the remote workstation
             mkdir -p test_results/inspec
