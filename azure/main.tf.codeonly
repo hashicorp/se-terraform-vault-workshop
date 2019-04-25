@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "hashitraining" {
-  name     = "${var.prefix}-vault-workshop"
+  name     = "${var.prefix}-workshop"
   location = "${var.location}"
 }
 
