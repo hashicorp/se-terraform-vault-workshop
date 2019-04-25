@@ -25,7 +25,7 @@ control 'git-clone' do
   describe powershell(
     'cd C:\Users\hashicorp\Desktop;
     Remove-Item -recurse -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop
-    git clone https://github.com/hashicorp/se-terraform-vault-workshop;
+    git clone https://github.com/hashicorp/se-terraform-vault-workshop.git;
     Get-ChildItem C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure'
   ) do
     its('exit_status') { should eq 0 }
