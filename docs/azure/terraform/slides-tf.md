@@ -586,12 +586,12 @@ name: workstation-setup-6
 Clone the Training Repo
 -------------------------
 <br><br>
-Run the following commands to clone the training repository from GitHub:
+Run the following commands to clone the training repository from GitHub. Make sure you are in the 'azure' subdirectory.
 
 ```powershell
 cd ~/Desktop
 git clone https://github.com/scarolan/azure-terraform-vault-workshop
-cd azure-terraform-vault-workshop
+cd azure-terraform-vault-workshop/azure
 ```
 
 Now reload your text editor in the current directory with the code command:
@@ -642,7 +642,7 @@ You should see the following output (version number may vary):
 
 ```powershell
 PS> terraform --version
-Terraform v0.11.11
+Terraform v0.11.13
 ```
 
 ???
@@ -1759,7 +1759,7 @@ The state file is Terraform's source of record for everything it knows about.
 ```json
 {
   "version": 3,
-  "terraform_version": "0.11.11",
+  "terraform_version": "0.11.13",
   "serial": 6,
   "lineage": "983e6899-96f4-ce60-744e-7123bb1fc315",
   "modules": [

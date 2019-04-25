@@ -15,8 +15,8 @@ to dynamically set our name and location. Variables are usually defined in
 the variables.tf file, and you can override the defaults in your 
 own terraform.tfvars file. */
 
-resource "azurerm_resource_group" "vaultworkshop" {
-  name     = "${var.prefix}-vault-workshop"
+resource "azurerm_resource_group" "hashitraining" {
+  name     = "${var.prefix}-workshop"
   location = "${var.location}"
 }
 
@@ -29,9 +29,9 @@ GraphViz tool: http://www.webgraphviz.com/ */
 
 # resource "azurerm_virtual_network" "vnet" {
 #   name                = "${var.prefix}-vnet"
-#   location            = "${azurerm_resource_group.vaultworkshop.location}"
+#   location            = "${azurerm_resource_group.hashitraining.location}"
 #   address_space       = ["${var.address_space}"]
-#   resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+#   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 # }
 
 /* Next we'll build a subnet to run our VMs in. These variables can be defined 
@@ -43,7 +43,7 @@ making a copy of the terraform.tfvars.example file. */
 # resource "azurerm_subnet" "subnet" {
 #   name                 = "${var.prefix}-subnet"
 #   virtual_network_name = "${azurerm_virtual_network.vnet.name}"
-#   resource_group_name  = "${azurerm_resource_group.vaultworkshop.name}"
+#   resource_group_name  = "${azurerm_resource_group.hashitraining.name}"
 #   address_prefix       = "${var.subnet_prefix}"
 # }
 
@@ -58,7 +58,7 @@ automatically, and each resource is named with user-defined variables. */
 # resource "azurerm_network_security_group" "vault-sg" {
 #   name                = "${var.prefix}-sg"
 #   location            = "${var.location}"
-#   resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+#   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 
 #   security_rule {
 #     name                       = "Vault"
@@ -103,7 +103,7 @@ resource. Terraform will let you know if you're missing a dependency. */
 # resource "azurerm_network_interface" "vault-nic" {
 #   name                      = "${var.prefix}-vault-nic"
 #   location                  = "${var.location}"
-#   resource_group_name       = "${azurerm_resource_group.vaultworkshop.name}"
+#   resource_group_name       = "${azurerm_resource_group.hashitraining.name}"
 #   network_security_group_id = "${azurerm_network_security_group.vault-sg.id}"
 
 #   ip_configuration {
@@ -121,7 +121,7 @@ demo environments like this one. */
 # resource "azurerm_public_ip" "vault-pip" {
 #   name                = "${var.prefix}-ip"
 #   location            = "${var.location}"
-#   resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+#   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 #   allocation_method   = "Dynamic"
 #   domain_name_label   = "${var.prefix}"
 # }
@@ -134,7 +134,7 @@ provisioners including Bash, Powershell and Chef. */
 # resource "azurerm_virtual_machine" "vault" {
 #   name                = "${var.prefix}-vault"
 #   location            = "${var.location}"
-#   resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+#   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 #   vm_size             = "${var.vm_size}"
 
 #   network_interface_ids         = ["${azurerm_network_interface.vault-nic.id}"]
@@ -213,8 +213,8 @@ https://www.terraform.io/docs/providers/azurerm/r/mysql_server.html */
 
 # resource "azurerm_mysql_server" "mysql" {
 #   name                = "${var.prefix}-mysql-server"
-#   location            = "${azurerm_resource_group.vaultworkshop.location}"
-#   resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+#   location            = "${azurerm_resource_group.hashitraining.location}"
+#   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 #   ssl_enforcement     = "Disabled"
 
 #   sku {
@@ -244,7 +244,7 @@ every time. */
 
 # resource "azurerm_mysql_database" "wsmysqldatabase" {
 #   name                = "wsmysqldatabase"
-#   resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+#   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 #   server_name         = "${azurerm_mysql_server.mysql.name}"
 #   charset             = "utf8"
 #   collation           = "utf8_unicode_ci"
@@ -266,7 +266,7 @@ from the data source above. */
 
 # resource "azurerm_mysql_firewall_rule" "vault-mysql" {
 #   name                = "vault-mysql"
-#   resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+#   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 #   server_name         = "${azurerm_mysql_server.mysql.name}"
 #   start_ip_address    = "${data.azurerm_public_ip.vault-pip.ip_address}"
 #   end_ip_address      = "${data.azurerm_public_ip.vault-pip.ip_address}"

@@ -66,3 +66,27 @@ control 'terraform-plan' do
     its('stdout') { should match(/1 to add, 0 to change, 0 to destroy./) }
   end
 end
+
+control 'terraform-destroy' do
+  impact 1.0
+  desc 'Run terraform destroy.'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\azure-terraform-vault-workshop;
+    terraform destroy -force -var "prefix=uat-tf-vault"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/Destroy complete!/) }
+  end
+end
+
+control 'terraform-apply' do
+  impact 1.0
+  desc 'Run terraform apply.'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\azure-terraform-vault-workshop;
+    terraform apply -auto-approve -var "prefix=uat-tf-vault"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/name:     "" => "uat-tf-vault-vault-workshop"/) }
+  end
+end

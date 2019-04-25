@@ -1,26 +1,26 @@
-resource "azurerm_resource_group" "vaultworkshop" {
+resource "azurerm_resource_group" "hashitraining" {
   name     = "${var.prefix}-vault-workshop"
   location = "${var.location}"
 }
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.prefix}-vnet"
-  location            = "${azurerm_resource_group.vaultworkshop.location}"
+  location            = "${azurerm_resource_group.hashitraining.location}"
   address_space       = ["${var.address_space}"]
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 }
 
 resource "azurerm_subnet" "subnet" {
   name                 = "${var.prefix}-subnet"
   virtual_network_name = "${azurerm_virtual_network.vnet.name}"
-  resource_group_name  = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name  = "${azurerm_resource_group.hashitraining.name}"
   address_prefix       = "${var.subnet_prefix}"
 }
 
 resource "azurerm_network_security_group" "vault-sg" {
   name                = "${var.prefix}-sg"
   location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 
   security_rule {
     name                       = "Vault"
@@ -63,7 +63,7 @@ resource "azurerm_network_security_group" "vault-sg" {
 resource "azurerm_network_interface" "vault-nic" {
   name                      = "${var.prefix}-vault-nic"
   location                  = "${var.location}"
-  resource_group_name       = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name       = "${azurerm_resource_group.hashitraining.name}"
   network_security_group_id = "${azurerm_network_security_group.vault-sg.id}"
 
   ip_configuration {
@@ -77,7 +77,7 @@ resource "azurerm_network_interface" "vault-nic" {
 resource "azurerm_public_ip" "vault-pip" {
   name                = "${var.prefix}-ip"
   location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
   allocation_method   = "Dynamic"
   domain_name_label   = "${var.prefix}"
 }
@@ -85,7 +85,7 @@ resource "azurerm_public_ip" "vault-pip" {
 resource "azurerm_virtual_machine" "vault" {
   name                = "${var.prefix}-vault"
   location            = "${var.location}"
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
   vm_size             = "${var.vm_size}"
 
   network_interface_ids         = ["${azurerm_network_interface.vault-nic.id}"]
@@ -157,8 +157,8 @@ resource "azurerm_virtual_machine" "vault" {
 
 resource "azurerm_mysql_server" "mysql" {
   name                = "${var.prefix}-mysql-server"
-  location            = "${azurerm_resource_group.vaultworkshop.location}"
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  location            = "${azurerm_resource_group.hashitraining.location}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
   ssl_enforcement     = "Disabled"
 
   sku {
@@ -182,7 +182,7 @@ resource "azurerm_mysql_server" "mysql" {
 
 resource "azurerm_mysql_database" "wsmysqldatabase" {
   name                = "wsmysqldatabase"
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
   server_name         = "${azurerm_mysql_server.mysql.name}"
   charset             = "utf8"
   collation           = "utf8_unicode_ci"
@@ -196,7 +196,7 @@ data "azurerm_public_ip" "vault-pip" {
 
 resource "azurerm_mysql_firewall_rule" "vault-mysql" {
   name                = "vault-mysql"
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
   server_name         = "${azurerm_mysql_server.mysql.name}"
   start_ip_address    = "${data.azurerm_public_ip.vault-pip.ip_address}"
   end_ip_address      = "${data.azurerm_public_ip.vault-pip.ip_address}"
