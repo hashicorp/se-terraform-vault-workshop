@@ -87,6 +87,6 @@ control 'terraform-apply' do
     terraform apply -auto-approve -var "prefix=uat-tf-vault"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/name:     "" => "uat-tf-vault-vault-workshop"/) }
+    its('stdout') { should match(/name:     "" => "uat-tf-vault-hashitraining"/) }
   end
 end
