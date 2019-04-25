@@ -590,7 +590,7 @@ Run the following commands to clone the training repository from GitHub. Make su
 
 ```powershell
 cd ~/Desktop
-git clone https://github.com/scarolan/azure-terraform-vault-workshop
+git clone https://github.com/hashicorp/se-terraform-vault-workshop
 cd azure-terraform-vault-workshop/azure
 ```
 
@@ -1988,4 +1988,4 @@ Terraform Azurerm Provider Documentation
 https://www.terraform.io/docs/providers/azurerm/
 
 Link to this Slide Deck  
-https://scarolan.github.io/azure-terraform-vault-workshop/terraform
+https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform
