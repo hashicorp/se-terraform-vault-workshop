@@ -24,7 +24,7 @@ control 'git-clone' do
   desc 'Clone the training repository'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop;
-    Remove-Item -recurse -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop
+    Remove-Item -force -recurse -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop
     git clone https://github.com/hashicorp/se-terraform-vault-workshop.git;
     Get-ChildItem C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure'
   ) do
