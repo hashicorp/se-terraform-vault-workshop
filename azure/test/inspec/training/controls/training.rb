@@ -42,6 +42,20 @@ control 'verify-git-line-endings' do
   end
 end
 
+# Clean up anything left from the previous run
+# Need some kind of 'az login' here.
+control 'az-group-delete' do
+  impact 1.0
+  desc 'Clean up from any previous test run.'
+  describe powershell(
+    'az login --service-principal -u http://SE-Training-Workstation-Creds -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID;
+    az group delete -y --name uat-tf-vault-workshop'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/PAYG/) }
+  end
+end
+
 control 'terraform-init' do
   impact 1.0
   desc 'Run terraform init.'
@@ -50,7 +64,7 @@ control 'terraform-init' do
     terraform init'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/provider.azurerm: version = "~> 1.25"/) }
+    its('stdout') { should match(/provider.azurerm: version = "~> 1.26"/) }
     its('stdout') { should match(/Terraform has been successfully initialized!/) }
   end
 end
@@ -60,22 +74,10 @@ control 'terraform-plan' do
   desc 'Run terraform plan.'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform plan -var "prefix=inspectest"'
+    terraform plan -var "prefix=uat-tf-vault"'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/1 to add, 0 to change, 0 to destroy./) }
-  end
-end
-
-control 'terraform-destroy' do
-  impact 1.0
-  desc 'Run terraform destroy.'
-  describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform destroy -force -var "prefix=uat-tf-vault"'
-  ) do
-    its('exit_status') { should eq 0 }
-    its('stdout') { should match(/Destroy complete!/) }
   end
 end
 
@@ -88,7 +90,6 @@ control 'terraform-apply' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/name:     "" => "uat-tf-vault-workshop"/) }
-    its('stderr') { should match(/foo/) }
   end
 end
 
@@ -101,5 +102,42 @@ control 'terraform-change-variable' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/1 added, 0 changed, 1 destroyed/) }
+  end
+end
+
+control 'terraform-destroy' do
+  impact 1.0
+  desc 'Run terraform destroy'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    terraform destroy -force -var "prefix=uat-tf-vault"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/Destroy complete! Resources: 1 destroyed./) }
+  end
+end
+
+control 'terraform-rebuild' do
+  impact 1.0
+  desc 'Run terraform apply again'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    terraform apply -auto-approve -var "prefix=uat-tf-vault"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/1 added, 0 changed, 0 destroyed/) }
+  end
+end
+
+control 'terraform-build-vault-lab' do
+  impact 1.0
+  desc 'Build the rest of the Vault lab'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    Copy-Item -Force "main.tf.codeonly" -Destination "main.tf"
+    terraform apply -auto-approve -var "prefix=uat-tf-vault"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/21 added, 0 changed, 0 destroyed/) }
   end
 end
