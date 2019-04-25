@@ -44,6 +44,7 @@ end
 
 # Clean up anything left from the previous run
 # Need some kind of 'az login' here.
+# TODO:  See if the while loop is really needed.
 control 'az-group-delete' do
   impact 1.0
   desc 'Clean up from any previous test run.'
