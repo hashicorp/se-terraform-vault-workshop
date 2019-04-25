@@ -138,6 +138,14 @@ control 'terraform-build-vault-lab' do
     terraform apply -auto-approve -var "prefix=uat-tf-vault"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/21 added, 0 changed, 0 destroyed/) }
+    its('stdout') { should match(/uat-tf-vault-workshop/) }
+    its('stderr') { should match(/oopsie/) }
   end
 end
+
+# control 'connect-to-vault' do
+#   impact 1.0
+#   desc 'Make a test connection to the Vault instance'
+#   describe powershell(
+#     '$VAULT_ADDR=https://'
+#   )

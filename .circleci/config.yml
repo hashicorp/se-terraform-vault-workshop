@@ -7,7 +7,7 @@ jobs:
       - checkout
       - run:
           name: Validate Vault
-          command: terraform validate ./azure/
+          command: terraform validate -check-variables=false ./azure/
 workflows:
   version: 2
   build-and-deploy:
