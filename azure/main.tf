@@ -13,7 +13,7 @@ You can find a complete list of Azure resources supported by Terraform here:
 https://www.terraform.io/docs/providers/azurerm/. Note the use of variables 
 to dynamically set our name and location. Variables are usually defined in 
 the variables.tf file, and you can override the defaults in your 
-own terraform.tfvars file. */
+own terraform.tfvars file. */ 
 
 resource "azurerm_resource_group" "hashitraining" {
   name     = "${var.prefix}-workshop"
