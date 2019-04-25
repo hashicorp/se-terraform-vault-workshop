@@ -49,10 +49,15 @@ control 'az-group-delete' do
   desc 'Clean up from any previous test run.'
   describe powershell(
     'az login --service-principal -u http://SE-Training-Workstation-Creds -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID;
-    az group delete -y --name uat-tf-vault-workshop'
+    az group delete -y --name uat-tf-vault-lab-workshop;
+    while($(az group exists --name uat-tf-vault-lab-workshop).exit) { 
+      Start-Sleep -s 5; 
+      Write-Host "Waiting for resource group to finish deleting..." 
+    }'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/PAYG/) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -74,7 +79,7 @@ control 'terraform-plan' do
   desc 'Run terraform plan.'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform plan -var "prefix=uat-tf-vault"'
+    terraform plan -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/1 to add, 0 to change, 0 to destroy./) }
@@ -86,10 +91,10 @@ control 'terraform-apply' do
   desc 'Run terraform apply.'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform apply -auto-approve -var "prefix=uat-tf-vault"'
+    terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/name:     "" => "uat-tf-vault-workshop"/) }
+    its('stdout') { should match(/name:     "" => "uat-tf-vault-lab-workshop"/) }
   end
 end
 
@@ -98,7 +103,7 @@ control 'terraform-change-variable' do
   desc 'Re-run terraform apply with a different variable.'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform apply -auto-approve -var "prefix=uat-tf-vault" -var "location=eastus"'
+    terraform apply -auto-approve -var "prefix=uat-tf-vault-lab" -var "location=eastus"'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/1 added, 0 changed, 1 destroyed/) }
@@ -110,7 +115,7 @@ control 'terraform-destroy' do
   desc 'Run terraform destroy'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform destroy -force -var "prefix=uat-tf-vault"'
+    terraform destroy -force -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/Destroy complete! Resources: 1 destroyed./) }
@@ -122,7 +127,7 @@ control 'terraform-rebuild' do
   desc 'Run terraform apply again'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform apply -auto-approve -var "prefix=uat-tf-vault"'
+    terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/1 added, 0 changed, 0 destroyed/) }
@@ -135,10 +140,10 @@ control 'terraform-build-vault-lab' do
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
     Copy-Item -Force "main.tf.codeonly" -Destination "main.tf"
-    terraform apply -auto-approve -var "prefix=uat-tf-vault"'
+    terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/uat-tf-vault-workshop/) }
+    its('stdout') { should match(/uat-tf-vault-lab-workshop/) }
     its('stderr') { should match(/oopsie/) }
   end
 end

@@ -6,8 +6,21 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Validate Vault
+          name: Validate Terraform
           command: terraform validate -check-variables=false ./azure/
+  run-functional-tests-inspec:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Run Inspec Tests
+          command: |
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec -b winrm --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os azure/test/inspec/training
 workflows:
   version: 2
   build-and-deploy:
