@@ -27,5 +27,5 @@ workflows:
     jobs:
       - validate-code
       - run-functional-tests-inspec
-        requires:
-          - validate-code
+          requires:
+            - validate-code
