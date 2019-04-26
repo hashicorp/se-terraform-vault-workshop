@@ -198,6 +198,20 @@ control 'terraform-fmt' do
   end
 end
 
+control 'terraform--taint-provisioner' do
+  impact 1.0
+  desc 'Run terraform taint and re-build virtual machine'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    ((Get-Content -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf -Raw) -replace "sleep 30","sleep 30; cowsay Moooooo!") | Set-Content -Path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf;
+    terraform taint azurerm_virtual_machine.vault;
+    terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/Moooooo!/) }
+  end
+end
+
 # control 'connect-to-vault' do
 #   impact 1.0
 #   desc 'Make a test connection to the Vault instance'
