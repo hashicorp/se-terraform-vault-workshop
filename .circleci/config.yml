@@ -22,6 +22,8 @@ jobs:
             # Run inspec tests on the remote workstation
             mkdir -p test_results/inspec
             inspec exec -b winrm --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os azure/test/inspec/training
+      - store_test_results:
+          path: test-results
 workflows:
   version: 2
   build-and-deploy:
@@ -30,5 +32,3 @@ workflows:
       - run-functional-tests-inspec:
           requires:
             - validate-code
-      - store_test_results:
-          path: test-results
