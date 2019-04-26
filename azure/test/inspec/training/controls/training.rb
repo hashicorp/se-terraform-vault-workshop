@@ -144,8 +144,7 @@ control 'terraform-build-vault-lab' do
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/21 added, 0 changed, 0 destroyed/) }
-    its('stderr') { should match(/oopsie/) }
+    its('stdout') { should match(/10 added, 0 changed, 0 destroyed/) }
   end
 end
 
