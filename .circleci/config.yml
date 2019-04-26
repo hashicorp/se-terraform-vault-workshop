@@ -52,11 +52,11 @@ workflows:
   nightly-build:
     triggers:
       - schedule:
-        cron: "0 0 * * *"
-        filters:
-          branches:
-            only:
-              - master
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
     jobs:
       - validate-code
       - run-functional-tests-inspec:
