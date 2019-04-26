@@ -21,7 +21,7 @@ jobs:
           command: |
             # Run inspec tests on the remote workstation
             mkdir -p test_results/inspec
-            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os azure/test/inspec/training
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os azure/test/inspec/training
       - store_test_results:
           path: test_results
   clean-up-uat:

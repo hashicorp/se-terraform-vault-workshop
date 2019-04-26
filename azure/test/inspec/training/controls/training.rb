@@ -203,7 +203,7 @@ control 'terraform-taint-provisioner' do
   desc 'Run terraform taint and re-build virtual machine'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    ((Get-Content -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf -Raw) -replace "sleep 30","sleep 30; cowsay Moooooo!") | Set-Content -Path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf;
+    ((Get-Content -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf -Raw) -replace "sleep 30","sleep 30; /usr/games/cowsay Moooooo!") | Set-Content -Path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf;
     terraform taint azurerm_virtual_machine.vault;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
