@@ -49,3 +49,19 @@ workflows:
       - clean-up-uat:
           requires:
             - run-functional-tests-inspec
+  nightly-build:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - validate-code
+      - run-functional-tests-inspec:
+          requires:
+            - validate-code
+      - clean-up-uat:
+          requires:
+            - run-functional-tests-inspec

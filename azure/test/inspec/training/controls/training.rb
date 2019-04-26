@@ -213,6 +213,8 @@ control 'terraform-taint-provisioner' do
   end
 end
 
+# TODO: Write tests for the Vault workshop
+
 # control 'connect-to-vault' do
 #   impact 1.0
 #   desc 'Make a test connection to the Vault instance'

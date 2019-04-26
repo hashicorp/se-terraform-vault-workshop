@@ -39,9 +39,12 @@ name: Link-to-Slide-Deck
 The Slide Deck
 -------------------------
 <br><br><br>
-You can follow along on your own computer at this link:
+.center[
+Follow along on your own computer at this link:
 
-.center[https://bit.ly/hashiazure]
+https://bit.ly/hashiazure
+=========================
+]
 
 ---
 name: Introductions
