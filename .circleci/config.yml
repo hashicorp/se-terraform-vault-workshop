@@ -30,3 +30,5 @@ workflows:
       - run-functional-tests-inspec:
           requires:
             - validate-code
+      - store_test_results:
+          path: test-results
