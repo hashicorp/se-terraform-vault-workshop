@@ -148,6 +148,56 @@ control 'terraform-build-vault-lab' do
   end
 end
 
+control 'terraform-refresh' do
+  impact 1.0
+  desc 'Run terraform refresh to show outputs'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    Copy-Item -Force "outputs.tf.completed" -Destination "outputs.tf"
+    terraform refresh -var "prefix=uat-tf-vault-lab"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/Vault_Server_URL = http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
+    its('stdout') { should match(/MySQL_Server_FQDN = uat-tf-vault-lab-mysql-server.mysql.database.azure.com/)}
+  end
+end
+
+control 'terraform-output' do
+  impact 1.0
+  desc 'Run terraform output to show outputs'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    terraform output -var "prefix=uat-tf-vault-lab"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/Vault_Server_URL = http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
+    its('stdout') { should match(/MySQL_Server_FQDN = uat-tf-vault-lab-mysql-server.mysql.database.azure.com/)}
+  end
+end
+
+control 'terraform-output-singlevalue' do
+  impact 1.0
+  desc 'Run terraform output to show a single value'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    terraform output -var "prefix=uat-tf-vault-lab" Vault_Server_URL'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
+  end
+end
+
+control 'terraform-fmt' do
+  impact 1.0
+  desc 'Run terraform fmt to format code'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    terraform fmt'
+  ) do
+    its('exit_status') { should eq 0 }
+  end
+end
+
 # control 'connect-to-vault' do
 #   impact 1.0
 #   desc 'Make a test connection to the Vault instance'
