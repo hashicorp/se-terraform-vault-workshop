@@ -1,7 +1,39 @@
+##############################################################################
+# HashiCorp Terraform and Vault Workshop
+# 
+# This Terraform configuration will create the following:
+#
+# Azure Resource group with a virtual network and subnet
+# A Linux server running HashiCorp Vault and a simple application
+# A hosted Azure MySQL database server
+
+/* This is the provider block. We recommend pinning the provider version to 
+a known working version. If you leave this out you'll get the latest
+version. */
+
+provider "azurerm" {
+  version = "=1.27.0"
+}
+
+/* First we'll create a resource group. In Azure every resource belongs to a 
+resource group. Think of it as a container to hold all your resources. 
+You can find a complete list of Azure resources supported by Terraform here:
+https://www.terraform.io/docs/providers/azurerm/. Note the use of variables 
+to dynamically set our name and location. Variables are usually defined in 
+the variables.tf file, and you can override the defaults in your 
+own terraform.tfvars file. */ 
+
 resource "azurerm_resource_group" "hashitraining" {
   name     = "${var.prefix}-workshop"
   location = "${var.location}"
 }
+
+/* The next resource is a Virtual Network. We can dynamically place it into the
+resource group without knowing its name ahead of time. Terraform handles all
+of that for you, so everything is named consistently every time. Say goodbye
+to weirdly-named mystery resources in your Azure Portal. To see how all this
+works visually, run `terraform graph` and copy the output into the online
+GraphViz tool: http://www.webgraphviz.com/ */
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.prefix}-vnet"
@@ -10,12 +42,26 @@ resource "azurerm_virtual_network" "vnet" {
   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 }
 
+/* Next we'll build a subnet to run our VMs in. These variables can be defined 
+via environment variables, a config file, or command line flags. Default 
+values will be used if the user does not override them. You can find all the
+default variables in the variables.tf file. You can customize this demo by
+making a copy of the terraform.tfvars.example file. */
+
 resource "azurerm_subnet" "subnet" {
   name                 = "${var.prefix}-subnet"
   virtual_network_name = "${azurerm_virtual_network.vnet.name}"
   resource_group_name  = "${azurerm_resource_group.hashitraining.name}"
   address_prefix       = "${var.subnet_prefix}"
 }
+
+/* Now that we have a network, we'll deploy a stand-alone HashiCorp Vault 
+server. Vault supports a 'dev' mode which is appropriate for demonstrations
+and development purposes. In other words, don't do this in production.
+An Azure Virtual Machine has several components. In this example we'll build
+a security group, a network interface, a public ip address, a storage 
+account and finally the VM itself. Terraform handles all the dependencies 
+automatically, and each resource is named with user-defined variables. */
 
 resource "azurerm_network_security_group" "vault-sg" {
   name                = "${var.prefix}-sg"
@@ -46,7 +92,6 @@ resource "azurerm_network_security_group" "vault-sg" {
     destination_address_prefix = "*"
   }
 
-
   security_rule {
     name                       = "SSH"
     priority                   = 101
@@ -59,6 +104,9 @@ resource "azurerm_network_security_group" "vault-sg" {
     destination_address_prefix = "*"
   }
 }
+
+/* A network interface. This is required by the azurerm_virtual_machine 
+resource. Terraform will let you know if you're missing a dependency. */
 
 resource "azurerm_network_interface" "vault-nic" {
   name                      = "${var.prefix}-vault-nic"
@@ -74,6 +122,10 @@ resource "azurerm_network_interface" "vault-nic" {
   }
 }
 
+/* Every Azure Virtual Machine comes with a private IP address. You can also 
+optionally add a public IP address for Internet-facing applications and 
+demo environments like this one. */
+
 resource "azurerm_public_ip" "vault-pip" {
   name                = "${var.prefix}-ip"
   location            = "${var.location}"
@@ -81,6 +133,11 @@ resource "azurerm_public_ip" "vault-pip" {
   allocation_method   = "Dynamic"
   domain_name_label   = "${var.prefix}"
 }
+
+/* And finally we build our Vault server. This is a standard Ubuntu instance.
+We use the shell provisioner to run a Bash script that configures Vault for 
+the demo environment. Terraform supports several different types of 
+provisioners including Bash, Powershell and Chef. */
 
 resource "azurerm_virtual_machine" "vault" {
   name                = "${var.prefix}-vault"
@@ -155,6 +212,13 @@ resource "azurerm_virtual_machine" "vault" {
   }
 }
 
+/* Azure MySQL Database
+Vault will manage this database with the database secrets engine.
+Terraform can build any type of infrastructure, not just virtual machines. 
+Azure offers managed MySQL database servers and a whole host of other 
+resources. Each resource is documented with all the available settings:
+https://www.terraform.io/docs/providers/azurerm/r/mysql_server.html */
+
 resource "azurerm_mysql_server" "mysql" {
   name                = "${var.prefix}-mysql-server"
   location            = "${azurerm_resource_group.hashitraining.location}"
@@ -180,6 +244,12 @@ resource "azurerm_mysql_server" "mysql" {
   ssl_enforcement              = "Disabled"
 }
 
+/* This is a sample database that we'll populate with data from our app.
+With Terraform, everything is Infrastructure as Code. No more manual steps,
+aging runbooks, tribal knowledge or outdated wiki instructions. Terraform
+is your executable documentation, and it will build infrastructure correctly
+every time. */
+
 resource "azurerm_mysql_database" "wsmysqldatabase" {
   name                = "wsmysqldatabase"
   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
@@ -188,11 +258,19 @@ resource "azurerm_mysql_database" "wsmysqldatabase" {
   collation           = "utf8_unicode_ci"
 }
 
+/* Public IP addresses are not generated until they are attached to an object.
+So we use a 'data source' here to fetch it once its available. Then we can
+provide the public IP address to the next resource for allowing firewall 
+access to our database. */
+
 data "azurerm_public_ip" "vault-pip" {
   name                = "${azurerm_public_ip.vault-pip.name}"
   depends_on          = ["azurerm_virtual_machine.vault"]
   resource_group_name = "${azurerm_virtual_machine.vault.resource_group_name}"
 }
+
+/* Allows the Linux VM to connect to the MySQL database, using the IP address
+from the data source above. */
 
 resource "azurerm_mysql_firewall_rule" "vault-mysql" {
   name                = "vault-mysql"

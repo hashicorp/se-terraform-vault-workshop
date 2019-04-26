@@ -140,7 +140,7 @@ control 'terraform-build-vault-lab' do
   desc 'Build the rest of the Vault lab'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    Copy-Item -Force "main.tf.codeonly" -Destination "main.tf"
+    Copy-Item -Force "main.tf.completed" -Destination "main.tf"
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }

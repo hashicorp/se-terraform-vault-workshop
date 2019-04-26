@@ -1291,7 +1291,7 @@ Lab Exercise 3c: Build the Lab Environment
 -------------------------
 Go through the rest of the **main.tf** file and uncomment all of the terraform resources. 
 
-Alternatively, you can copy all of the contents of the **main.tf.codeonly** file into your **main.tf** file. Just make sure you overwrite the entire file and save it.
+Alternatively, you can copy all of the contents of the **main.tf.completed** file into your **main.tf** file. Just make sure you overwrite the entire file and save it.
 
 Run `terraform apply` again to build out the rest of your lab environment.
 
@@ -1304,7 +1304,7 @@ NOTE: It will take up to five minutes to build out the lab environment. This is 
 name: chapter-3c-lab-answer
 Lab Exercise 3c: Answer
 -------------------------
-If you copied all the code over from **main.tf.codeonly** into **main.tf** it should look like this:
+If you copied all the code over from **main.tf.completed** into **main.tf** it should look like this:
 
 ```terraform
 resource "azurerm_resource_group" "hashitraining" {
