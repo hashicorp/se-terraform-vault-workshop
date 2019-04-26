@@ -203,7 +203,7 @@ control 'terraform-taint-provisioner' do
   desc 'Run terraform taint and re-build virtual machine'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    ((Get-Content -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf -Raw) -replace "${var.admin_username}/setup.sh`",","${var.admin_username}/setup.sh`",`n      `"cowsay Moooooo!`"") | Set-Content -Path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf;
+    ((Get-Content -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf -Raw) -replace "${var.admin_username}/setup.sh`"","${var.admin_username}/setup.sh`",`n      `"cowsay Moooooo!`"") | Set-Content -Path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf;
     terraform taint azurerm_virtual_machine.vault;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
