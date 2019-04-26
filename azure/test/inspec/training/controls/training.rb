@@ -51,9 +51,9 @@ control 'az-group-delete' do
   describe powershell(
     'az login --service-principal -u http://SE-Training-Workstation-Creds -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID;
     az group delete -y --name uat-tf-vault-lab-workshop;
-    while($(az group exists --name uat-tf-vault-lab-workshop).exit) { 
-      Start-Sleep -s 5; 
-      Write-Host "Waiting for resource group to finish deleting..." 
+    while($(az group exists --name uat-tf-vault-lab-workshop).exit) {
+      Start-Sleep -s 5;
+      Write-Host "Waiting for resource group to finish deleting..."
     }'
   ) do
     its('exit_status') { should eq 0 }
@@ -70,7 +70,7 @@ control 'terraform-init' do
     terraform init'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/provider.azurerm: version = "~> 1.27"/) }
+    its('stdout') { should match(/1.27"/) }
     its('stdout') { should match(/Terraform has been successfully initialized!/) }
   end
 end
