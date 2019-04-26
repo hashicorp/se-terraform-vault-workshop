@@ -773,10 +773,10 @@ When you run `terraform plan` and enter your name, you should see output that lo
 ```tex
 Terraform will perform the following actions:
 
-  + azurerm_resource_group.vaultworkshop
+  + azurerm_resource_group.hashitraining
       id:       <computed>
       location: "centralus"
-      name:     "bugsbunny-vault-workshop"
+      name:     "bugsbunny-workshop"
       tags.%:   <computed>
 
 
@@ -950,8 +950,8 @@ Find the first resource in the main.tf file on lines 18-21. These lines are alre
 You can toggle comments with the _Edit > Toggle Line Comment_ menu, or by simply highlighting some text and pressing `CTRL-/`. 
 
 ```hcl
-resource "azurerm_resource_group" "vaultworkshop" {
-  name     = "${var.prefix}-vault-workshop"
+resource "azurerm_resource_group" "hashitraining" {
+  name     = "${var.prefix}-workshop"
   location = "${var.location}"
 }
 ```
@@ -985,10 +985,10 @@ Resource actions are indicated with the following symbols:
 
 Terraform will perform the following actions:
 
-  + azurerm_resource_group.vaultworkshop
+  + azurerm_resource_group.hashitraining
       id:       <computed>
       location: "centralus"
-      name:     "yourname-vault-workshop"
+      name:     "yourname-workshop"
       tags.%:   <computed>
 
 
@@ -1053,11 +1053,11 @@ Do you want to perform these actions?
   Only 'yes' will be accepted to approve.
   Enter a value: yes
 
-  azurerm_resource_group.vaultworkshop: Creating...
+  azurerm_resource_group.hashitraining: Creating...
   location: "" => "centralus"
-  name:     "" => "yourname-vault-workshop"
+  name:     "" => "yourname-workshop"
   tags.%:   "" => "<computed>"
-azurerm_resource_group.vaultworkshop: Creation complete after 1s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-vault-workshop)
+azurerm_resource_group.hashitraining: Creation complete after 1s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
@@ -1079,7 +1079,7 @@ Refreshing Terraform state in-memory prior to plan...
 The refreshed state will be used to calculate this plan, but will not be
 persisted to local or remote state storage.
 
-azurerm_resource_group.vaultworkshop: Refreshing state... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-vault-workshop)
+azurerm_resource_group.hashitraining: Refreshing state... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
 
 ------------------------------------------------------------------------
 
@@ -1111,10 +1111,10 @@ When you changed your location variable, Terraform detected a difference between
 ```tex
 Terraform will perform the following actions:
 
--/+ azurerm_resource_group.vaultworkshop (new resource required)
-      id:       "/subscriptions/c0a607b2-6372-4ef3-abdb-dbe52a7b56ba/resourceGroups/yourname-vault-workshop" => <computed> (forces new resource)
+-/+ azurerm_resource_group.hashitraining (new resource required)
+      id:       "/subscriptions/c0a607b2-6372-4ef3-abdb-dbe52a7b56ba/resourceGroups/yourname-workshop" => <computed> (forces new resource)
       location: "uksouth" => "uscentral" (forces new resource)
-      name:     "yourname-vault-workshop" => "yourname-vault-workshop"
+      name:     "yourname-workshop" => "yourname-workshop"
       tags.%:   "0" => <computed>
 
 
@@ -1159,11 +1159,11 @@ terraform apply -auto-approve
 
 Output:
 ```tex
-azurerm_resource_group.vaultworkshop: Creating...
+azurerm_resource_group.hashitraining: Creating...
   location: "" => "centralus"
-  name:     "" => "yourname-vault-workshop"
+  name:     "" => "yourname-workshop"
   tags.%:   "" => "<computed>"
-azurerm_resource_group.vaultworkshop: Creation complete after 1s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-vault-workshop)
+azurerm_resource_group.hashitraining: Creation complete after 1s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
@@ -1191,7 +1191,7 @@ Lab Exercise 3b: Answer
 Adding and removing tags is a non-destructive action, therefore Terraform is able to make these changes in-place, without destroying your resource group. Your main.tf file should look like this:
 
 ```terraform
-resource "azurerm_resource_group" "vaultworkshop" {
+resource "azurerm_resource_group" "hashitraining" {
   name     = "${var.prefix}-vault-workshop"
   location = "${var.location}"
 
@@ -1203,10 +1203,10 @@ resource "azurerm_resource_group" "vaultworkshop" {
 
 Note how the tag is added by modifying the existing resource:
 ```tex
-azurerm_resource_group.vaultworkshop: Modifying... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-vault-workshop)
+azurerm_resource_group.hashitraining: Modifying... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
   tags.%:           "0" => "1"
   tags.environment: "" => "Production"
-azurerm_resource_group.vaultworkshop: Modifications complete after 0s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-vault-workshop)
+azurerm_resource_group.hashitraining: Modifications complete after 0s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
 ```
 
 ???
@@ -1221,9 +1221,9 @@ Let's add a virtual network. Scroll down in the main.tf file until you find the 
 ```terraform
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.prefix}-vnet"
-  location            = "${azurerm_resource_group.vaultworkshop.location}"
+  location            = "${azurerm_resource_group.hashitraining.location}"
   address_space       = ["${var.address_space}"]
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 }
 ```
 Note the syntax for ensuring that this virtual network is placed into the resource group we created earlier.
@@ -1241,16 +1241,16 @@ Terraform Dependency Mapping
 Terraform can automatically keep track of dependencies for you. Let's take a look at the two resources in our main.tf file. Note the highlighted line in the azurerm_virtual_network resource. This is how we tell one resource to refer to another in terraform.
 
 ```terraform
-resource "azurerm_resource_group" "vaultworkshop" {
+resource "azurerm_resource_group" "hashitraining" {
   name     = "${var.prefix}-vault-workshop"
   location = "${var.location}"
 }
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.prefix}-vnet"
-  location            = "${azurerm_resource_group.vaultworkshop.location}"
+  location            = "${azurerm_resource_group.hashitraining.location}"
   address_space       = ["${var.address_space}"]
-* resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+* resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 }
 ```
 
@@ -1267,13 +1267,13 @@ terraform apply -auto-approve
 
 Output:
 ```tex
-azurerm_resource_group.vaultworkshop: Refreshing state... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-vault-workshop)
+azurerm_resource_group.hashitraining: Refreshing state... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
 azurerm_virtual_network.vnet: Creating...
   address_space.#:     "" => "1"
   address_space.0:     "" => "10.0.0.0/16"
   location:            "" => "centralus"
   name:                "" => "yourname-vnet"
-  resource_group_name: "" => "yourname-vault-workshop"
+  resource_group_name: "" => "yourname-workshop"
   subnet.#:            "" => "<computed>"
   tags.%:              "" => "<computed>"
 azurerm_virtual_network.vnet: Still creating... (10s elapsed)
@@ -1307,22 +1307,22 @@ Lab Exercise 3c: Answer
 If you copied all the code over from **main.tf.codeonly** into **main.tf** it should look like this:
 
 ```terraform
-resource "azurerm_resource_group" "vaultworkshop" {
+resource "azurerm_resource_group" "hashitraining" {
   name     = "${var.prefix}-vault-workshop"
   location = "${var.location}"
 }
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.prefix}-vnet"
-  location            = "${azurerm_resource_group.vaultworkshop.location}"
+  location            = "${azurerm_resource_group.hashitraining.location}"
   address_space       = ["${var.address_space}"]
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 }
 
 resource "azurerm_subnet" "subnet" {
   name                 = "${var.prefix}-subnet"
   virtual_network_name = "${azurerm_virtual_network.vnet.name}"
-  resource_group_name  = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name  = "${azurerm_resource_group.hashitraining.name}"
   address_prefix       = "${var.subnet_prefix}"
 }
 ...
@@ -1363,22 +1363,22 @@ The first file is called main.tf. This is where you normally store your terrafor
 
 ```powershell
 # This is the main.tf file.
-resource "azurerm_resource_group" "vaultworkshop" {
+resource "azurerm_resource_group" "hashitraining" {
   name     = "${var.prefix}-vault-workshop"
   location = "${var.location}"
 }
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.prefix}-vnet"
-  location            = "${azurerm_resource_group.vaultworkshop.location}"
+  location            = "${azurerm_resource_group.hashitraining.location}"
   address_space       = ["${var.address_space}"]
-  resource_group_name = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name = "${azurerm_resource_group.hashitraining.name}"
 }
 
 resource "azurerm_subnet" "subnet" {
   name                 = "${var.prefix}-subnet"
   virtual_network_name = "${azurerm_virtual_network.vnet.name}"
-  resource_group_name  = "${azurerm_resource_group.vaultworkshop.name}"
+  resource_group_name  = "${azurerm_resource_group.hashitraining.name}"
   address_prefix       = "${var.subnet_prefix}"
 }
 ```
