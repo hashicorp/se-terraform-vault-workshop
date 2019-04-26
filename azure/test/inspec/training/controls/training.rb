@@ -198,17 +198,19 @@ control 'terraform-fmt' do
   end
 end
 
+# This step emulates a student adding 'cowsay Moooooo!' to their provisioner.
 control 'terraform-taint-provisioner' do
   impact 1.0
   desc 'Run terraform taint and re-build virtual machine'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    ((Get-Content -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf -Raw) -replace "${var.admin_username}/setup.sh`"","${var.admin_username}/setup.sh`",`n      `"cowsay Moooooo!`"") | Set-Content -Path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf;
+    ((Get-Content -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf -Raw) -replace "MYSQL_HOST=${var.prefix}-mysql-server /home/${var.admin_username}/setup.sh`"","MYSQL_HOST=${var.prefix}-mysql-server /home/${var.admin_username}/setup.sh`",`n      `"cowsay Moooooo!`"") | Set-Content -Path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf;
     terraform taint azurerm_virtual_machine.vault;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/Moooooo!/) }
+    its('stderr') { should match(/foo/) }
   end
 end
 
