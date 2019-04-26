@@ -198,7 +198,7 @@ control 'terraform-fmt' do
   end
 end
 
-control 'terraform--taint-provisioner' do
+control 'terraform-taint-provisioner' do
   impact 1.0
   desc 'Run terraform taint and re-build virtual machine'
   describe powershell(
