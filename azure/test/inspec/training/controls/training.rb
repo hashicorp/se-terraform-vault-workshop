@@ -167,7 +167,7 @@ control 'terraform-output' do
   desc 'Run terraform output to show outputs'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform output -var "prefix=uat-tf-vault-lab"'
+    terraform output'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/Vault_Server_URL = http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
@@ -180,7 +180,7 @@ control 'terraform-output-singlevalue' do
   desc 'Run terraform output to show a single value'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    terraform output -var "prefix=uat-tf-vault-lab" Vault_Server_URL'
+    terraform output Vault_Server_URL'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
