@@ -49,16 +49,16 @@ $Shortcut.Save()
 ```
 3. Install vault and terraform in C:\windows\system32. That's right, just toss the binaries in there.
 4. Install the Azure CLI
-5. Generate a token on the CAM vault server scoped to the following policy. This needs to be in the `Sales/SE` namespace:
+5. Generate a token on the CAM vault server scoped to the following policy. This needs to be in the `Sales/SE` namespace. The following will create a token valid for 90 days. So remember to rebuild your workstation images at least once a quarter.
 ```
 vault token create -policy=se-workshop-creds -ttl 2160h
 ```
-6. Bake the token and CAM Vault URL into *system* environment variables:
+6. Bake the token and CAM Vault URL into *system* environment variables. These are used by the setup.ps1 script on the user's desktop.
 ```
 [Environment]::SetEnvironmentVariable("SETUP_VAULT_TOKEN", "YOURTOKENHERE", "Machine")
 [Environment]::SetEnvironmentVariable("SETUP_VAULT_ADDR", "https://cam-vault.hashidemos.io:8200", "Machine")
 ```
-7. Add a file called setup.ps1 inside of `C:\Users\Public\Public Desktop`. This will ensure that it shows up on your users desktop when you deploy new workstations. This script fetches Azure credentials that are good for eight hours.
+7. Add a file called `setup.ps1` inside of `C:\Users\Public\Public Desktop`. This will ensure that it shows up on your users desktop when you deploy new workstations. This script fetches Azure credentials that are good for eight hours.
 
 ```
 # Fetch dynamic Azure credentials for the workshop.
@@ -101,5 +101,5 @@ cd C:\windows\system32\sysprep
 ```
 
 10.  Click the 'generalize' box and set the pulldown to "shutdown". Wait and give it a good ten minutes to fully shutdown.
-11.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-01-11`
+11.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-04-26`
 12. Use the image to spin up your workstations
