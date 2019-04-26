@@ -70,7 +70,7 @@ control 'terraform-init' do
     terraform init'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/provider.azurerm: version = "~> 1.26"/) }
+    its('stdout') { should match(/provider.azurerm: version = "~> 1.27"/) }
     its('stdout') { should match(/Terraform has been successfully initialized!/) }
   end
 end

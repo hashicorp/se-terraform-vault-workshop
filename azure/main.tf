@@ -7,6 +7,14 @@
 # A Linux server running HashiCorp Vault and a simple application
 # A hosted Azure MySQL database server
 
+/* This is the provider block. We recommend pinning the provider version to 
+a known working version. If you leave this out you'll get the latest
+version. */
+
+provider "azurerm" {
+  version = "=1.27.0"
+}
+
 /* First we'll create a resource group. In Azure every resource belongs to a 
 resource group. Think of it as a container to hold all your resources. 
 You can find a complete list of Azure resources supported by Terraform here:
