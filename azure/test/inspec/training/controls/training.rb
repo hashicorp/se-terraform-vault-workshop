@@ -8,6 +8,7 @@ control 'cd-desktop' do
     Get-Location'
   ) do
     its('stdout') { should match(/C:\\Users\\hashicorp\\Desktop/) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -16,6 +17,7 @@ control 'run-setup-script' do
   desc 'Run the setup.ps1 script'
   describe powershell('powershell -ExecutionPolicy ByPass -File C:\Users\Public\Desktop\setup.ps1') do
     its('stdout') { should match(/You may proceed with the workshop./) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -39,6 +41,7 @@ control 'verify-git-line-endings' do
   describe file('C:\Users\hashicorp\.gitconfig') do
     it { should be_file }
     its('content') { should match(/autocrlf = false/) }
+    its('stderr') { should match(//) }
   end
 end
 
