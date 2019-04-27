@@ -32,6 +32,7 @@ control 'git-clone' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/main.tf/) }
+    its('stderr') { should match(//) }
   end
 end
 
