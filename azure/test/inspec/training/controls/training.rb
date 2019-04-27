@@ -42,7 +42,6 @@ control 'verify-git-line-endings' do
   describe file('C:\Users\hashicorp\.gitconfig') do
     it { should be_file }
     its('content') { should match(/autocrlf = false/) }
-    its('stderr') { should match(//) }
   end
 end
 
