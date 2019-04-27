@@ -72,6 +72,7 @@ control 'terraform-init' do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/"azurerm" \(1.27.0\)/) }
     its('stdout') { should match(/Terraform has been successfully initialized!/) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -84,6 +85,7 @@ control 'terraform-plan' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/1 to add, 0 to change, 0 to destroy./) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -96,6 +98,7 @@ control 'terraform-apply' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/name:     "" => "uat-tf-vault-lab-workshop"/) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -108,6 +111,7 @@ control 'terraform-change-variable' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/1 added, 0 changed, 1 destroyed/) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -120,6 +124,7 @@ control 'terraform-destroy' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/Destroy complete! Resources: 1 destroyed./) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -132,6 +137,7 @@ control 'terraform-rebuild' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/1 added, 0 changed, 0 destroyed/) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -145,6 +151,7 @@ control 'terraform-build-vault-lab' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/10 added, 0 changed, 0 destroyed/) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -159,6 +166,7 @@ control 'terraform-refresh' do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/Vault_Server_URL = http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
     its('stdout') { should match(/MySQL_Server_FQDN = uat-tf-vault-lab-mysql-server.mysql.database.azure.com/)}
+    its('stderr') { should match(//) }
   end
 end
 
@@ -172,6 +180,7 @@ control 'terraform-output' do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/Vault_Server_URL = http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
     its('stdout') { should match(/MySQL_Server_FQDN = uat-tf-vault-lab-mysql-server.mysql.database.azure.com/)}
+    its('stderr') { should match(//) }
   end
 end
 
@@ -184,6 +193,7 @@ control 'terraform-output-singlevalue' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -195,6 +205,7 @@ control 'terraform-fmt' do
     terraform fmt'
   ) do
     its('exit_status') { should eq 0 }
+    its('stderr') { should match(//) }
   end
 end
 
@@ -210,6 +221,7 @@ control 'terraform-taint-provisioner' do
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/Moooooo!/) }
+    its('stderr') { should match(//) }
   end
 end
 
