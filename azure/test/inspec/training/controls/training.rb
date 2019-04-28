@@ -264,8 +264,13 @@ control 'vault-setup-script' do
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
     plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/vault_setup.sh"'
   ) do
-    its('exit_status') { should eq 0 }
-    its('stdout') { should match(/foo/) }
-    its('stderr') { should match(//) }
+    its('stdout') { should match(/Enabled the file audit device at: file\//) }
+    its('stdout') { should match(/Enabled the database secrets engine at: lob_a\/workshop\/database\//) }
+    its('stdout') { should match(/Data written to: lob_a\/workshop\/database\/roles\/workshop-app-long/) }
+    its('stdout') { should match(/Data written to: lob_a\/workshop\/database\/roles\/workshop-app/) }
+    its('stdout') { should match(/Enabled the transit secrets engine at: lob_a\/workshop\/transit\//) }
+    its('stdout') { should match(/Data written to: lob_a\/workshop\/transit\/keys\/customer-key/) }
+    its('stdout') { should match(/Data written to: lob_a\/workshop\/transit\/keys\/archive-key/) }
+    its('stdout') { should match(/Script complete./) }
   end
 end
