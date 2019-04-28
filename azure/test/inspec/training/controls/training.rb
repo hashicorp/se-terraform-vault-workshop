@@ -1,5 +1,8 @@
-# Walk through training exercises
+#################################################
+# Terraform Workshop Tests
+#################################################
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#31
 control 'cd-desktop' do
   impact 1.0
   desc 'Change directory to the user desktop'
@@ -12,6 +15,7 @@ control 'cd-desktop' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#32
 control 'run-setup-script' do
   impact 1.0
   desc 'Run the setup.ps1 script'
@@ -21,6 +25,7 @@ control 'run-setup-script' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#38
 control 'git-clone' do
   impact 1.0
   desc 'Clone the training repository'
@@ -36,6 +41,8 @@ control 'git-clone' do
   end
 end
 
+# Required! If this is not set Git for Windows will muck up your line endings.
+# This causes the provisioning stage of Terraform to fail.
 control 'verify-git-line-endings' do
   impact 1.0
   desc 'Make sure git line endings are set correctly.'
@@ -45,9 +52,8 @@ control 'verify-git-line-endings' do
   end
 end
 
-# Clean up anything left from the previous run
-# Need some kind of 'az login' here.
-# TODO:  See if the while loop is really needed.
+# Clean up anything left from the previous run.
+# We want a clean slate for the test environment.
 control 'az-group-delete' do
   impact 1.0
   desc 'Clean up from any previous test run.'
@@ -66,6 +72,7 @@ control 'az-group-delete' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#45
 control 'terraform-init' do
   impact 1.0
   desc 'Run terraform init.'
@@ -80,6 +87,7 @@ control 'terraform-init' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#46
 control 'terraform-plan' do
   impact 1.0
   desc 'Run terraform plan.'
@@ -93,6 +101,7 @@ control 'terraform-plan' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#61
 control 'terraform-apply' do
   impact 1.0
   desc 'Run terraform apply.'
@@ -106,6 +115,7 @@ control 'terraform-apply' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#64
 control 'terraform-change-variable' do
   impact 1.0
   desc 'Re-run terraform apply with a different variable.'
@@ -119,6 +129,7 @@ control 'terraform-change-variable' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#65
 control 'terraform-destroy' do
   impact 1.0
   desc 'Run terraform destroy'
@@ -132,6 +143,7 @@ control 'terraform-destroy' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#66
 control 'terraform-rebuild' do
   impact 1.0
   desc 'Run terraform apply again'
@@ -145,6 +157,7 @@ control 'terraform-rebuild' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#72
 control 'terraform-build-vault-lab' do
   impact 1.0
   desc 'Build the rest of the Vault lab'
@@ -159,6 +172,7 @@ control 'terraform-build-vault-lab' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#81
 control 'terraform-refresh' do
   impact 1.0
   desc 'Run terraform refresh to show outputs'
@@ -174,6 +188,7 @@ control 'terraform-refresh' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#82
 control 'terraform-output' do
   impact 1.0
   desc 'Run terraform output to show outputs'
@@ -188,6 +203,7 @@ control 'terraform-output' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#83
 control 'terraform-output-singlevalue' do
   impact 1.0
   desc 'Run terraform output to show a single value'
@@ -201,6 +217,7 @@ control 'terraform-output-singlevalue' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#86
 control 'terraform-fmt' do
   impact 1.0
   desc 'Run terraform fmt to format code'
@@ -213,6 +230,7 @@ control 'terraform-fmt' do
   end
 end
 
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#96
 # This step emulates a student adding 'cowsay Moooooo!' to their provisioner.
 control 'terraform-taint-provisioner' do
   impact 1.0
@@ -229,11 +247,20 @@ control 'terraform-taint-provisioner' do
   end
 end
 
-# TODO: Write tests for the Vault workshop
+#################################################
+# Vault Workshop Tests
+#################################################
 
-# control 'connect-to-vault' do
-#   impact 1.0
-#   desc 'Make a test connection to the Vault instance'
-#   describe powershell(
-#     '$VAULT_ADDR=https://'
-#   )
+# https://hashicorp.github.io/se-terraform-vault-workshop/azure/vault/#12
+# Verifies that we can connect via SSH and run our vault_setup.sh script
+control 'vault-setup-script' do
+  impact 1.0
+  desc 'Run the Vault setup script.'
+  describe powershell(
+    'putty.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! ~/vault_setup.sh'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/foo/) }
+    its('stderr') { should match(//) }
+  end
+end
