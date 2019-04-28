@@ -253,11 +253,16 @@ end
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/azure/vault/#12
 # Verifies that we can connect via SSH and run our vault_setup.sh script
+# Since we're not using SSH keys we have to do this in two steps, first 
+# we find and store the server host public key fingerprint, then we use 
+# the plink command to start an SSH session and run our script with the 
+# appropriate variables.
 control 'vault-setup-script' do
   impact 1.0
   desc 'Run the Vault setup script.'
   describe powershell(
-    'putty.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! ~/vault_setup.sh'
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern 'ed25519' | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/vault_setup.sh"'
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/foo/) }
