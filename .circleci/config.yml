@@ -17,7 +17,7 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Run Inspec Tests
-          no_output_timeout: 30m
+          no_output_timeout: 45m
           command: |
             # Run inspec tests on the remote workstation
             mkdir -p test_results/inspec
@@ -33,7 +33,7 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Clean up UAT environment
-          no_output_timeout: 30m
+          no_output_timeout: 45m
           command: |
             # Delete the UAT environment
             az login --service-principal -u http://SE-Training-Workstation-Creds -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID;
