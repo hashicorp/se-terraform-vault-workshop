@@ -53,10 +53,11 @@ control 'az-group-delete' do
   desc 'Clean up from any previous test run.'
   describe powershell(
     'az login --service-principal -u http://SE-Training-Workstation-Creds -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID;
-    az group delete -y --name uat-tf-vault-lab-workshop;
-    while($(az group exists --name uat-tf-vault-lab-workshop).exit) {
-      Start-Sleep -s 5;
-      Write-Host "Waiting for resource group to finish deleting..."
+    if ($(az group exists --name uat-tf-vault-lab-workshop).exit) {
+      Write-Host "Deleting existing UAT environment.";
+      az group delete -y --name uat-tf-vault-lab-workshop;
+    } else {
+      Write-Host "No UAT environment found. Proceeding."
     }'
   ) do
     its('exit_status') { should eq 0 }
