@@ -74,9 +74,14 @@ Write-Host -ForegroundColor Magenta "Fetching dynamic Azure credentials from Has
 
 $CREDS=(Invoke-RestMethod -Headers @{"X-Vault-Token" = ${VAULT_TOKEN}; "X-Vault-Namespace" = "Sales/SE"} -Method GET -Uri ${VAULT_ADDR}/v1/azure/creds/se-training-workstation-payg).data
 
-#write-output $CREDS
+#write-host $CREDS
 $CLIENT_ID=$CREDS.client_id
 $CLIENT_SECRET=$CREDS.client_secret
+
+Do {
+    Write-Host -ForegroundColor White "Waiting for Azure credentials to be ready..."
+    Start-Sleep 3
+} Until (az login --service-principal -u http://SE-Training-Workstation-Creds -p $CLIENT_SECRET --tenant $env:ARM_TENANT_ID 2> $null)
 
 Write-Host -ForegroundColor Yellow "Storing credentials as system environment variables..."
 

@@ -1,5 +1,5 @@
-name: se-tf-vault-os-env
-title: Verify Operating System and Environment Variables
+name: se-tf-vault-az-creds
+title: Verify Azure Credentials
 maintainer: HashiCorp
 copyright: HashiCorp
 copyright_email: team-se@hashicorp.com

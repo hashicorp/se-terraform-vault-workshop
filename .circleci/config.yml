@@ -24,6 +24,22 @@ jobs:
             inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os
       - store_test_results:
           path: test_results
+    run-creds-tests-inspec:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Run Inspec Tests for Azure Credentials
+          no_output_timeout: 45m
+          command: |
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/creds
+      - store_test_results:
+          path: test_results
   run-training-tests-inspec:
     docker:
       - image: scarolan/inspec:latest
@@ -32,7 +48,7 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Run Inspec Tests for Trainig Exercises
+          name: Run Inspec Tests for Training Exercises
           no_output_timeout: 45m
           command: |
             # Run inspec tests on the remote workstation
@@ -62,9 +78,12 @@ workflows:
       - run-os-tests-inspec:
           requires:
             - validate-code
-      - run-training-tests-inspec:
+      - run-creds-tests-inspec:
           requires:
             - run-os-tests-inspec
+      - run-training-tests-inspec:
+          requires:
+            - run-creds-tests-inspec
       - clean-up-uat:
           requires:
             - run-training-tests-inspec
@@ -81,9 +100,12 @@ workflows:
       - run-os-tests-inspec:
           requires:
             - validate-code
-      - run-training-tests-inspec:
+      - run-creds-tests-inspec:
           requires:
             - run-os-tests-inspec
+      - run-training-tests-inspec:
+          requires:
+            - run-creds-tests-inspec
       - clean-up-uat:
           requires:
             - run-training-tests-inspec
