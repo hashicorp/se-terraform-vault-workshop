@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Validate Terraform
           command: terraform validate -check-variables=false ./azure/
-  run-functional-tests-inspec:
+  run-os-tests-inspec:
     docker:
       - image: scarolan/inspec:latest
     steps:
@@ -16,12 +16,28 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Run Inspec Tests
+          name: Run Inspec Tests for OS settings
           no_output_timeout: 45m
           command: |
             # Run inspec tests on the remote workstation
             mkdir -p test_results/inspec
-            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os azure/test/inspec/training
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os
+      - store_test_results:
+          path: test_results
+  run-training-tests-inspec:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Run Inspec Tests for Trainig Exercises
+          no_output_timeout: 45m
+          command: |
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/training
       - store_test_results:
           path: test_results
   clean-up-uat:
@@ -43,12 +59,15 @@ workflows:
   build-and-deploy:
     jobs:
       - validate-code
-      - run-functional-tests-inspec:
+      - run-os-tests-inspec:
           requires:
             - validate-code
+      - run-training-tests-inspec:
+          requires:
+            - run-os-tests-inspec
       - clean-up-uat:
           requires:
-            - run-functional-tests-inspec
+            - run-training-tests-inspec
   nightly-build:
     triggers:
       - schedule:
@@ -59,9 +78,12 @@ workflows:
                 - master
     jobs:
       - validate-code
-      - run-functional-tests-inspec:
+      - run-os-tests-inspec:
           requires:
             - validate-code
+      - run-training-tests-inspec:
+          requires:
+            - run-os-tests-inspec
       - clean-up-uat:
           requires:
-            - run-functional-tests-inspec
+            - run-training-tests-inspec
