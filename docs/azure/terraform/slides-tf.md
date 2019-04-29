@@ -603,7 +603,7 @@ Run the following commands to clone the training repository from GitHub. Make su
 ```powershell
 cd ~/Desktop
 git clone https://github.com/hashicorp/se-terraform-vault-workshop
-cd azure-terraform-vault-workshop/azure
+cd se-terraform-vault-workshop/azure
 ```
 
 Now reload your text editor in the current directory with the code command:
@@ -729,17 +729,11 @@ terraform init
 
 Output:
 ```tex
-* provider.azurerm: version = "~> 1.27"
+Initializing provider plugins...
+- Checking for available provider plugins on https://releases.hashicorp.com...
+- Downloading plugin for provider "azurerm" (1.27.0)...
 
 Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget,
-other commands will detect it and remind you to do so if necessary.
 ```
 
 Terraform fetches any required providers and modules and stores them in the .terraform directory. You can take a peek inside that directory where you'll see the plugins folder.
@@ -796,6 +790,24 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 ```
 
 We are not actually building anything yet. This is just a dry run, showing us what would happen if we applied our change.
+
+---
+name: terraform-plan-3
+Optional: Save Your Terraform Plan
+-------------------------
+<br><br><br>
+You may have noticed this output when you ran `terraform plan`:
+
+```tex
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+```
+
+If you specify the -out parameter, you can save your Terraform plan in a file and run it later.
+
+???
+Why might you want to do this? Maybe you have a maintenance window and can only implement changes on Friday evening. But you'd like to do the dry run on Friday afternoon. So you run the plan, have it approved, and save it for deployment later that night.
 
 ---
 name: set-prefix
@@ -861,12 +873,12 @@ https://azure.microsoft.com/en-us/global-infrastructure/locations/
 
 Examples:
 ```
-centralus  - Iowa, USA
-eastus     - Virginia, USA
-westus     - California, USA
-uksouth    - London, UK
-southindia - Chennai, India
-chinaeast  - Shanghai, China
+centralus  - Iowa
+eastus     - Virginia
+westus     - California
+uksouth    - London
+southindia - Chennai
+eastasia   - Hong Kong
 ```
 
 ???
@@ -1028,39 +1040,6 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 
 ???
 **Terraform plan is a dry run. It gives you a chance to have other people review and approve your changes before you apply them.**
-
----
-name: terraform-graph
-Terraform Graph
--------------------------
-<br><br><br>
-Let's take a closer look at what Terraform wants to build. Use the command palette menu, or the CTRL-SHIFT-P keyboard shortcut to bring up the Command Palette.
-
-.center[![:scale 60%](images/command_palette.png)]
-
----
-name: terraform-graph-2
-Terraform Graph
--------------------------
-<br><br><br>
-Start typing 'terraform' into the Command Palette and you'll see some different options in a pull-down menu. Choose the Terraform: Preview Graph option. Select graph type 'plan'.
-
-.center[![:scale 80%](images/preview_graph.png)]
-
----
-name: terraform-graph-3
-Terraform Graph
--------------------------
-You'll see a graph pop up in a new tab. This is a map of all the resources and dependencies that Terraform is keeping track of.
-
-.center[![:scale 100%](images/resource_graph.png)]
-
-???
-**This is the graph for the fully completed workshop lab once it is built.**
-
-**You might have noticed that we have a bunch of variables that we aren't using yet. Don't worry, we will use them as the workshop progresses. You can click on any of the nodes in the graph to jump to the specific part of your code where it is being referenced. Any time you want to update the graph simply use the Command Palette to regenerate it.**
-
-NOTE: The graph is a bit more visible with a 'light' color theme.
 
 ---
 name: terraform-apply
@@ -1246,6 +1225,7 @@ Some resources can be non-destructively changed in place. Ask your class what th
 name: add-virtual-network
 Add a Virtual Network
 -------------------------
+<br><br>
 Let's add a virtual network. Scroll down in the main.tf file until you find the azurerm_virtual_network resource. Uncomment it and save the file.
 
 ```terraform
@@ -1257,8 +1237,6 @@ resource "azurerm_virtual_network" "vnet" {
 }
 ```
 Note the syntax for ensuring that this virtual network is placed into the resource group we created earlier.
-
-Optional: regenerate the Terraform Graph to see how it changes.
 
 ???
 Hop over to your own workstation and regenerate the terraform graph. Point out that we now have a Virtual Network, that depends on the resource group. How did Terraform know these things are connected? 
@@ -2031,3 +2009,44 @@ https://www.terraform.io/docs/providers/azurerm/
 
 Link to this Slide Deck  
 https://bit.ly/hashiazure
+
+---
+name: Appendix-A-Terraform-Graph
+class: center,middle
+Appendix A - Terraform Graph
+=========================
+???
+These are currently broken in VSC. Hopefully a fix comes soon.
+
+---
+name: terraform-graph
+Terraform Graph
+-------------------------
+<br><br><br>
+Let's take a closer look at what Terraform wants to build. Use the command palette menu, or the CTRL-SHIFT-P keyboard shortcut to bring up the Command Palette.
+
+.center[![:scale 60%](images/command_palette.png)]
+
+---
+name: terraform-graph-2
+Terraform Graph
+-------------------------
+<br><br><br>
+Start typing 'terraform' into the Command Palette and you'll see some different options in a pull-down menu. Choose the Terraform: Preview Graph option. Select graph type 'plan'.
+
+.center[![:scale 80%](images/preview_graph.png)]
+
+---
+name: terraform-graph-3
+Terraform Graph
+-------------------------
+You'll see a graph pop up in a new tab. This is a map of all the resources and dependencies that Terraform is keeping track of.
+
+.center[![:scale 100%](images/resource_graph.png)]
+
+???
+**This is the graph for the fully completed workshop lab once it is built.**
+
+**You might have noticed that we have a bunch of variables that we aren't using yet. Don't worry, we will use them as the workshop progresses. You can click on any of the nodes in the graph to jump to the specific part of your code where it is being referenced. Any time you want to update the graph simply use the Command Palette to regenerate it.**
+
+NOTE: The graph is a bit more visible with a 'light' color theme.
