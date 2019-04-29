@@ -24,7 +24,7 @@ jobs:
             inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os
       - store_test_results:
           path: test_results
-    run-creds-tests-inspec:
+  run-creds-tests-inspec:
     docker:
       - image: scarolan/inspec:latest
     steps:
