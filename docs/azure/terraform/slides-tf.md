@@ -959,13 +959,16 @@ Terraform Provider Configuration
 <br><br><br>
 Open up the main.tf file in Visual Studio Code and you'll see the provider block.
 
-You can manually configure which version(s) of a provider you would like to use. If you leave this option out, Terraform will default to the latest available version of the provider. Here we have pinned the provider version to 1.27.0. We recommend pinning your provider versions, especially in production.
+You can manually configure which version(s) of a provider you would like to use. If you leave this option out, Terraform will default to the latest available version of the provider.
 
 ```hcl
 provider "azurerm" {
   version = "=1.27.0"
 }
 ```
+
+???
+**Here we have pinned the provider version to 1.27.0. We recommend pinning your provider versions, especially in production.**
 
 ---
 name: resources-building-blocks
