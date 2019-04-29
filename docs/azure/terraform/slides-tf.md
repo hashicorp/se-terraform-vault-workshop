@@ -729,7 +729,7 @@ terraform init
 
 Output:
 ```tex
-* provider.azurerm: version = "~> 1.21"
+* provider.azurerm: version = "~> 1.27"
 
 Terraform has been successfully initialized!
 
@@ -745,7 +745,7 @@ other commands will detect it and remind you to do so if necessary.
 Terraform fetches any required providers and modules and stores them in the .terraform directory. You can take a peek inside that directory where you'll see the plugins folder.
 
 ???
-**Terraform has an extendible architecture. You download the core program, terraform, then it fetches plugins and modules that are required for your code. Because our code contains the keyword azurerm, terraform automatically knows to fetch that provider for you.**
+**Terraform has an extendible architecture. You download the core program, terraform, then it fetches plugins and modules that are required for your code.**
 
 ---
 name: terraform-plan
@@ -773,7 +773,7 @@ persisted to local or remote state storage.
 ???
 **`terraform plan` is a dry run command. We're not actually building anything yet, Terraform is just telling is what it would do if we ran it for real.**
 
-**If you're curious, how are we authenticating to Azure? We've saved some Azure credentials on your workstation as environment variables. You can also use Terraform directly from Azure cloudshell. Terraform is preinstalled in cloudshell and doesn't require any authentication or special configuration.**
+**If you're curious, how are we authenticating to Azure? We saved some Azure credentials on your workstation as environment variables when we ran the setup.ps1 script. You can also use Terraform directly from Azure cloudshell. Terraform is preinstalled in cloudshell and doesn't require any authentication or special configuration.**
 
 ---
 name: terraform-plan-2
@@ -953,11 +953,26 @@ Every terraform resource is structured exactly the same way.
 Everything else you want to configure within the resource is going to be sandwiched between the curly braces. These can include strings, lists, and maps.
 
 ---
+name: provider-block
+Terraform Provider Configuration
+-------------------------
+<br><br><br>
+Open up the main.tf file in Visual Studio Code and you'll see the provider block.
+
+You can manually configure which version(s) of a provider you would like to use. If you leave this option out, Terraform will default to the latest available version of the provider. Here we have pinned the provider version to 1.27.0. We recommend pinning your provider versions, especially in production.
+
+```hcl
+provider "azurerm" {
+  version = "=1.27.0"
+}
+```
+
+---
 name: resources-building-blocks
 Resources - Terraform Building Blocks
 -------------------------
 <br><br><br>
-Find the first resource in the main.tf file on lines 18-21. These lines are already uncommented for you.
+Scroll down a little further and find the first resource in the main.tf file on lines 26-29. These lines are already uncommented for you.
 
 You can toggle comments with the _Edit > Toggle Line Comment_ menu, or by simply highlighting some text and pressing `CTRL-/`. 
 
@@ -1316,7 +1331,7 @@ NOTE: It will take up to five minutes to build out the lab environment. This is 
 name: chapter-3c-lab-answer
 Lab Exercise 3c: Answer
 -------------------------
-If you copied all the code over from **main.tf.completed** into **main.tf** it should look like this:
+If you copied all the code over from **main.tf.completed** into **main.tf**, it should look like this (comments have been removed for brevity):
 
 ```terraform
 resource "azurerm_resource_group" "hashitraining" {
@@ -1395,6 +1410,9 @@ resource "azurerm_subnet" "subnet" {
 }
 ```
 
+???
+**We've removed all the comments from this code so it will fit on the slide.**
+
 ---
 name: terraform-variables
 The Variables File
@@ -1452,6 +1470,9 @@ ssh ${var.admin_username}@${azurerm_public_ip.vault-pip.fqdn}
 SHELLCOMMANDS
 }
 ```
+
+???
+**This bit here with the SHELLCOMMANDS is an example of a HEREDOC. It allows you store multi-line text in an output.**
 
 ---
 name: terraform-outputs
@@ -1561,11 +1582,17 @@ Output:
 http://yourname.centralus.cloudapp.azure.com:8200
 ```
 
+???
+**The name of the variable here is CaSe Sensitive. Make sure you copy it exactly.**
+
 ---
 name: chapter-4a-lab
 Lab Exercise 4a: Break main.tf into smaller files
 -------------------------
 Take the azurerm_virtual_machine resource out of main.tf and put it into its own file called **vm.tf**. Save both files. Run `terraform apply` again. What happens?
+
+???
+**Don't forget to take the config resource out of main.tf when you copy it into vm.tf. Otherwise you'll have two resources of the same type, with the same name, which causes an error.**
 
 ---
 name: chapter-4a-lab-answer
@@ -1734,7 +1761,7 @@ Run `terraform apply` again and see what happens. Did your virtual machine get r
 Hint: read up on the [terraform taint](https://www.terraform.io/docs/commands/taint.html) command.
 
 ???
-Explain that provisioners only run when virtual machines are first created. If you need to reprovision, you simply destroy and rebuild the VM. You can force a rebuild with this `terraform taint` command.
+Explain that provisioners only run when virtual machines are first created. If you need to reprovision, you simply destroy and rebuild the VM. You can force a rebuild with this `terraform taint` command. Don't forget that comma at the end of the setup.sh line!
 
 ---
 name: chapter-5-lab-answer
@@ -2000,4 +2027,4 @@ Terraform Azurerm Provider Documentation
 https://www.terraform.io/docs/providers/azurerm/
 
 Link to this Slide Deck  
-https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform
+https://bit.ly/hashiazure
