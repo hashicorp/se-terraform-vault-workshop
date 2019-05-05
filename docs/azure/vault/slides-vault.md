@@ -7,12 +7,21 @@ Azure Vault Workshop]
 Modern Security With Vault
 
 ???
-
 Welcome to the beginner's guide to Vault on Azure. 
 
+---
+name: Link-to-Slide-Deck
+The Slide Deck
+-------------------------
+<br><br><br>
+.center[
+Follow along on your own computer at this link:
+
+https://bit.ly/hashiazure
+=========================
+]
 
 ---
-
 name: Introductions
 Introductions
 -------------------------
@@ -41,48 +50,55 @@ Table of Contents
 
 .contents[
 
-0. Vault Overview
+0. HashiCorp Vault Overview
 1. Our Vault Server
-1. Interacting with Vault (CLI, browser, API)
-1. Authorization in Vault: Policies
-1. Authenticating to Vault: Auth Methods
-1. Secret Management: Secret Engines
-1. Example Engine One: Protecting Databases
-1. Example Engine Two: Encryption as a Service
-1. Vault Enterprise -- Extending Vault across the organization
+1. Interacting with Vault (CLI, GUI, API)
+1. Authorization (authn): Policies
+1. Authentication (authz): Auth Methods
+1. Vault Secrets Engines
+1. Dynamic Secrets
+1. Encryption as a Service
+1. Vault Enterprise
 ]
 
----
+???
+TODO: Speaker talk track for the table of contents.
 
+---
 name: Chapter-1
 class: center,middle
 .section[
 Chapter 1  
-Vault Overview
+HashiCorp Vault Overview
 ]
 
 ---
-
-name: Vault-Overview
-Vault Overview
+name: HashiCorp-Vault-Overview
+HashiCorp Vault Overview
 -------------------------
+<br>
+.center[
+![:scale 80%](images/vault_logo.png)
+]
 
-###Vault is a __BIG__ topic!  
+HashiCorp Vault is an API-driven, cloud agnostic secrets management system. It allows you to safely store and manage sensitive data in hybrid cloud environments. You can also use Vault to generate dynamic short-lived credentials, or encrypt application data on the fly.
 
+???
 This is meant as a high level overview.  For detailed descriptions or instructions please see the docs, API guide, or learning site:
 * https://www.vaultproject.io/docs/
 * https://www.vaultproject.io/api/
 * https://learn.hashicorp.com/vault/
 
-
 ---
-
-name: Securing-Apps
-Application Security
+name: The-Old-Way
+The Traditional Security Model
 -------------------------
+.center[![:scale 90%](images/bodiam_castle.jpg)]
+.center[Also known as the "Castle and Moat" method.]
 
+???
+TODO: Put Stephen's talk track in here.
 
-### Traditional Model
 Traditional security models were built upon the idea of perimeter based security.  There would be a firewall, and inside that firewall it was assumed one was safe.  Resources such as databases were mostly static.  As such rules were based upon IP address, credentials were baked into source code or kept in a static file on disk.
 
 * IP Address based rules
@@ -91,15 +107,27 @@ Traditional security models were built upon the idea of perimeter based security
   * Difficult to rotate, decommission, and determine who has access
   * Revoking compromised credentials could break 
 
+---
+name: The-New-Way
+Modern Secrets Management
+-------------------------
+.center[![:scale 90%](images/nomadic_houses.jpg)]
+.center[No well defined permieter; security enforced by identity.]
+
+???
+These are Mongolian Yurts or "Ger" as they are called locally. Instead of a castle with walls and a drawbridge, a fixed fortress that has an inside and an outside, these people move from place to place, bringing their houses with them.
+
+And if you don't think the Nomadic way can be an effective security posture, think about this for a moment. The Mongol military tactics and organization enabled the Genghis Khan to conquer nearly all of continental Asia, the Middle East and parts of eastern Europe. Mongol warriors would typically bring three or four horses with them, so they could rotate through the horses and go farther. Mongol army units could move up to 100 miles a day, which was unheard of in the 13th century. They were faster, more adaptable, and more resilient than all their enemies.
 
 ---
-
-name: Securing-Apps-Vault
-How Vault Secures Applications
+name: Identity-Based-Security
+Identity Based Security
 -------------------------
+.center[![:scale 100%](images/identity-triangle.png)]
+.center[Identity Based Security in Low Trust Networks
+https://www.hashicorp.com/identity-based-security-and-low-trust-networks]
 
-
-###Identity Based Model
+???
 Vault was designed to address the security needs of modern applications.  It differs from the traditional approach by using:
 
 * Identity based rules allowing security to stretch across network perimeters
@@ -108,8 +136,56 @@ Vault was designed to address the security needs of modern applications.  It dif
 * Easily invalidate credentials or entities
 
 ---
+name: Secrets-Engines
+Multi-tool for Secrets Management
+-------------------------
+.center[![:scale 90%](images/vault-engines.png)]
+.center[Store and manage any type of secret with different engines
+https://www.hashicorp.com/identity-based-security-and-low-trust-networks]
 
+---
+name: Vault-Reference-Architecture-1
+Vault Architecture - Internals
+-------------------------
+.center[![:scale 100%](images/vault_arch.png)]
+.center[HashiCorp Vault Internals Reference Architecture
+https://www.vaultproject.io/docs/internals/architecture.html
+]
 
+---
+name: Vault-Reference-Architecture-2
+Vault Architecture - High Availability
+-------------------------
+.center[![:scale 80%](images/vault-ref-arch-lb.png)]
+.center[Vault High Availability Architecture
+https://learn.hashicorp.com/vault/operations/ops-reference-architecture
+]
+
+---
+name: Vault-Reference-Architecture-3
+Vault Architecture - Multi-Region
+-------------------------
+.center[![:scale 90%](images/vault-ref-arch-replication.png)]
+.center[Vault Multi-Region Architecture
+https://learn.hashicorp.com/vault/operations/ops-reference-architecture
+]
+
+---
+name: chapter-1-review
+Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+* Open source secrets management system
+* Supports multi-cloud, hybrid environments
+* Identity-based security
+* Manage secrets on untrusted networks
+* Secure apps and infrastructure everywhere
+* Highly available, production ready
+* Trusted by industry and government
+]
+
+---
 name: Chapter-2
 class: center,middle
 .section[
