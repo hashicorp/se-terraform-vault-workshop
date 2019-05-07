@@ -51,7 +51,7 @@ Table of Contents
 .contents[
 
 0. HashiCorp Vault Overview
-1. Our Vault Server
+1. Vault Lab Environment
 1. Interacting with Vault (CLI, GUI, API)
 1. Authorization (authn): Policies
 1. Authentication (authz): Auth Methods
@@ -172,7 +172,84 @@ https://learn.hashicorp.com/vault/operations/ops-reference-architecture
 
 ---
 name: chapter-1-review
-Chapter 1 Review
+📝 Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+]
+
+---
+name: chapter-1-review
+📝 Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+* Open source secrets management system
+]
+
+---
+name: chapter-1-review
+📝 Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+* Open source secrets management system
+* Supports multi-cloud, hybrid environments
+]
+
+---
+name: chapter-1-review
+📝 Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+* Open source secrets management system
+* Supports multi-cloud, hybrid environments
+* Identity-based security
+]
+
+---
+name: chapter-1-review
+📝 Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+* Open source secrets management system
+* Supports multi-cloud, hybrid environments
+* Identity-based security
+* Manage secrets on untrusted networks
+]
+
+---
+name: chapter-1-review
+📝 Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+* Open source secrets management system
+* Supports multi-cloud, hybrid environments
+* Identity-based security
+* Manage secrets on untrusted networks
+* Secure apps and infrastructure everywhere
+]
+
+---
+name: chapter-1-review
+📝 Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+* Open source secrets management system
+* Supports multi-cloud, hybrid environments
+* Identity-based security
+* Manage secrets on untrusted networks
+* Secure apps and infrastructure everywhere
+* Highly available, production ready
+]
+
+---
+name: chapter-1-review
+📝 Chapter 1 Review
 -------------------------
 .contents[
 What is HashiCorp Vault?
@@ -186,25 +263,48 @@ What is HashiCorp Vault?
 ]
 
 ---
-name: Chapter-2
-class: center,middle
-.section[
-Chapter 2
-Our Vault Server
+name: chapter-1-review
+📝 Chapter 1 Review
+-------------------------
+.contents[
+What is HashiCorp Vault?
+* Open source secrets management system
+* Supports multi-cloud, hybrid environments
+* Identity-based security
+* Manage secrets on untrusted networks
+* Secure apps and infrastructure everywhere
+* Highly available, production ready
+* Trusted by industry and government
+* Enterprise version with extra features
 ]
 
 ---
+name: Chapter-2
+class: center,middle
+.section[
+Chapter 2      
+Vault Lab Environment
+]
 
-name: Our-Vault-Server-2
-Our Vault Server 
+---
+name: Your-Lab-Environment
+Your Lab Environment 
 -------------------------
+.center[![:scale 90%](images/workshop_lab_environment.png)]
+Some of the lab exercises will ask you to run commands on the Linux server where Vault is installed. Vault can be managed via the command line, the GUI, or via the API.
 
-During the Terraform Workshop we deployed a pre-configured Vault server.  That means we have already:
-* Initialized the server (vault init)
+???
+During the Terraform Workshop we deployed a pre-configured Vault server, an Azure MySQL database, and a simple Python Flask application. The Linux server here in the diagram is doing triple duty. It's running Vault as well as our application, and it will also be where we run most of our lab commands.
+
+Reminder: This is a lab training environment and we are doing some things here that you should never do in production. There is no SSL encryption configured, and Vault is running in memory on a single machine in development mode. 
+
+We've skipped over some steps that you would normally do in a production environment:
+
+* Initialize the server (vault init)
   * This creates the master key used to encrypt storage
 * Unsealed it
-  * Vault protects the master key using a process called "unsealing"
-  * One can unseal using Shamir's Secret Sharing, or auto unseal mechanisms
+  * Vault protects the master key using a process called unsealing
+  * You can unseal using Shamir's Secret Sharing, or auto unseal mechanisms
   * For production we strongly recommend integrating Vault with an HSM or cloud key management service like Azure Key Vault
 * Retrieved the initial root token
   * When a Vault server first starts it prints the root token
@@ -212,9 +312,20 @@ During the Terraform Workshop we deployed a pre-configured Vault server.  That m
   * In production it should be used for initial config and then destroyed
   * A root token can be regenerated at a later date if needed
 
+---
+name: chapter-2-review
+📝 Chapter 2 Review
+-------------------------
+.contents[
+Your Lab Environment
+* Linux server and Azure MySQL database
+* Vault and application are on the Linux server
+* Ports 8200, 5000, and 22 are open
+* Vault is running in *dev* mode
+* Don't do this in production
+]
 
 ---
-
 name: Chapter-3
 class: center,middle
 .section[
@@ -223,87 +334,126 @@ Interacting with Vault
 ]
 
 ---
-name: Our-Vault-Server
-Connecting To Our Vault Server
+name: Getting-Connected-GUI-1
+Connect to Your Vault Server - GUI
 -------------------------
-
-Before we begin we will connect to our Vault server so that we can run a setup script.  
-
-Retrieve the connection instructions from Terraform. Make sure to run this command from within the azure-terraform-vault-workshop directory, where you built the lab environment.
+During the Terraform workshop we learned the `terraform output` command. Run this command now to show the command for connecting to your Vault server via SSH. Remember to run this from within the `azure` subdirectory where all your terraform files are. The command is CaSe Sensitive!
 
 Command:
 ```powershell
-terraform output
+terraform output Vault_Server_URL
 ```
 
 Output:
 ```tex
-...
-ssh hashicorp@ehron.centralus.cloudapp.azure.com
+http://bugsbunny.centralus.cloudapp.azure.com:8200
 ```
 
 ---
-name: Our-Vault-Server
-Connecting To Our Vault Server
+name: Getting-Connected-GUI-2
+Connect to Your Vault Server - GUI
 -------------------------
+.center[![:scale 90%](images/vault_login_page.png)]
+Open the Vault server URL in a web browser. Log in with the master token, which is simply `root`. (Don't do this in production!)
 
-Open another Powershell window, paste in the ssh command, and run the vault_setup.sh script when connected. 
+---
+name: Getting-Connected-GUI-3
+The Vault Server GUI
+-------------------------
+.center[![:scale 90%](images/take_a_tour.png)]
+When you first log onto a new Vault server you'll see an invitation to take a tour. You can always get back to the Welcome Tour by clicking the menu in the upper right corner and selecting "Restart Guide".
 
-Your password is Password123!
+---
+name: chapter-3a-lab
+.center[.lab-header[👩‍🔬 Lab Exercise 3a: Secrets Guide]]
+<br><br>
+.center[![:scale 80%](images/tour_secrets.png)]
+Go through the Secrets Guide and create a Key/Value (kv) secret store. Create a KV secrets engine with the default mount path of `kv`, and `department/team/mysecret` for the path to your secret. Use `rootpass` for the Key and `supersecret` for the Value.
+
+???
+This will all make more sense as you go through the tutorial. Walk through it and see if you can figure it out.
+
+---
+name: chapter-3a-lab-answers
+.center[.lab-header[👩‍🔬 Lab Exercise 3a: Answers]]
+<br><br><br>
+You can follow the steps in the 'Secrets' section of the Welcome Tour to enable a new Key/Value secrets engine and store a secret.
+
+1. Start the tour. Under the _Enable Secrets Engine_ page select the KV option and click on the **Next** button.
+1. On the next page leave the default setting of `kv` and click **Enable Engine**.
+1. Click on **Create Secret** and enter **department/team/mysecret** where it asks for a path.
+1. Scroll down and enter `rootpass` for the Key and `supersecret` for the value. Click on the Save button at the bottom.
+
+Congratulations, you just stored your first secret in HashiCorp Vault!
+
+---
+name: Getting-Connected-CLI-1
+The Vault Command Line Interface
+-------------------------
+Vault is distributed as a single binary file, which means it can act as both a server or a command line client. We're going to SSH onto the Vault server and run some vault commands locally. Go back to your Visual Studio Code terminal and run the following command.
+
+Command:
+```powershell
+terraform output Instructions
+```
+
+Output:
+```bash
+# Connect to your Linux Virtual Machine
+#
+# Run the command below to SSH into your server. You can also use PuTTY or any
+# other SSH client. Your password is: Password123!
+
+ssh hashicorp@seancvault.centralus.cloudapp.azure.com
+```
+
+---
+name: Getting-Connected-CLI-2
+The Vault Command Line Interface
+-------------------------
+In Visual Studio Code, open a new Terminal window and paste the ssh command from your terraform output into the terminal. The command below is an example. Yours will contain your own username where YOURNAME is.
+
+Your password is: **Password123!**
 
 Commands:
 ```powershell
-ssh hashicorp@ehron.centralus.cloudapp.azure.com
-./vault_setup.sh
+ssh hashicorp@YOURNAME.centralus.cloudapp.azure.com
 ```
-_Note: Leave this window open as we will need this connection in future steps_
 
 ---
-
-name: Our-Vault-Server
-Connecting To Our Vault Server
+name: Getting-Connected-CLI-3
+The Vault Command Line Interface
 -------------------------
+Vault is already preconfigured to communicate with the server running on the local machine. Remember that all interactions with Vault, whether through the GUI, or command line always have an underlying API call. Run the following commands to see Vault's environment variables.
 
-We can interact with our newly deployed Vault server in a number of ways.  Let us connect to the web UI.
-
-First, let us retrieve the address from Terraform by inspecting the output:
-
-Command:
-```powershell
-terraform output
+Commands:
+```bash
+echo $VAULT_ADDR
+echo $VAULT_TOKEN
 ```
 
-Output:
+Outputs:
 ```tex
-...
-http://ehron.centralus.cloudapp.azure.com:8200
+http://localhost:8200
+root
 ```
 
+The Vault CLI has many other settings which you can read about here:
+.center[https://www.vaultproject.io/docs/commands/]
+
+???
+At a minimum Vault needs two pieces of information. Where is the Vault server, and what token are we using to communicate with it?
+
+Note that even the command line tool uses that API to communicate with Vault. Same goes for the GUI.
 
 ---
-name: Our-Vault-Server-2
-Connecting To Our Vault Server (Continued)
+name: Vault-Status
+Vault Status
 -------------------------
-
-Use a web browser to connect to the address that is returned.
-
-Log in using the token "root":
-.center[![:scale 50%](images/vault_browser.png)]
-
-Once logged in feel free to click around.
-
-
----
-
-name: Our-Vault-Server-3
-Connecting To Our Vault Server (Continued)
--------------------------
-
-We can also access our Vault server from the command line.  Vault is preinstalled on your lab machine.  First, we need to tell the Vault client where the Vault server is:
+Let's try a few basic Vault commands, starting with `vault status`:
 
 Command:
-```powershell
-$Env:VAULT_ADDR="http://<YOUR_NAME>.<REGION>.cloudapp.azure.com:8200"
+```bash
 vault status
 ```
 
@@ -316,83 +466,219 @@ Initialized     true
 Sealed          false
 Total Shares    1
 Threshold       1
-Version         1.0.1
-Cluster Name    vault-cluster-4a47af87
-Cluster ID      532155d5-892d-5320-80ee-297ee94bd114
+Version         1.1.1
+Cluster Name    vault-cluster-db6f271d
+Cluster ID      33e85d7c-63bb-7523-0165-9d1aee722d70
 HA Enabled      false
 ```
----
 
-name: Our-Vault-Server-4
-Authenticating To Our Vault Server
+`vault status` gives us some basic information about the Vault cluster.
+
+---
+name: Vault-Help
+Vault Help
 -------------------------
-Let us log in.  We need to authenticate on the command line just as we did in the web UI:
+`vault --help` will show you a list of available subcommands. You can also run `vault subcommand --help` to get more information:
 
 Command:
-```powershell
-vault login
+```bash
+vault --help
 ```
 
 Output:
 ```tex
-Token (will be hidden):
-Success! You are now authenticated. The token information displayed below
-is already stored in the token helper. You do NOT need to run "vault login"
-again. Future Vault requests will automatically use this token.
+Usage: vault <command> [args]
 
-Key                  Value
----                  -----
-token                root
-token_accessor       7iLORuL3pxfPFj5hbetn1Yhs
-token_duration       ∞
-token_renewable      false
-token_policies       ["root"]
-identity_policies    []
-policies             ["root"]
+Common commands:
+    read        Read data and retrieves secrets
+    write       Write data, configuration, and secrets
+    delete      Delete secrets and configuration
+    list        List data or secrets
+    login       Authenticate locally
+    agent       Start a Vault agent
+    server      Start a Vault server
+    status      Print seal and HA status
+    unwrap      Unwrap a wrapped secret
+...
 ```
 
 ---
-name: Our-Vault-Server-4.5
-Install the Postman Chrome Extension
+name: Vault-Autocomplete
+Vault Autocomplete
 -------------------------
+<br><br>
+Vault has a handy autocomplete feature. You can simply hit the [TAB] key while typing commands and it will offer useful autocomplete suggestions. Install Vault autocomplete with these commands:
 
-Install the free Postman extension in your web browser. You can use the shortcut link below to download it:
+Command:
+```bash
+vault -autocomplete-install
+source ~/.bashrc
+```
 
-.center[https://goo.gl/rwTDYJ]
+These commands have no output if they run successfully. You can test the autocomplete feature by typing `vault` and then hitting the [TAB] key a few times.
 
 ---
-
-name: Our-Vault-Server-5
-API Call To Our Vault Server
+name: Vault-KV-Command
+Vault KV
 -------------------------
+The `vault kv` command allows you to interact with Key/Value stores like the one you created in the previous lab. Try running `vault kv list` on the KV secrets engine you mounted to see what's inside:
 
-Finally, we can make API calls to the Vault server.  One could use something like curl or Invoke-WebRequest.  We will use Postman.  Open the Postman app and create a new request:
+Commands:
+```bash
+vault kv list kv
+vault kv list kv/department
+vault kv list kv/department/team
+```
 
-.center[![:scale 100%](images/postman_call.png)]
+Output:
+```tex
+Keys
+----
+mysecret
+```
 
 ---
+name: chapter-3b-lab
+.center[.lab-header[👩‍🔬 Lab Exercise 3b: Retreive a Secret]]
+<br><br><br>
+Retreive the secret you stored in the first lab with the `vault kv get` command. Try and figure this one out on your own before looking at the answer.
 
-name: Our-Vault-Server-6
-API Call To Our Vault Server
--------------------------
-
-We will create a Get request:
-  * To authenticate the request create a Header named "X-Vault-Token" and set it to the value of your token (root)
-  * The URL we will call is http://$USER.$REGION.cloudapp.azure.com:8200/v1/auth/token/lookup-self
-
-Click send, and you should see some info displayed in the response that describes your token such as the path you authenticated against, the policies assigned, etc.
+Hint: You'll need the full path to your secret on the server.
 
 ---
-name: Our-Vault-Server-7
-API Call To Our Vault Server (Results)
--------------------------
+name: chapter-3b-lab-answer
+.center[.lab-header[👩‍🔬 Lab Exercise 3b: Answer]]
+<br><br><br>
+Reading secrets via the command line is easy. You can get the latest version of your secret with this command:
 
-Results:
+Command:
+```bash
+vault kv get kv/department/team/mysecret
+```
 
-.center[![:scale 70%](images/postman_results.png)]
+Output:
+```tex
+====== Metadata ======
+Key              Value
+---              -----
+created_time     2019-05-07T13:52:50.929656328Z
+deletion_time    n/a
+destroyed        false
+version          1
+
+====== Data ======
+Key         Value
+---         -----
+*rootpass    supersecret
+```
 
 ---
+name: Getting-Connected-API-1
+The Vault API
+-------------------------
+Vault has a full RESTful API which you can use to configure Vault and manage your secrets. Let's test the API with a simple cURL command. Here we are checking the sys/health endpoint and using jq to format the JSON output.
 
+Command:
+```bash
+curl http://localhost:8200/v1/sys/health | jq
+```
+
+Output:
+```json
+{
+  "initialized": true,
+  "sealed": false,
+  "standby": false,
+  "performance_standby": false,
+  "replication_performance_mode": "disabled",
+  "replication_dr_mode": "disabled",
+  "server_time_utc": 1557180149,
+  "version": "1.1.1",
+  "cluster_name": "vault-cluster-db6f271d",
+  "cluster_id": "33e85d7c-63bb-7523-0165-9d1aee722d70"
+}
+```
+
+---
+name: Getting-Connected-API-2
+The Vault API
+-------------------------
+The sys/health endpoint didn't require any authentication, but most of your API calls will be authenticated. Let's read that secret we created earlier using our root token. Be sure to copy and paste both lines together.
+
+Command:
+```bash
+curl --header "X-Vault-Token: root" \
+http://localhost:8200/v1/kv/data/department/team/mysecret | jq .data
+```
+
+Output:
+```json
+{
+  "data": {
+    "rootpass": "supersecret"
+  },
+  "metadata": {
+    "created_time": "2019-05-06T21:42:39.022036021Z",
+    "deletion_time": "",
+    "destroyed": false,
+    "version": 1
+  }
+}
+```
+
+---
+name: chapter-3c-lab
+.center[.lab-header[👩‍🔬 Lab Exercise 3c: API Calls]]
+<br><br><br><br>
+In this lab we'll look up information about your current token. Create a curl command like the one we used previously to query the `v1/auth/token/lookup-self` endpoint.
+
+---
+name: chapter-3c-lab-answer
+.center[.lab-header[👩‍🔬 Lab Exercise 3c: Answer]]
+<br><br><br>
+Command:
+```bash
+curl --header "X-Vault-Token: root" \
+http://localhost:8200/v1/auth/token/lookup-self | jq
+```
+
+Output:
+```json
+{
+  "accessor": "bPNHDP8WDW4YgejBLvJm10I2",
+  "creation_time": 1557168937,
+  "creation_ttl": 0,
+  "display_name": "token",
+  "entity_id": "",
+  "expire_time": null,
+  "explicit_max_ttl": 0,
+  "id": "root",
+  "issue_time": "2019-05-06T18:55:37.270794189Z",
+  "meta": null,
+  "num_uses": 0,
+  "orphan": true,
+  "path": "auth/token/create",
+...
+```
+
+---
+name: chapter-3-review
+📝 Chapter 3 Review
+-------------------------
+.contents[
+Interacting with Vault
+* 3 ways to interact with Vault - GUI, CLI, API
+* Everything maps back to an API call
+* A valid token is required for most requests
+* Authenticated users and apps can get tokens
+* The root token is special, not for everyday use
+* Access level is based on *policy*
+]
+
+???
+So far we've been doing everything as the root or superuser. In the next chapter we'll learn how to create policies that can limit what your users and applications can do with Vault.
+
+---
 name: Chapter-4
 class: center,middle
 .section[
@@ -403,12 +689,12 @@ Authorization in Vault: Policies
 ---
 
 name: Vault-Authorization
-Authorization and Policies
+Vault ACL Policies
 -------------------------
+<br>
+Vault Access Control List (ACL) Policies let you restrict which secrets your users and applications will have access to. Vault follows the practice of least privilege, with a default setting of *deny*.
 
-Vault, by default, allows no access to any entity.  Administrators must explicitly grant access to consumers of the Vault service by defined policies. 
-
-Policies express a path, and a set of "capabilities" for that path.
+Vault administrators must explicity grant access to users and applications with policy statements. Policies express a path, and a set of capabilities for that path. Policies are written in HashiCorp Config Language, or HCL.
 
 Example:
 ```hcl
@@ -418,15 +704,18 @@ path "auth/token/lookup-self" {
 }
 ```
 
+???
+Take a look at the Policies tab in your Vault UI. You'll see a default policy along with the root policy. The default policy has some very basic permissions for looking up info about one's own token, etc. The root policy is special and generally reserved for first time setup of Vault.
+
 ---
 
 name: Vault-Authorization-1
 Path and Capabilities
 -------------------------
+<br>
+The path portion of the policy maps to an API path. Capabilities can include one or more of read, update, list, delete, create, and sudo.
 
-The path portion literally maps to an API path.  Capabilities can include things like allowing to read, update, list, delete, create, etc.
-
-A common pattern is for organizations to create sections of Vault for a BU or department.  Let us imagine we wanted to allow someone full control over such a section.  We could write a policy like so:
+Many organizations structure their Vault server by department or line of business (lob). Here's an example policy the administrator created for line of business A, department 1:
 
 ```hcl
 path "lob_a/dept_1/*" {
@@ -434,65 +723,58 @@ path "lob_a/dept_1/*" {
 }
 ```
 
-The above policy grants all permissions to any and all secrets mounted at "lob_a/dept_1/" by using the splat (star) operator.  
+This policy grants all permissions to all secrets mounted under `lob_a/dept_1/` with the wildcard (*) operator.
+
+???
+Sudo is mainly reserved for interacting with 'root-protected' paths like things under /sys.
 
 ---
+name: chapter-4a-lab
+.center[.lab-header[👩‍🔬 Lab Exercise 4a: Create New Policies]]
+<br><br><br>
+Policies are assigned when a user or app authenticates. Create the following two policies using the Vault UI Policies tab. You can copy and paste the code below right into the UI.
 
-name: Vault-Authorization-2
-Create a Policy
--------------------------
+Call the first policy *lob_a* and the second policy *secret*.
 
-Policies are assigned when a user authenticates.  We will now create and save a policy.  We will then use it in the next section on authentication.
-
-Our policy will limit the secrets a user can see to those under a "lob_a/workshop" path.  
-
-Create file named "lob_a_policy.hcl", and put the following inside it:
-
+Policy #1: lob_a
 ```hcl
 path "lob_a/workshop/*" {
     capabilities = ["read", "list", "create", "delete", "update"]
 }
 ```
 
-Put the following into a file called "secret.hcl"
-
+Policy #2: secret
 ```hcl
 path "secret/*" {
     capabilities = ["read", "list", "create"]
 }
 ```
----
 
-name: Vault-Authorization-3
-Write the Policies
+---
+name: chapter-4a-lab-answer
+.center[.lab-header[👩‍🔬 Lab Exercise 4a: Answer]]
+<br><br><br>
+1. Click on the **Policies** link on the top navigation bar.
+1. In the upper right corner, click on **Create ACL Policy**
+1. Enter `lob_a` for the name and copy and paste the lob_a policy into the text area.
+1. Click **Create Policy** at the bottom of the page.
+1. Repeat for the `secret` policy.
+
+---
+name: chapter-4-review
+📝 Chapter 4 Review
 -------------------------
-
-All that is left is for us to write the policies to Vault:
-```bash
-# Write the policies
-vault policy write lob_a lob_a_policy.hcl
-vault policy write secret secret.hcl
-```
-
-We can verify that we were successful by reading the policy endpoint:
-
-Command:
-```powershell
-vault list sys/policy
-```
-
-Output:
-```tex
-Keys
-----
-default
-lob_a
-root
-secret
-```
+<br>
+.contents[
+Vault ACL Policies
+* Determines what apps and users can access
+* Policies are path-based
+* Capabilities: list, read, create, update, delete
+* Assigned when an entity authenticates
+* Root policy is special, not for everyday use
+]
 
 ---
-
 name: Chapter-5
 class: center,middle
 .section[
@@ -501,90 +783,132 @@ Authenticating to Vault: Auth Methods
 ]
 
 ---
-
 name: Vault-Authentication
-Auth Methods
+Vault Auth Methods
 -------------------------
+.center[![:scale 65%](images/vault_auth_methods.png)]
+Vault supports many different authentication methods. You can enable multiple auth methods, or multiple instances of the same auth method.
 
-There are many ways to authenticate to Vault including:
-  * Approle
-  * Azure/GCP/AWS/Alicloud/Etc
-  * Kubernetes
-  * TLS Certificates
-  * ... and many more!
-
-We covered authorization in the last chapter.  Now we will see how we tie policies to authenticated entities.
+???
+Auth methods are how your apps and users verify their identity. In the same way you might present some kind of valid ID at the hotel check-in desk, users and apps provide some kind of credential or token to authenticate.
 
 ---
-
-name: Vault-Authentication
-Authentication Example: Userpass
+name: Vault-Authentication-0
+Vault Auth Method: UserPass
 -------------------------
+.center[![:scale 50%](images/userpass_login.png)]
+The simplest authentication method (besides using a token directly) is the userpass method. As the name implies, these are local user accounts on the Vault server itself.
 
-An important thing to remember with authentication is that Vault is almost never the system of record.  
+???
+In the real world you'd probably have Vault use your Active Directory, LDAP or other system of record for authentication.
 
-Instead Vault generally takes information provided by a user and validates it against an external system of record like Active Directory or cloud service metadata.
+The userpass method of authentication is not recommended for production, but it's fine for development and lab environments.
 
-For the workshop we will use the Userpass auth method.  It is suitable for testing, but is not recommended for production.
+We're keeping it simple here. Userpass does not require an active directory server or any other external provider to work.
 
 ---
-
 name: Vault-Authentication-1
-Authentication Example: Userpass (Continued)
+Vault Auth Method: UserPass
 -------------------------
-
-Authentication methods are "mounted" to a path.  We will enable the userpass auth method now.  You should still be logged in with the root token:
-
-```hcl
-vault auth enable -path=workshop/userpass userpass
-```
-
-We have enabled our userpass auth method at the path "workshop/userpass."  We can mount as many different auth methods as we need as long as the paths for each are unique.
+.center[![:scale 90%](images/enable-userpass.png)]
+<br>
+Let's enable the userpass authentication method in Vault. Click on the **Access** link in the top menu, then select **Enable New Method**.
 
 ---
-
-name: Vault-Authentication-1
-Authentication Example: Userpass (Continued)
+name: Vault-Authentication-2
+Vault Auth Method: UserPass
 -------------------------
+<br><br>
+.center[![:scale 90%](images/select-userpass.png)]
+<br>
+Select the **Username and Password** box and click **Next** at the bottom of the page.
 
-Next, let's create a couple of users:
+---
+name: Vault-Authentication-3
+Vault Auth Method: UserPass
+-------------------------
+<br><br>
+.center[![:scale 90%](images/set-userpass-path.png)]
+<br>
+Leave the default path of **userpass** and click on **Enable Method**. The userpass authentication method is now mounted at the `userpass/` API endpoint.
 
+---
+name: Vault-Authentication-4
+Vault Auth Method: UserPass
+-------------------------
+Next, let's create a couple of users. These steps need to be done on the command line. Make sure you are SSH'd into the Vault server when you run these commands. Copy and paste the below commands into your terminal:
+
+Commands:
 ```bash
-vault write auth/workshop/userpass/users/bob \
+vault write auth/userpass/users/bob \
     password=foo \
     policies=secret
 
-vault write auth/workshop/userpass/users/sally \
+vault write auth/userpass/users/sally \
     password=foo \
     policies=lob_a
 ```
 
+Output:
+```tex
+Success! Data written to: auth/userpass/users/bob
+Success! Data written to: auth/userpass/users/sally
+```
+
+???
 Notice the policy section.  Policies are mapped to authentication endpoints.  Tokens generated from those endpoints have the policies assigned to it.
 
 ---
+name: chapter-5a-lab
+.center[.lab-header[👩‍🔬 Lab Exercise 5a: Bob and Sally]]
+<br><br><br>
+Log onto the web UI with Bob's account. Create some secret data under the secret/* path, where the default K/V store is mounted. Log out of Bob's account.
 
-name: Vault-Authentication-2
-Authentication Example: Userpass (Bob and Sally)
--------------------------
+Now log on using Sally's account. Can you see the secret data Bob entered? Why or why not?
 
-To see this in action log into the web client with both the Bob and Sally users.
+Log back on with your root token, and create a new policy called "readonly" so Sally can *read* and *list* what's inside of `secret/`.
 
-.center[![:scale 60%](images/bob_login.png)]
-
----
-
-name: Vault-Authentication-3
-Authentication Example: Userpass (Bob and Sally)
--------------------------
-
-Do the users see the same thing?  No, because they had different policies assigned to their auth method, and therefore Bob can see the "secret" path while Sally cannot.
-
-If you want to further investigate this you can use that same lookup-self call we made in Postman earlier.
-
-.center[![:scale 50%](images/more_you_know.gif)]
+**Hint:** You'll need to recreate Sally's account with a `vault write` command, adding the policy to her account.
 
 ---
+name: chapter-5a-lab-answers
+.center[.lab-header[👩‍🔬 Lab Exercise 5a: Answers]]
+<br>
+Bob can read, list and create data under the `secret/*` path because his policy allows him to do so. Vault comes with a key/value store mounted at `secret/` by default.
 
+When Sally logs on she can't even see the `secret/` path because she hasn't got list permissions. Here are the policy and command you'll need to run to grant Sally read-only access:
+
+Policy: readonly
+```hcl
+path "secret/*" {
+    capabilities = ["read", "list"]
+}
+```
+Vault Command:
+```bash
+vault write auth/userpass/users/sally \
+    password=foo \
+    policies=lob_a,readonly
+```
+
+???
+It's worth mentioning that you can create policies for paths that do not exist yet. Sally has permission to create secrets under lob_a/workshop/ even though she can't see these paths in the UI (yet).
+
+---
+name: chapter-5-review
+📝 Chapter 5 Review
+-------------------------
+<br>
+.contents[
+Vault Authentication Methods
+* Supports over a dozen auth methods
+* Policies assigned to a token after auth
+* Multiple policies can be assigned to an entity
+* Policies prevent unauthorized access
+* The default policy in vault is *deny*
+]
+
+---
 name: Chapter-6
 class: center,middle
 .section[
@@ -593,7 +917,6 @@ Example Engine One: Protecting Databases
 ]
 
 ---
-
 name: Database-Engine
 Dynamic Secrets: Protecting Databases
 -------------------------
@@ -610,7 +933,6 @@ See the docs for more information:
 https://www.vaultproject.io/docs/secrets/
 
 ---
-
 name: Database-Engine
 Dynamic Secrets: Roles
 -------------------------
@@ -620,7 +942,6 @@ Vault administrators enable a secret engine, and then create "roles" that descri
 For example, you could have a read-only role, and a read-write role for the same database.  You control access to the roles through policies.
 
 ---
-
 name: Database-Engine-1
 Dynamic Secrets: Enable and Create Role
 -------------------------
@@ -655,11 +976,9 @@ vault write lob_a/workshop/database/roles/workshop-app \
 ```
 
 ---
-
 name: Database-Engine-2
 Dynamic Secrets: Database
 -------------------------
-
 There was a lot going on in the last slide.  We specified a number of things:
   * The path someone would call: "lob_a/workshop/database"
   * The name of the database the role can interact with: wsmysqldatabase
@@ -668,7 +987,6 @@ There was a lot going on in the last slide.  We specified a number of things:
   * The maximum duration for a generated account; 24 hours and 1 hour respectively
 
 ---
-
 name: Database-Engine-3
 Dynamic Secrets: Retrieve an account
 -------------------------
@@ -692,7 +1010,6 @@ username           v-token-workshop-a-787SbPtZgozJ4
 Voila!  We have database creds!
 
 ---
-
 name: Database-Engine-4
 Dynamic Secrets: verify account
 -------------------------
@@ -725,7 +1042,6 @@ As you can see retrieving dynamic credentials is straightforward.  We do not nee
 .center[![:scale 80%](images/wow.png)]
 
 ---
-
 name: Chapter-8
 class: center,middle
 .section[
@@ -734,7 +1050,6 @@ Example Engine Two: Encryption as a Service
 ]
 
 ---
-
 name: Encryption-as-a-Service
 Encryption as a Service: Immense Value Delivered
 -------------------------
@@ -750,7 +1065,6 @@ EEAS has many benefits:
   * And more...
 
 ---
-
 name: Encryption-as-a-Service-1
 Encryption as a Service: Example Application
 -------------------------
@@ -764,7 +1078,6 @@ hashicorp@ehron:~/transit-app-example/backend$ nano/vim config.ini
 ```
 
 ---
-
 name: Encryption-as-a-Service-2
 Encryption as a Service: Example Application (Continued)
 -------------------------
@@ -792,7 +1105,6 @@ DynamicDBCreds = False
 ```
 
 ---
-
 name: Encryption-as-a-Service-3
 Encryption as a Service: Example Application (Continued)
 -------------------------
@@ -805,8 +1117,6 @@ hashicorp@ehron:~/transit-app-example/backend$ python3 app.py
 It is a Python application.  The above command runs the server.  The app should be listening on port 5000.
 
 ---
-
-
 name: Encryption-as-a-Service-1
 Encryption as a Service: Example Application
 -------------------------
@@ -831,7 +1141,6 @@ There are two main sections in the application.
   * It is the equivalent of "SELECT * FROM `users`"
 
 ---
-
 name: Encryption-as-a-Service-3
 Encryption as a Service: Application Records and Database Entries
 -------------------------
@@ -842,7 +1151,6 @@ Initially, the application is not configured to use Vault.  Click the "Add Recor
 .center[![:scale 80%](images/add_user.png)]
 
 ---
-
 name: Encryption-as-a-Service-4
 Encryption as a Service: Application Records and Database Entries (Continued)
 -------------------------
@@ -854,7 +1162,6 @@ Now, click on the Database View.  Again, you should see the data you entered in 
 Can we do better?
 
 ---
-
 name: Encryption-as-a-Service-5
 Encryption as a Service: Protecting PII From Internal And External Threats
 -------------------------
@@ -876,7 +1183,6 @@ hashicorp@ehron:~$
 The above demonstrates encrypting and decrypting using the shell.  While we all love a good shell command this would normally be done as part of an application.  Let's see that next.
 
 ---
-
 name: Encryption-as-a-Service-6
 Encryption as a Service: Protecting PII Using Vault
 -------------------------
@@ -902,8 +1208,8 @@ Enabled = True ## <-- Change me to True
 DynamicDBCreds = False
 ...
 ```
----
 
+---
 name: Encryption-as-a-Service-7
 Encryption as a Service: Protecting PII Using Vault (Continued)
 -------------------------
@@ -930,7 +1236,6 @@ In Main...
 ```
 
 ---
-
 name: Encryption-as-a-Service-8
 Encryption as a Service: Protecting PII Using Vault
 -------------------------
@@ -942,7 +1247,6 @@ The record view shouldn't change.  You will still see the unencrypted data one w
 What about the Database View?
 
 ---
-
 name: Encryption-as-a-Service-9
 Encryption as a Service: Protecting PII Using Vault (Continued)
 -------------------------
@@ -952,7 +1256,6 @@ When we look at the Database View we can see that our records are no longer stor
 Using Vault in this way significantly reduces the threat of a harmful breach.  Unencrypted PII is very valuable.  Ciphertext is virtually worthless!
 
 ---
-
 name: Encryption-as-a-Service-10
 Encryption as a Service: Conclusion
 -------------------------
