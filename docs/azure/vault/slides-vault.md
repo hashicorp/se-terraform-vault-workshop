@@ -366,9 +366,9 @@ When you first log onto a new Vault server you'll see an invitation to take a to
 ---
 name: chapter-3a-lab
 .center[.lab-header[👩‍🔬 Lab Exercise 3a: Secrets Guide]]
-<br><br>
+<br>
 .center[![:scale 80%](images/tour_secrets.png)]
-Go through the Secrets Guide and create a Key/Value (kv) secret store. Create a KV secrets engine with the default mount path of `kv`, and `department/team/mysecret` for the path to your secret. Use `rootpass` for the Key and `supersecret` for the Value.
+Go through the first part of the Welcome Tour and create a key/value secrets engine with the default mount path of `kv`, and `department/team/mysecret` for the path to your secret. Use `rootpass` for the Key and `supersecret` for the Value.
 
 ???
 This will all make more sense as you go through the tutorial. Walk through it and see if you can figure it out.
@@ -379,10 +379,10 @@ name: chapter-3a-lab-answers
 <br><br><br>
 You can follow the steps in the 'Secrets' section of the Welcome Tour to enable a new Key/Value secrets engine and store a secret.
 
-1. Start the tour. Under the _Enable Secrets Engine_ page select the KV option and click on the **Next** button.
+1. Start the tour. Under the **Enable Secrets Engine** page select the KV option and click on the **Next** button.
 1. On the next page leave the default setting of `kv` and click **Enable Engine**.
-1. Click on **Create Secret** and enter **department/team/mysecret** where it asks for a path.
-1. Scroll down and enter `rootpass` for the Key and `supersecret` for the value. Click on the Save button at the bottom.
+1. Click on **Create Secret** and enter `department/team/mysecret` where it asks for a path.
+1. Scroll down and enter `rootpass` for the Key and `supersecret` for the Value. Click on the **Save** button at the bottom.
 
 Congratulations, you just stored your first secret in HashiCorp Vault!
 
@@ -521,7 +521,7 @@ These commands have no output if they run successfully. You can test the autocom
 name: Vault-KV-Command
 Vault KV
 -------------------------
-The `vault kv` command allows you to interact with Key/Value stores like the one you created in the previous lab. Try running `vault kv list` on the KV secrets engine you mounted to see what's inside:
+The `vault kv` command allows you to interact with Key/Value engines like the one you created in the previous lab. Try running `vault kv list` on the KV secrets engine you mounted to see what's inside:
 
 Commands:
 ```bash
@@ -548,7 +548,7 @@ Hint: You'll need the full path to your secret on the server.
 ---
 name: chapter-3b-lab-answer
 .center[.lab-header[👩‍🔬 Lab Exercise 3b: Answer]]
-<br><br><br>
+<br><br>
 Reading secrets via the command line is easy. You can get the latest version of your secret with this command:
 
 Command:
@@ -635,7 +635,7 @@ In this lab we'll look up information about your current token. Create a curl co
 ---
 name: chapter-3c-lab-answer
 .center[.lab-header[👩‍🔬 Lab Exercise 3c: Answer]]
-<br><br><br>
+<br><br>
 Command:
 ```bash
 curl --header "X-Vault-Token: root" \
@@ -665,6 +665,7 @@ Output:
 name: chapter-3-review
 📝 Chapter 3 Review
 -------------------------
+<br>
 .contents[
 Interacting with Vault
 * 3 ways to interact with Vault - GUI, CLI, API
@@ -731,7 +732,7 @@ Sudo is mainly reserved for interacting with 'root-protected' paths like things 
 ---
 name: chapter-4a-lab
 .center[.lab-header[👩‍🔬 Lab Exercise 4a: Create New Policies]]
-<br><br><br>
+<br><br>
 Policies are assigned when a user or app authenticates. Create the following two policies using the Vault UI Policies tab. You can copy and paste the code below right into the UI.
 
 Call the first policy *lob_a* and the second policy *secret*.
@@ -768,7 +769,7 @@ name: chapter-4-review
 .contents[
 Vault ACL Policies
 * Determines what apps and users can access
-* Policies are path-based
+* Policies are path-based, map to API endpoints
 * Capabilities: list, read, create, update, delete
 * Assigned when an entity authenticates
 * Root policy is special, not for everyday use
@@ -862,7 +863,7 @@ Notice the policy section.  Policies are mapped to authentication endpoints.  To
 name: chapter-5a-lab
 .center[.lab-header[👩‍🔬 Lab Exercise 5a: Bob and Sally]]
 <br><br><br>
-Log onto the web UI with Bob's account. Create some secret data under the secret/* path, where the default K/V store is mounted. Log out of Bob's account.
+Log onto the web UI with Bob's account. Create some secret data under the secret/* path, where the default K/V engine is mounted. Log out of Bob's account.
 
 Now log on using Sally's account. Can you see the secret data Bob entered? Why or why not?
 
@@ -874,9 +875,9 @@ Log back on with your root token, and create a new policy called "readonly" so S
 name: chapter-5a-lab-answers
 .center[.lab-header[👩‍🔬 Lab Exercise 5a: Answers]]
 <br>
-Bob can read, list and create data under the `secret/*` path because his policy allows him to do so. Vault comes with a key/value store mounted at `secret/` by default.
+Bob can read, list and create data under the `secret/*` path because his policy allows him to do so. Vault comes with a key/value engine mounted at `secret/` by default.
 
-When Sally logs on she can't even see the `secret/` path because she hasn't got list permissions. Here are the policy and command you'll need to run to grant Sally read-only access:
+When Sally logs on she can't even see the `secret/` path because she does not have list permissions. Here are the policy and command you'll need to run to grant Sally read-only access:
 
 Policy: readonly
 ```hcl
@@ -912,37 +913,69 @@ Vault Authentication Methods
 name: Chapter-6
 class: center,middle
 .section[
-Chapter 6
-Example Engine One: Protecting Databases
+Chapter 6      
+Vault Secrets Engines
 ]
 
 ---
-name: Database-Engine
-Dynamic Secrets: Protecting Databases
+name: Vault-Secrets-Engines
+Vault Secrets Engines
 -------------------------
+.center[![:scale 85%](images/vault-secrets-engines.png)]
+HashiCorp Vault ships with many different secrets engines. Some are for storing secrets, others can dynamically manage credentials or even provide encryption as a service.
 
-Can you believe we have made it this far without talking about Dynamic Secrets?  Me either!
-
-Just like with authentication Vault has many different Secret Engines such as:
-  * Dynamic Database Credentials
-  * PKI/TLS cert generation
-  * Azure/GCP/AWS/Alicloud/etc accounts
-  * and so much more!
-
-See the docs for more information:
-https://www.vaultproject.io/docs/secrets/
+???
+Spend some time pointing out what some of these do:
+* KV - we've already got some experience with this one. Supports versioning, which we don't cover in this workshop.
+* PKI - If you ever have to manage SSL certificates this one is for you.
+* SSH - Take all the pain and drudgery out of securing your SSH infrastructure. Vault can provide key signing services that make securing SSH a snap.
+* Transit - Imagine if you had an API that could handle all your encryption and decryption needs, based on policy, without ever having to manage a complicated key infrastructure. Vault Transit - Encryption as a Service
+* TOTP - Vault is like a swiss army knife with many tools. The TOTP tool allows Vault to either act as a code-generating device for MFA logins (useful for automated logins to MFA-enabled systems), or it can also provide TOTP server capabilities for MFA infrastructure.
+* Active Directory - we can rotate passwords and will soon be able to generate dynamic credentials.  Works on Azure AD too!
+* All the cloud IAM engines. Provide dynamic cloud creds for jobs, humans, etc.
+* Databases - We'll cover this in the workshop. Generate dynamic database credentials that have a lease and an expiration date. 
 
 ---
-name: Database-Engine
-Dynamic Secrets: Roles
+name: Chapter-7
+class: center,middle
+.section[
+Chapter 7    
+Dynamic Secrets: Protecting Databases
+]
+
+---
+name: Database-Engine-0
+Dynamic Secrets: Protecting Databases
 -------------------------
+Let's review our lab diagram:
+.center[![:scale 85%](images/workshop_lab_environment.png)]
+Normally database credentials are long-lived and stored on the app server.
 
-Vault administrators enable a secret engine, and then create "roles" that describe a set of capabilities.  Multiple roles for the same engine can exist.
+With dynamic credentials, we can make a request to Vault, then Vault will use a special account on the database server to create a brand new username and password. Vault manages the lifecycle and policy of these credentials.
 
-For example, you could have a read-only role, and a read-write role for the same database.  You control access to the roles through policies.
+???
+The database secrets engine supports common database types including MySQL, MSSQL, Oracle, PostgreSQL, MongoDB, Cassandra and others. All of them work the same basic way:
+
+1. Vault admin enables the database secrets engine
+1. The database secrets engine is configued with the correct plugin and connection info. A service account with permissions to manage users on the database server is required.
+1. A role is created in Vault that executes a SQL statement to create users with the correct permissions and access. You can also define the TTL or time to live for credentials. Multiple roles can be applied to the same secrets engine, for enabling different levels of access.
+1. Applications and users can now authenticate and retrieve new database credentials as needed.
+1. These 'disposable' credentials can be valid for an hour, a day, or a month. The TTL settings can be tuned to suit your needs.
+1. In Case of Emergency: If you suspect credentials have been compromised you can revoke any or all of the outstanding dynamic credentials immediately.
 
 ---
 name: Database-Engine-1
+Configuration Steps
+-------------------------
+<br><br>
+.contents[
+1. Enable the database secrets engine
+2. Configure it with the MySQL plugin and connect string
+3. Create roles that can create new credentials
+]
+
+---
+name: Database-Engine-2
 Dynamic Secrets: Enable and Create Role
 -------------------------
 

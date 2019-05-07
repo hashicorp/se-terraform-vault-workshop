@@ -793,7 +793,7 @@ We are not actually building anything yet. This is just a dry run, showing us wh
 
 ---
 name: terraform-plan-3
-Optional: Save Your Terraform Plan
+Optional - Save Your Plan
 -------------------------
 <br><br><br>
 You may have noticed this output when you ran `terraform plan`:
@@ -865,7 +865,7 @@ A. In the terraform.tfvars file, or optionally on the command line or via enviro
 
 ---
 name: chapter-2-lab
-.center[.lab-header[👩‍🔬 Lab Exercise 2a: Set the location variable]]
+.center[.lab-header[👩‍🔬 Lab Exercise 2a: Set a Variable]]
 
 Choose the Azure location nearest to you and set the 'location' variable. You can find a list of Azure locations here:
 
@@ -1181,7 +1181,7 @@ The phrase "We can rebuild him. We have the technology." comes from 1970s TV sho
 
 ---
 name: chapter-3b-lab
-.center[.lab-header[👩‍🔬 Lab Exercise 3b: Tag Your Resource Group]]
+.center[.lab-header[👩‍🔬 Lab Exercise 3b: Add a Tag]]
 <br><br><br>
 Read the documentation for the `azurerm_resource_group` resource and learn how to add tags to the resource group:
 
@@ -1294,7 +1294,7 @@ The auto-approve flag is so we don't have to type 'yes' every time we run terraf
 
 ---
 name: chapter-3c-lab
-.center[.lab-header[👩‍🔬 Lab Exercise 3c: Build the Lab Environment]]
+.center[.lab-header[👩‍🔬 Lab Exercise 3c: Build the Vault Lab]]
 <br><br><br>
 Go through the rest of the **main.tf** file and uncomment all of the terraform resources. 
 
@@ -1567,7 +1567,7 @@ http://yourname.centralus.cloudapp.azure.com:8200
 
 ---
 name: chapter-4a-lab
-.center[.lab-header[👩‍🔬 Lab Exercise 4a: Break main.tf down]]
+.center[.lab-header[👩‍🔬 Lab Exercise 4a: Break main.tf Down]]
 <br><br><br><br>
 Take the azurerm_virtual_machine resource out of main.tf and put it into its own file called **vm.tf**. Save both files. Run `terraform apply` again. What happens?
 
@@ -1722,7 +1722,7 @@ On the other hand, if you want immutable infrastructure you should consider usin
 
 ---
 name: chapter-5-lab
-.center[.lab-header[👩‍🔬 Lab Exercise 5: Add a Provisioner Command]]
+.center[.lab-header[👩‍🔬 Lab Exercise 5: Use a Provisioner]]
 <br><br><br>
 Let's add a simple command to our **remote-exec** block of code.  You can use the 'cowsay' command to output messages into your Terraform log:
 
