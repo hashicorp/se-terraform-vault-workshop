@@ -12,16 +12,15 @@ echo 'path "secret/*" {
 vault policy write lob_a lob_a_policy.hcl
 vault policy write secret secret.hcl
 
-
 # Enable userpass at mount workshop/userpass
-vault auth enable -path=workshop/userpass userpass
+vault auth enable -path=userpass userpass
 
 # Create users 
-vault write auth/workshop/userpass/users/bob \
+vault write auth/userpass/users/bob \
     password=foo \
     policies=secret
 
-vault write auth/workshop/userpass/users/sally \
+vault write auth/userpass/users/sally \
     password=foo \
     policies=lob_a
 

@@ -16,7 +16,7 @@ output "MySQL_Server_FQDN" {
   value = "${azurerm_mysql_server.mysql.fqdn}"
 }
 
-output "_Instructions" {
+output "Instructions" {
   value = <<SHELLCOMMANDS
 
 # Connect to your Linux Virtual Machine
