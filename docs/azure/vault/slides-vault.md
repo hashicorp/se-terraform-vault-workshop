@@ -978,16 +978,29 @@ Configuration Steps
 name: Database-Engine-2
 Dynamic Secrets: Enable and Create Role
 -------------------------
+The commands for configuring the database secrets backend are long and somewhat complex. We've provided a bash script that you can run to make sure we don't have any typos. From your SSH terminal on the Vault server run the `database_setup.sh` script:
 
-We will now enable the database secret engine, and create a couple of roles
-
-The following commands should be run on the Vault server:
-
+Command:
 ```bash
-# Enable database secrets engine
+./database_setup.sh
+```
+
+Output:
+```tex
+Success! Enabled the database secrets engine at: lob_a/workshop/database/
+Success! Data written to: lob_a/workshop/database/roles/workshop-app-long
+Success! Data written to: lob_a/workshop/database/roles/workshop-app
+Script complete.
+```
+
+---
+name: Database-Engine-3
+Dynamic Secrets: Database
+-------------------------
+Let's take a closer look at what happened when we ran that script:
+```bash
 vault secrets enable -path=lob_a/workshop/database database
 
-# Configure our secret engine
 vault write lob_a/workshop/database/config/wsmysqldatabase \
     plugin_name=mysql-database-plugin \
     connection_url="{{username}}:{{password}}@tcp(${MYSQL_HOST}.mysql.database.azure.com:3306)/" \
@@ -997,82 +1010,90 @@ vault write lob_a/workshop/database/config/wsmysqldatabase \
 
 vault write lob_a/workshop/database/roles/workshop-app-long \
     db_name=wsmysqldatabase \
-    creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO '{{name}}'@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;" \
+    creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT ALL ON my_app.* TO '{{name}}'@'%';" \
     default_ttl="1h" \
     max_ttl="24h"
 
 vault write lob_a/workshop/database/roles/workshop-app \
     db_name=wsmysqldatabase \
-    creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT SELECT, INSERT, UPDATE, DELETE ON *.* TO '{{name}}'@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;" \
+    creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GRANT ALL ON my_app.* TO '{{name}}'@'%';" \
     default_ttl="5m" \
     max_ttl="1h"
 ```
 
----
-name: Database-Engine-2
-Dynamic Secrets: Database
--------------------------
-There was a lot going on in the last slide.  We specified a number of things:
-  * The path someone would call: "lob_a/workshop/database"
-  * The name of the database the role can interact with: wsmysqldatabase
-  * The creation statement that defines the capabilities of the user that is created
-  * The default time to live.  One role specified an hour, and the other 5 minutes
-  * The maximum duration for a generated account; 24 hours and 1 hour respectively
+???
+We specified a number of things:
+* The path someone would call: "lob_a/workshop/database"
+* The name of the database the role can interact with: wsmysqldatabase
+* The creation statement that defines the capabilities of the user that is created
+* The default time to live.  One role specified an hour, and the other 5 minutes
+* The maximum duration for a generated account; 24 hours and 1 hour respectively
 
 ---
-name: Database-Engine-3
-Dynamic Secrets: Retrieve an account
--------------------------
-Now that we have configured the secret engine let us use it to retrieve an account!  In production you would create a policy scoped to this path.  In the interest of time we will just log back in as root.  Execute the following commands from your SSH connection to the Vault server:
-Commands:
+name: chapter-7a-lab
+.center[.lab-header[👩‍🔬 Lab Exercise 7a: Dynamic Credentials]]
+<br><br><br>
+Exercise 1:<br>
+Use the vault command line tool to retreive database credentials from the `lob_a/workshop/database/creds/workshop-app` endpoint.
+
+Exercise 2:<br>
+Use a curl command to retreive database credentials from the `lob_a/workshop/database/creds/workshop-app-long` endpoint.
+
+**Hint:** You can look at your previous commands with the `history` command.
+
+---
+name: chapter-7a-lab-answers
+.center[.lab-header[👩‍🔬 Lab Exercise 7a: Answers]]
+<br><br>
+Exercise #1<br>
+Authenticated users with read access can run the following command to get new credentials:
+
 ```bash
-vault login root
 vault read lob_a/workshop/database/creds/workshop-app
 ```
 
-Output:
-```tex
-Key                Value
----                -----
-lease_id           lob_a/workshop/database/creds/workshop-app/7iGbAFpSiq8VXkpzuvqVESiy
-lease_duration     5m
-lease_renewable    true
-password           A1a-6piezZFGBDzplwUb
-username           v-token-workshop-a-787SbPtZgozJ4
+Exercise #2<br>
+Pass a valid token along with your curl command and you can do the same thing through the API:
+
+```bash
+curl --header 'X-Vault-Token: root' \
+http://localhost:8200/v1/lob_a/workshop/database/creds/workshop-app-long
 ```
-Voila!  We have database creds!
 
 ---
 name: Database-Engine-4
 Dynamic Secrets: verify account
 -------------------------
+Use your newly created credentials to log onto the MySQL database. We've created a handy helper script to make this easier. The script will fetch new credentials from Vault and then use them to log onto the database server.
 
-We can verify the creds by using them to log in to the Azure Mysql database:
+Command:
 ```bash
-hashicorp@ehron:$ mysql -h ehron-mysql-server.mysql.database.azure.com -u v-token-workshop-a-4Jt0c81skKnkj@ehron-mysql-server -pA1a-29dUv0Vcp9bkJ063
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MySQL connection id is 65281
-Server version: 5.6.39.0 MySQL Community Server (GPL)
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
-
-Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-
-MySQL [(none)]> 
-...
+./mysql_login.sh
 ```
 
-_The above command is tricky.  No spaces between -p and password are allowed, and the username format is quite odd.  Cutting and pasting where possible is ideal..._
+Output:
+```tex
+mysql: [Warning] Using a password on the command line interface can be insecure.
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 64762
+Server version: 5.6.39.0 MySQL Community Server (GPL)
+
+mysql> show databases;
+```
 
 ---
-
-name: Database-Engine-5
-Dynamic Secrets: Wrapping up
+name: chapter-7-review
+📝 Chapter 7 Review
 -------------------------
-
-As you can see retrieving dynamic credentials is straightforward.  We do not need to manually clean up the account.  It will disappear when the lease expires!
-
-.center[![:scale 80%](images/wow.png)]
+<br>
+.contents[
+Dynamic Database Secrets Engine
+* Support for commercial and OSS databases
+* Better than password rotation
+* Bring your own authentication method
+* Short lived credentials make you more secure
+* Each app instance can have its own creds
+]
 
 ---
 name: Chapter-8
