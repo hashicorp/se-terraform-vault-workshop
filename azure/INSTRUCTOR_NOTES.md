@@ -107,4 +107,4 @@ cd C:\windows\system32\sysprep
 
 10.  Click the 'generalize' box and set the pulldown to "shutdown". Wait and give it a good ten minutes to fully shutdown.
 11.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-04-29`
-12. Use the image to spin up your workstations
+12. Use the image to spin up your workstations.
