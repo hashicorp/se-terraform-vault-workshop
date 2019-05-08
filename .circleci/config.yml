@@ -124,7 +124,8 @@ workflows:
             - run-terraform-tests-inspec
       - clean-up-uat:
           requires:
-            - run-training-tests-inspec
+            - run-vault-cli-tests-inspec
+            - run-vault-api-tests-inspec
   nightly-build:
     triggers:
       - schedule:
