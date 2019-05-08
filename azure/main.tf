@@ -173,26 +173,14 @@ provisioners including Bash, Powershell and Chef. */
 #   }
 
 #   provisioner "file" {
-#     source      = "files/setup.sh"
-#     destination = "/home/${var.admin_username}/setup.sh"
+#     source      = "files"
+#     destination = "/home/${var.admin_username}/"
 
 #     connection {
 #       type     = "ssh"
 #       user     = "${var.admin_username}"
 #       password = "${var.admin_password}"
-#       host     = "${azurerm_public_ip.vault-pip.fqdn}"
-#     }
-#   }
-
-#   provisioner "file" {
-#     source      = "files/vault_setup.sh"
-#     destination = "/home/${var.admin_username}/vault_setup.sh"
-
-#     connection {
-#       type     = "ssh"
-#       user     = "${var.admin_username}"
-#       password = "${var.admin_password}"
-#       host     = "${azurerm_public_ip.vault-pip.fqdn}"
+#       host     = "${azurerm_public_ip.vault-pip.fqdn}/"
 #     }
 #   }
 
