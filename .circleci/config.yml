@@ -40,7 +40,7 @@ jobs:
             inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/creds
       - store_test_results:
           path: test_results
-  run-training-tests-inspec:
+  run-terraform-tests-inspec:
     docker:
       - image: scarolan/inspec:latest
     steps:
@@ -48,12 +48,44 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Run Inspec Tests for Training Exercises
+          name: Run Inspec Tests for Terraform Labs
           no_output_timeout: 45m
           command: |
             # Run inspec tests on the remote workstation
             mkdir -p test_results/inspec
-            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/training
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/terraform
+      - store_test_results:
+          path: test_results
+  run-vault-api-tests-inspec:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Run Inspec API Tests for Vault labs
+          no_output_timeout: 5m
+          command: |
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec --show-progress --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/vault_api
+      - store_test_results:
+          path: test_results
+  run-vault-cli-tests-inspec:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Run Inspec CLI Tests for Vault Labs
+          no_output_timeout: 20m
+          command: |
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/vault_cli
       - store_test_results:
           path: test_results
   clean-up-uat:
@@ -81,9 +113,15 @@ workflows:
       - run-creds-tests-inspec:
           requires:
             - run-os-tests-inspec
-      - run-training-tests-inspec:
+      - run-terraform-tests-inspec:
           requires:
             - run-creds-tests-inspec
+      - run-vault-api-tests-inspec:
+          requires:
+            - run-terraform-tests-inspec
+      - run-vault-cli-tests-inspec:
+          requires:
+            - run-terraform-tests-inspec
       - clean-up-uat:
           requires:
             - run-training-tests-inspec
