@@ -241,26 +241,21 @@ end
 # Vault Workshop Tests
 #################################################
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/vault/#12
-# Verifies that we can connect via SSH and run our vault_setup.sh script
+# Verifies that we can connect via SSH and run our database_setup.sh script
 # Since we're not using SSH keys we have to do this in two steps, first 
 # we find and store the server host public key fingerprint, then we use 
 # the plink command to start an SSH session and run our script with the 
 # appropriate variables.
-control 'vault-setup-script' do
+control 'database-setup-script' do
   impact 1.0
-  desc 'Run the Vault setup script.'
+  desc 'Run the database setup script.'
   describe powershell(
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
-    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/vault_setup.sh"'
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/database_setup.sh"'
   ) do
-    its('stdout') { should match(/Enabled the file audit device at: file\//) }
     its('stdout') { should match(/Enabled the database secrets engine at: lob_a\/workshop\/database\//) }
     its('stdout') { should match(/Data written to: lob_a\/workshop\/database\/roles\/workshop-app-long/) }
     its('stdout') { should match(/Data written to: lob_a\/workshop\/database\/roles\/workshop-app/) }
-    its('stdout') { should match(/Enabled the transit secrets engine at: lob_a\/workshop\/transit\//) }
-    its('stdout') { should match(/Data written to: lob_a\/workshop\/transit\/keys\/customer-key/) }
-    its('stdout') { should match(/Data written to: lob_a\/workshop\/transit\/keys\/archive-key/) }
     its('stdout') { should match(/Script complete./) }
   end
 end
