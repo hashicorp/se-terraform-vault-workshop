@@ -132,7 +132,7 @@ workflows:
       - run-terraform-tests-inspec:
           requires:
             - run-creds-tests-inspec
-      - run-vault-api-tests-inspec
+      - run-vault-api-tests-inspec:
           requires:
             - run-terraform-tests-inspec
       - run-vault-cli-tests-inspec:
