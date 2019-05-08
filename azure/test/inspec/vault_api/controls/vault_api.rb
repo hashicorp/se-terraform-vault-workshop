@@ -72,6 +72,6 @@ control 'vault-test-api-call' do
     method: 'GET'
   ) do
     its('status') { should be_in [200] }
-    its('body') { should match 'foo' }
+    its('body') { should match 'root' }
   end
 end
