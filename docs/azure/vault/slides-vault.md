@@ -863,10 +863,12 @@ Notice the policy section.  Policies are mapped to authentication endpoints.  To
 name: chapter-5a-lab
 .center[.lab-header[👩‍🔬 Lab Exercise 5a: Bob and Sally]]
 <br><br><br>
+**Exercise 1:**<br>
 Log onto the web UI with Bob's account. Create some secret data under the secret/* path, where the default K/V engine is mounted. Log out of Bob's account.
 
 Now log on using Sally's account. Can you see the secret data Bob entered? Why or why not?
 
+**Exercise 2:**<br>
 Log back on with your root token, and create a new policy called "readonly" so Sally can *read* and *list* what's inside of `secret/`.
 
 **Hint:** You'll need to recreate Sally's account with a `vault write` command, adding the policy to her account.

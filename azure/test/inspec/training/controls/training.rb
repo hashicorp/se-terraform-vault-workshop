@@ -253,6 +253,18 @@ control 'vault-api-status' do
   end
 end
 
+# Chapter 3 - Install Vault autocomplete
+control 'install-autocomplete' do
+  impact 1.0
+  desc 'Install Vault autocomplete in our shell'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "vault -autocomplete-install; source ~/.bashrc"'
+  ) do
+    its('stdout') { should match(//) }
+  end
+end
+
 # Chapter 3 - Test authentication with root token
 control 'vault-read-mounts' do
   impact 1.0
@@ -285,6 +297,18 @@ control 'vault-create-kv-secret' do
     data: '{ "rootpass": "supersecret" }'
   ) do
     its('status') { should be_in [200,204] }
+  end
+end
+
+# Chapter 3 - Test the vault kv list command
+control 'test-vault-kv-list-cli' do
+  impact 1.0
+  desc 'Test the vault kv list command'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "vault kv list kv/department/team"'
+  ) do
+    its('stdout') { should match(/mysecret/) }
   end
 end
 
@@ -327,13 +351,25 @@ control 'create-vault-policies' do
   end
 end
 
-# Lab exercise 5a - Bob and Sally
-control 'bob-and-sally' do
+# Lab exercise 5a - Bob and Sally Exercise 1
+control 'bob-and-sally-exercise-1' do
   impact 1.0
   desc 'Create user accounts for Bob and Sally'
   describe powershell(
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
     plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/bob_and_sally.sh"'
+  ) do
+    its('stdout') { should match(/foo/) }
+  end
+end
+
+# Lab exercise 5a - Bob and Sally Exercise 2
+control 'bob-and-sally-exercise-2' do
+  impact 1.0
+  desc 'Grant Sally read access to secret/'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/recreate_sally.sh"'
   ) do
     its('stdout') { should match(/foo/) }
   end
