@@ -1066,7 +1066,7 @@ http://localhost:8200/v1/lob_a/workshop/database/creds/workshop-app-long
 name: Database-Engine-4
 Dynamic Secrets: verify account
 -------------------------
-Use your newly created credentials to log onto the MySQL database. We've created a handy helper script to make this easier. The script will fetch new credentials from Vault and then use them to log onto the database server.
+Use your newly created credentials to log onto the MySQL database. We've created a handy helper script to make this easier. The script will fetch new credentials from Vault and then use them to log onto the database server, then run a `show databases;` command and exit.
 
 Command:
 ```bash
@@ -1075,12 +1075,16 @@ Command:
 
 Output:
 ```tex
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   313  100   313    0     0   4574      0 --:--:-- --:--:-- --:--:--  4602
 mysql: [Warning] Using a password on the command line interface can be insecure.
-Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 64762
-Server version: 5.6.39.0 MySQL Community Server (GPL)
-
-mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
++--------------------+
+Script complete.
 ```
 
 ---
