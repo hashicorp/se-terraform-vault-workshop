@@ -139,7 +139,7 @@ Vault was designed to address the security needs of modern applications.  It dif
 name: Secrets-Engines
 Multi-tool for Secrets Management
 -------------------------
-.center[![:scale 90%](images/vault-engines.png)]
+.center[![:scale 85%](images/vault-engines.png)]
 .center[Store and manage any type of secret with different engines
 https://www.hashicorp.com/identity-based-security-and-low-trust-networks]
 

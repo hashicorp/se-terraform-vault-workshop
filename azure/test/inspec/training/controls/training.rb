@@ -241,26 +241,152 @@ end
 # Vault Workshop Tests
 #################################################
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/vault/#12
-# Verifies that we can connect via SSH and run our vault_setup.sh script
-# Since we're not using SSH keys we have to do this in two steps, first 
-# we find and store the server host public key fingerprint, then we use 
-# the plink command to start an SSH session and run our script with the 
-# appropriate variables.
-control 'vault-setup-script' do
+# See if the API is responding
+control 'vault-api-status' do
   impact 1.0
-  desc 'Run the Vault setup script.'
+  desc 'Checks the Vault API status endpoint.'
+  describe http('http://uat-tf-vault-lab.centralus.cloudapp.azure.com:8200/v1/sys/health') do
+    its('status') { should cmp 200 }
+    its('body') { should match /"initialized":true/ }
+    its('body') { should match /"sealed":false/ }
+    its('body') { should match /"version":"1.1.0"/ }
+  end
+end
+
+# Chapter 3 - Test authentication with root token
+control 'vault-read-mounts' do
+  impact 1.0
+  desc 'Make an authenticated API call with the root token.'
+  describe http('http://uat-tf-vault-lab.centralus.cloudapp.azure.com:8200/v1/sys/mounts', headers: {'X-Vault-Token' => 'root'}) do
+    its('status') { should cmp 200 }
+  end
+end
+
+# Chapter 3 - Interacting with Vault
+control 'vault-mount-kv' do
+  impact 1.0
+  desc 'Mount key/value secrets engine'
+  describe http('http://uat-tf-vault-lab.centralus.cloudapp.azure.com:8200/v1/sys/mounts/kv', 
+    headers: {'X-Vault-Token' => 'root', 'Content-Type' => 'application/json'},
+    method: 'POST',
+    data: '{"type": "kv", "config": { "version": "2" }}'
+  ) do
+    its('status') { should be_in [200,204] }
+  end
+end
+
+# Lab exercise 3a - Create a secret
+control 'vault-create-kv-secret' do
+  impact 1.0
+  desc 'Create a key/value secret'
+  describe http('http://uat-tf-vault-lab.centralus.cloudapp.azure.com:8200/v1/kv/data/department/team/mysecret', 
+    headers: {'X-Vault-Token' => 'root', 'Content-Type' => 'application/json'},
+    method: 'POST',
+    data: '{ "rootpass": "supersecret" }'
+  ) do
+    its('status') { should be_in [200,204] }
+  end
+end
+
+# Lab exercise 3b - Retreive a secret
+control 'vault-read-kv-secret' do
+  impact 1.0
+  desc 'Read a key/value secret'
+  describe http('http://uat-tf-vault-lab.centralus.cloudapp.azure.com:8200/v1/kv/data/department/team/mysecret', 
+    headers: {'X-Vault-Token' => 'root', 'Content-Type' => 'application/json'},
+    method: 'GET'
+  ) do
+    its('status') { should be_in [200,204] }
+    its('body') { should match 'rootpass' }
+    its('body') { should match 'supersecret' }
+  end
+end
+
+# Lab exercise 3c - make an API call
+control 'vault-test-api-call' do
+  impact 1.0
+  desc 'Get token info from the API'
+  describe http('http://uat-tf-vault-lab.centralus.cloudapp.azure.com:8200/v1/auth/token/lookup-self', 
+    headers: {'X-Vault-Token' => 'root', 'Content-Type' => 'application/json'},
+    method: 'GET'
+  ) do
+    its('status') { should be_in [200] }
+    its('body') { should match 'foo' }
+  end
+end
+
+# Lab exercise 4a - create some policies
+control 'create-vault-policies' do
+  impact 1.0
+  desc 'Create some vault policies'
   describe powershell(
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
-    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/vault_setup.sh"'
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/create_policies.sh"'
   ) do
-    its('stdout') { should match(/Enabled the file audit device at: file\//) }
+    its('stdout') { should match(/foo/) }
+  end
+end
+
+# Lab exercise 5a - Bob and Sally
+control 'bob-and-sally' do
+  impact 1.0
+  desc 'Create user accounts for Bob and Sally'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/bob_and_sally.sh"'
+  ) do
+    its('stdout') { should match(/foo/) }
+  end
+end
+
+# Chapter 7 - database setup script
+control 'database-setup-script' do
+  impact 1.0
+  desc 'Run the database setup script.'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/database_setup.sh"'
+  ) do
     its('stdout') { should match(/Enabled the database secrets engine at: lob_a\/workshop\/database\//) }
     its('stdout') { should match(/Data written to: lob_a\/workshop\/database\/roles\/workshop-app-long/) }
     its('stdout') { should match(/Data written to: lob_a\/workshop\/database\/roles\/workshop-app/) }
-    its('stdout') { should match(/Enabled the transit secrets engine at: lob_a\/workshop\/transit\//) }
-    its('stdout') { should match(/Data written to: lob_a\/workshop\/transit\/keys\/customer-key/) }
-    its('stdout') { should match(/Data written to: lob_a\/workshop\/transit\/keys\/archive-key/) }
     its('stdout') { should match(/Script complete./) }
+  end
+end
+
+# Lab exercise 7a - Dynamic Creds - CLI
+control 'get-dynamic-creds-cli' do
+  impact 1.0
+  desc 'Fetch dynamic database credentials on the command line'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root vault read lob_a/workshop/database/creds/workshop-app"'
+  ) do
+    its('stdout') { should match(/foo/) }
+  end
+end
+
+# Lab exercise 7a - Dynamic Creds - API
+control 'vault-test-api-call' do
+  impact 1.0
+  desc 'Fetch dynamic creds using the API'
+  describe http('http://uat-tf-vault-lab.centralus.cloudapp.azure.com:8200/v1/lob_a/workshop/database/creds/workshop-app-long', 
+    headers: {'X-Vault-Token' => 'root', 'Content-Type' => 'application/json'},
+    method: 'GET'
+  ) do
+    its('status') { should be_in [200] }
+    its('body') { should match 'foo' }
+  end
+end
+
+# Chapter 7 - Test MySQL login
+control 'test-mysql-login' do
+  impact 1.0
+  desc 'Attempt to log onto the mysql server'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root ./mysql_login.sh"'
+  ) do
+    its('stdout') { should match(/foo/) }
   end
 end
