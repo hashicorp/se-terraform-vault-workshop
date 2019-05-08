@@ -339,11 +339,7 @@ control 'bob-and-sally' do
   end
 end
 
-# Verifies that we can connect via SSH and run our database_setup.sh script
-# Since we're not using SSH keys we have to do this in two steps, first 
-# we find and store the server host public key fingerprint, then we use 
-# the plink command to start an SSH session and run our script with the 
-# appropriate variables.
+# Chapter 7 - database setup script
 control 'database-setup-script' do
   impact 1.0
   desc 'Run the database setup script.'
@@ -355,5 +351,42 @@ control 'database-setup-script' do
     its('stdout') { should match(/Data written to: lob_a\/workshop\/database\/roles\/workshop-app-long/) }
     its('stdout') { should match(/Data written to: lob_a\/workshop\/database\/roles\/workshop-app/) }
     its('stdout') { should match(/Script complete./) }
+  end
+end
+
+# Lab exercise 7a - Dynamic Creds - CLI
+control 'get-dynamic-creds-cli' do
+  impact 1.0
+  desc 'Fetch dynamic database credentials on the command line'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root vault read lob_a/workshop/database/creds/workshop-app"'
+  ) do
+    its('stdout') { should match(/foo/) }
+  end
+end
+
+# Lab exercise 7a - Dynamic Creds - API
+control 'vault-test-api-call' do
+  impact 1.0
+  desc 'Fetch dynamic creds using the API'
+  describe http('http://uat-tf-vault-lab.centralus.cloudapp.azure.com:8200/v1/lob_a/workshop/database/creds/workshop-app-long', 
+    headers: {'X-Vault-Token' => 'root', 'Content-Type' => 'application/json'},
+    method: 'GET'
+  ) do
+    its('status') { should be_in [200] }
+    its('body') { should match 'foo' }
+  end
+end
+
+# Chapter 7 - Test MySQL login
+control 'test-mysql-login' do
+  impact 1.0
+  desc 'Attempt to log onto the mysql server'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root ./mysql_login.sh"'
+  ) do
+    its('stdout') { should match(/foo/) }
   end
 end
