@@ -160,9 +160,18 @@ workflows:
       - run-creds-tests-inspec:
           requires:
             - run-os-tests-inspec
-      - run-training-tests-inspec:
+      - run-terraform-tests-inspec:
           requires:
             - run-creds-tests-inspec
+      - run-vault-api-tests-inspec:
+          requires:
+            - run-terraform-tests-inspec
+      - run-vault-cli-tests-inspec:
+          requires:
+            - run-vault-api-tests-inspec
+      - run-vault-dbcreds-tests-inspec:
+          requires:
+            - run-vault-cli-tests-inspec
       - clean-up-uat:
           requires:
-            - run-training-tests-inspec
+            - run-vault-dbcreds-tests-inspec
