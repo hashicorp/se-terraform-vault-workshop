@@ -186,7 +186,7 @@ provisioners including Bash, Powershell and Chef. */
 
 #   provisioner "remote-exec" {
 #     inline = [
-#       "chmod +x /home/${var.admin_username}/*.sh",
+#       "chmod -R +x /home/${var.admin_username}/*",
 #       "sleep 30",
 #       "MYSQL_HOST=${var.prefix}-mysql-server /home/${var.admin_username}/setup.sh"
 #     ]

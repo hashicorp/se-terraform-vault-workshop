@@ -526,8 +526,9 @@ The `vault kv` command allows you to interact with Key/Value engines like the on
 Commands:
 ```bash
 vault kv list kv
-vault kv list kv/department
-vault kv list kv/department/team
+vault kv list kv/data
+vault kv list kv/data/department
+vault kv list kv/data/department/team
 ```
 
 Output:

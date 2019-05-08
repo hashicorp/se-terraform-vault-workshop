@@ -20,7 +20,7 @@ control 'test-vault-kv-list-cli' do
   desc 'Test the vault kv list command'
   describe powershell(
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
-    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "vault kv list kv/department/team"'
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root vault kv list kv/data/department/team"'
   ) do
     its('stdout') { should match(/mysecret/) }
   end
