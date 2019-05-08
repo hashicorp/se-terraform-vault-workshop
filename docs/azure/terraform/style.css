@@ -71,6 +71,15 @@ h1, h2, h3, h4, h5, h6 {
   color: red;
 }
 
+.lab-header {
+  border-radius: 20px;
+  border-style: solid;
+  border: 2px solid rgb(141, 141, 141);
+  padding: 10px;
+  font-size: 1.8em;
+  font-family: Roboto;
+}
+
 #legend {
   border: 0px none; 
   height: 450px; 

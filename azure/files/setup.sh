@@ -1,5 +1,5 @@
 #!/bin/sh
-# Configures the Vault server for a database secrets demo
+# Configures the Vault server for workshops and demos
 
 # cd /tmp
 sudo apt-get -y update > /dev/null 2>&1

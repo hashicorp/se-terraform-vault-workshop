@@ -662,7 +662,7 @@ Terraform v0.11.13
 
 ---
 name: chapter-1-review
-Chapter 1 Review
+📝 Chapter 1 Review
 -------------------------
 .contents[
 In this chapter we:
@@ -793,7 +793,7 @@ We are not actually building anything yet. This is just a dry run, showing us wh
 
 ---
 name: terraform-plan-3
-Optional: Save Your Terraform Plan
+Optional - Save Your Plan
 -------------------------
 <br><br><br>
 You may have noticed this output when you ran `terraform plan`:
@@ -865,8 +865,8 @@ A. In the terraform.tfvars file, or optionally on the command line or via enviro
 
 ---
 name: chapter-2-lab
-Lab Exercise 2a: Set the location variable
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 2a: Set a Variable]]
+
 Choose the Azure location nearest to you and set the 'location' variable. You can find a list of Azure locations here:
 
 https://azure.microsoft.com/en-us/global-infrastructure/locations/
@@ -886,8 +886,7 @@ Have the students do this one on their own. They can choose any region, please l
 
 ---
 name: chapter-2-lab-answer
-Lab Exercise 2a: Answer
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 2a: Answer]]
 <br><br><br>
 Your **terraform.tfvars** file should now look similar to this:
 
@@ -903,7 +902,7 @@ If you wish you can run `terraform plan` again to see a different result. Notice
 
 ---
 name: chapter-2-review
-Chapter 2 Review
+📝 Chapter 2 Review
 -------------------------
 .contents[
 In this chapter we:
@@ -1104,8 +1103,8 @@ Terraform is sometimes called idempotent. This means it keeps track of what you 
 
 ---
 name: chapter-3a-lab
-Lab Exercise 3a: Change Your Location
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 3a: Change Your Location]]
+<br><br><br>
 Change the location variable in your terraform.tfvars file to a different Azure location. Re-run the `terraform plan` and `terraform apply` commands. What happens?
 
 ???
@@ -1113,8 +1112,8 @@ This is a good spot for a mini discussion on how Terraform is idempotent, and de
 
 ---
 name: chapter-3a-lab-answer
-Lab Exercise 3a: Answer
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 3a: Answer]]
+<br><br><br>
 When you changed your location variable, Terraform detected a difference between your current settings and what you built before. Terraform can destroy and recreate resources as you make changes to your code. Some resources can be changed in place.
 
 ```tex
@@ -1182,8 +1181,8 @@ The phrase "We can rebuild him. We have the technology." comes from 1970s TV sho
 
 ---
 name: chapter-3b-lab
-Lab Exercise 3b: Tag Your Resource Group
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 3b: Add a Tag]]
+<br><br><br>
 Read the documentation for the `azurerm_resource_group` resource and learn how to add tags to the resource group:
 
 https://www.terraform.io/docs/providers/azurerm/r/resource_group.html
@@ -1195,8 +1194,8 @@ Don't just give the answer away here. Let people struggle a little bit and try t
 
 ---
 name: chapter-3b-lab-answer
-Lab Exercise 3b: Answer
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 3b: Answer]]
+<br><br>
 Adding and removing tags is a non-destructive action, therefore Terraform is able to make these changes in-place, without destroying your resource group. Your main.tf file should look like this:
 
 ```terraform
@@ -1295,8 +1294,8 @@ The auto-approve flag is so we don't have to type 'yes' every time we run terraf
 
 ---
 name: chapter-3c-lab
-Lab Exercise 3c: Build the Lab Environment
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 3c: Build the Vault Lab]]
+<br><br><br>
 Go through the rest of the **main.tf** file and uncomment all of the terraform resources. 
 
 Alternatively, you can copy all of the contents of the **main.tf.completed** file into your **main.tf** file. Just make sure you overwrite the entire file and save it.
@@ -1310,8 +1309,8 @@ NOTE: It will take up to five minutes to build out the lab environment. This is 
 
 ---
 name: chapter-3c-lab-answer
-Lab Exercise 3c: Answer
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 3c: Answer]]
+<br><br>
 If you copied all the code over from **main.tf.completed** into **main.tf**, it should look like this (comments have been removed for brevity):
 
 ```terraform
@@ -1338,7 +1337,7 @@ resource "azurerm_subnet" "subnet" {
 
 ---
 name: chapter-3-review
-Chapter 3 Review
+📝 Chapter 3 Review
 -------------------------
 .contents[
 In this chapter we:
@@ -1568,8 +1567,8 @@ http://yourname.centralus.cloudapp.azure.com:8200
 
 ---
 name: chapter-4a-lab
-Lab Exercise 4a: Break main.tf into smaller files
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 4a: Break main.tf Down]]
+<br><br><br><br>
 Take the azurerm_virtual_machine resource out of main.tf and put it into its own file called **vm.tf**. Save both files. Run `terraform apply` again. What happens?
 
 ???
@@ -1577,8 +1576,8 @@ Take the azurerm_virtual_machine resource out of main.tf and put it into its own
 
 ---
 name: chapter-4a-lab-answer
-Lab Exercise 4a: Answer
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 4a: Answer]]
+<br><br><br><br>
 If you break a large *.tf file down into smaller ones, Terraform doesn't mind. It simply crawls through the directory looking for anything that ends in a .tf extension. All resources in all tf files will be compiled together onto the resource graph before the apply is run.
 
 If you want to exclude some tf files from being run, simply rename them with a different extension or move them into another directory.
@@ -1590,8 +1589,8 @@ Terraform will *not* crawl into subdirectories looking for tf files. There's als
 
 ---
 name: chapter-4b-lab
-Lab Exercise 4b: Automatically Format Your Code
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 4b: Format Your Code]]
+
 <br><br><br>
 Terraform comes with a built-in code formatting command, `terraform fmt`. Add some extra white space and lines to your Terraform code, save the file(s), then run this command in your terminal:
 
@@ -1600,8 +1599,8 @@ terraform fmt
 ```
 ---
 name: chapter-4b-lab-answer
-Lab Exercise 4b: Answer
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 4b: Answer]]
+
 <br><br><br><br>
 When you run the `terraform fmt` command your code is automatically formatted according to recommended standards. This ensures that your code is always neat and tidy, and eliminates unnecessary code versions caused by empty spaces.
 
@@ -1610,7 +1609,7 @@ Have your students play around with the `terraform fmt` command for a bit.
 
 ---
 name: chapter-4-review
-Chapter 4 Review
+📝 Chapter 4 Review
 -------------------------
 .contents[
 In this chapter we:
@@ -1723,9 +1722,8 @@ On the other hand, if you want immutable infrastructure you should consider usin
 
 ---
 name: chapter-5-lab
-Lab Exercise 5: Add a Provisioner Command
--------------------------
-<br>
+.center[.lab-header[👩‍🔬 Lab Exercise 5: Use a Provisioner]]
+<br><br><br>
 Let's add a simple command to our **remote-exec** block of code.  You can use the 'cowsay' command to output messages into your Terraform log:
 
 ```terraform
@@ -1746,8 +1744,8 @@ Explain that provisioners only run when virtual machines are first created. If y
 
 ---
 name: chapter-5-lab-answer
-Lab Exercise 5: Answer
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 5: Answer]]
+<br><br>
 The remote-exec provisioner is a [Creation Time](https://www.terraform.io/docs/provisioners/index.html#creation-time-provisioners) Provisioner. It does not run every time you update scripts or code within the remote-exec block. If you need to completely rebuild a virtual machine, you can use the **`terraform taint`** command to mark it for a rebuild. Go ahead and taint your Azure VM and rebuild it before the next chapter.
 
 ```bash
@@ -1759,6 +1757,19 @@ terraform apply -auto-approve
 
 ???
 You might walk through this one with your students, showing them how easy it is to run commands on your target machine. The cowsay program was installed on your Linux target by the setup.sh script in the files directory.
+
+---
+name: chapter-5-review
+📝 Chapter 5 Review
+-------------------------
+.contents[
+In this chapter we:
+* Learned about Terraform Provisioners
+* Explored the **file** and **remote-exec** provisioners
+* Learned the `terraform fmt` command
+* Used the `terraform taint` command
+* Rebuilt our web server with a new provisioning step
+]
 
 ---
 name: Chapter-6
@@ -1829,8 +1840,8 @@ Terraform does its best to add, delete, change, or replace existing resources ba
 
 ---
 name: chapter-6-lab
-Lab Exercise 6: State Quiz
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 6: State Quiz]]
+
 <br>
 .center[![:scale 100%](images/state_table_empty.png)]
 
@@ -1841,8 +1852,8 @@ Queue up the Jeopardy music! Walk through each row and explain the scenario. See
 
 ---
 name: chapter-6-lab-answer
-Lab Exercise 6: Answer
--------------------------
+.center[.lab-header[👩‍🔬 Lab Exercise 6: Answer]]
+
 <br>
 .center[![:scale 100%](images/state_table_full.png)]
 
