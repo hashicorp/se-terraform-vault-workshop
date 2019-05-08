@@ -4,7 +4,7 @@
 If you have access to the HashiCorp Azure Demo environment, you can simply browse to the Azure Dev/Test labs section and click on *se-training-lab*. If you're a partner or external user, skip down to the "Building an Azure Windows 10 Workstation" section to create a reusable custom image. Once you've got your custom Windows 10 image the process is pretty simple:
 
 1. Enter your Azure Dev/Test lab page on the Azure portal.
-1. Click on the blue plus sign at the top of the page: ➕`Add`
+1. Click on the blue plus sign at the top of the page: `+Add`
 1. Browse to your workstation image. In the HashiCorp SE account it is called hc-training-workstation-2019-02-08-3
 1. Give the virtual machine a name. Pick something simple and short, preferably without special characters.
 1. For user name enter `hashicorp`
