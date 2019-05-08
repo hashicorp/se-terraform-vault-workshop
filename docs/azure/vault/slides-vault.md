@@ -1129,30 +1129,31 @@ name: Encryption-as-a-Service-1
 Encryption as a Service: Example Application
 -------------------------
 
-We will demonstrate EEAS with an example application hosted on the Vault server.  It leverages the Azure Mysql database we deployed in the first part of the day.  
+We will demonstrate EaaS with an example application hosted on the Vault server.  It uses the Azure mySQL database we deployed earlier.  
 
-We need to make some config file changes, and start the application.  Using our SSH connection:
+We need to make some config file changes and start the application. Run these commands inside your SSH session:
+
+Commands:
 ```bash
-hashicorp@ehron:~$ cd transit-app-example/backend/
-hashicorp@ehron:~/transit-app-example/backend$ nano/vim config.ini 
+cd transit-app-example/backend/
+nano config.ini 
 ```
 
 ---
 name: Encryption-as-a-Service-2
 Encryption as a Service: Example Application (Continued)
 -------------------------
-
-We need to make some changes to the config file.  In the Database section update the Address, User, and Password sections.  In the Vault section change Enabled to False:
+Make the following changes to your config file. In the Database section update the Address, User, and Password sections.  In the Vault section change Enabled to False:
 ```bash
 [DEFAULT]
 LogLevel = DEBUG # Change this to debug if you wish
 
 [DATABASE]
 #Address=localhost
-Address=ehron-mysql-server.mysql.database.azure.com
+Address=YOURNAME-mysql-server.mysql.database.azure.com
 Port=3306
 #User=root
-User=hashicorp@ehron-mysql-server
+User=hashicorp@YOURNAME-mysql-server
 #Password=root
 Password=Password123!
 Database=my_app
@@ -1168,56 +1169,54 @@ DynamicDBCreds = False
 name: Encryption-as-a-Service-3
 Encryption as a Service: Example Application (Continued)
 -------------------------
-
 Once you have saved the changes to the config file you can start the application.
+
+Command:
 ```bash
-hashicorp@ehron:~/transit-app-example/backend$ python3 app.py
+python3 app.py
 ```
 
-It is a Python application.  The above command runs the server.  The app should be listening on port 5000.
+This is a Python Flask application. The app listens on port 5000 for traffic.
 
 ---
 name: Encryption-as-a-Service-1
 Encryption as a Service: Example Application
 -------------------------
-
-Open a browser, and navigate to the address of your Vault server while specifying port 5000.
+Open a browser, and navigate to the address of your Vault server on port 5000.
 
 Example:
 .center[![:scale 80%](images/transit_app.png)]
 
 ---
-
 name: Encryption-as-a-Service-2
 Encryption as a Service: Example Application (Continued)
 -------------------------
-
 There are two main sections in the application.
 1. Records View
-  * The records view displays records in plain text
-  * This view represents what a human customer service rep may see, or the data needed by an order processing system
+  * The records view displays records in plain text.
+  * This view represents what a human customer service rep may see, or the data needed by an order processing system.
 1. Database View
-  * This view shows the records in the database (so we don't have to have multiple terminals open)
-  * It is the equivalent of "SELECT * FROM `users`"
+  * This view shows the raw records in the database.
+  * It is the equivalent of the following SQL statement:
+  ```sql
+  SELECT * FROM users
+  ```
 
 ---
 name: Encryption-as-a-Service-3
 Encryption as a Service: Application Records and Database Entries
 -------------------------
+If you click around you may wonder what we are looking at.  The Records view looks very much like the Database view. Initially, the application is not configured to use Vault.  Click the "Add Record" button, and let's enter some data (any data will do):
 
-If you click around you may wonder what we are looking at.  The Records view looks very much like the Database view.
-
-Initially, the application is not configured to use Vault.  Click the "Add Record" button, and let's enter some data (any data will do):
-.center[![:scale 80%](images/add_user.png)]
+.center[![:scale 60%](images/add_user.png)]
 
 ---
 name: Encryption-as-a-Service-4
 Encryption as a Service: Application Records and Database Entries (Continued)
 -------------------------
+You should see a success message after you click submit, and your new record at the bottom of the list.
 
-You should see a success message after you click submit.  We're left looking at the Records view.  Not surprisingly the last record listed should contain the data we entered.
-
-Now, click on the Database View.  Again, you should see the data you entered in plain text.  
+Click on the Database View. You should see the same data you entered in plain text.  
 
 Can we do better?
 
@@ -1225,45 +1224,40 @@ Can we do better?
 name: Encryption-as-a-Service-5
 Encryption as a Service: Protecting PII From Internal And External Threats
 -------------------------
+Yes we can!  Vault can encrypt and decrypt data in transit. The user or application receives what they expect while the source of truth is encrypted and protected.
 
-Yes we can!  Vault can encrypt and decrypt data in transit.  The human or calling application receives what they expect while the source of truth is encrypted and protected.
+Vault has an API endpoint that accepts plaintext, and returns encrypted ciphertext. We can store this ciphertext to protect our valuable personal data from both internal and external threats.
 
-Vault has an API endpoint that accepts plaintext, and returns encrypted ciphertext.  We can store this ciphertext to protect our valuable PII from both internal and external threats.
-
-Example: 
+Command:
 ```bash
-hashicorp@ehron:~$ vault write lob_a/workshop/transit/encrypt/customer-key plaintext=$(base64 <<< "Protect me!")Key           Value
----           -----
-ciphertext    vault:v1:6ah0g5oUpG5vhgNWIvmxnCpKlzBc5zia00y16Es4489MM/xOsxWwWg==
-hashicorp@ehron:~$ vault write -field=plaintext lob_a/workshop/transit/decrypt/customer-key ciphertext=vault:v1:6ah0g5oUpG5vhgNWIvmxnCpKlzBc5zia00y16Es4489MM/xOsxWwWg== | base64 --decode
-Protect me!
-hashicorp@ehron:~$
+vault write lob_a/workshop/transit/encrypt/customer-key \
+plaintext=$(base64 <<< "Protect me!")
 ```
 
-The above demonstrates encrypting and decrypting using the shell.  While we all love a good shell command this would normally be done as part of an application.  Let's see that next.
+The above demonstrates encrypting some plain text using Vault's transit engine.  While we all love a good shell command this would normally be done as part of an application.  Let's see that next.
 
 ---
 name: Encryption-as-a-Service-6
 Encryption as a Service: Protecting PII Using Vault
 -------------------------
 
-Return to your shell, and stop the application (ctrl + c).  We need to edit our config.ini file.  We want to change the Enabled value to True:
+Return to your shell, and stop the application (ctrl + c).  We need to edit our config.ini file. Change the Enabled value in the Vault section to True.
 ```bash
 [DEFAULT]
 LogLevel = DEBUG # Change this to debug if you wish
 
 [DATABASE]
 #Address=localhost
-Address=ehron-mysql-server.mysql.database.azure.com
+Address=YOURNAME-mysql-server.mysql.database.azure.com
 Port=3306
 #User=root
-User=hashicorp@ehron-mysql-server
+User=hashicorp@YOURNAME-mysql-server
 #Password=root
 Password=Password123!
 Database=my_app
 
 [VAULT]
-Enabled = True ## <-- Change me to True
+*Enabled = True ## <-- Change me to True
 #Enabled = False
 DynamicDBCreds = False
 ...
@@ -1275,18 +1269,17 @@ Encryption as a Service: Protecting PII Using Vault (Continued)
 -------------------------
 
 After you have made that change save the file, and restart the application:
+
+Commands:
 ```bash
-hashicorp@ehron:~/transit-app-example/backend$ vim config.ini 
-hashicorp@ehron:~/transit-app-example/backend$ python3 app.py 
-In Main...
-2019-02-14 02:38:10,442 -     INFO -       app -        <module> - Vault is enabled...
-2019-02-14 02:38:10,442 -  WARNING - db_client -      init_vault - Connecting to vault server: http://localhost:8200
-2019-02-14 02:38:10,443 -    DEBUG - db_client -      init_vault - Initialized vault_client: <hvac.v1.Client object at 0x7f2ff3e66da0>
-2019-02-14 02:38:10,443 -     INFO -       app -        <module> - Using DB credentials from config.ini...
-2019-02-14 02:38:10,443 -    DEBUG - db_client -      connect_db - Connecting to ehron-mysql-server.mysql.database.azure.com with username hashicorp@ehron-mysql-server and password Password123!
-2019-02-14 02:38:10,591 -     INFO - db_client -         init_db - Preparing database my_app...
-2019-02-14 02:38:10,836 -     INFO - db_client -         init_db - Preparing customer table...
-2019-02-14 02:38:11,008 -     INFO -       app -        <module> - Starting Flask server on 0.0.0.0 listening on port 5000
+nano config.ini 
+python3 app.py 
+```
+
+Output:
+```tex
+...
+ server on 0.0.0.0 listening on port 5000
  * Serving Flask app "app" (lazy loading)
  * Environment: production
    WARNING: Do not use the development server in a production environment.
