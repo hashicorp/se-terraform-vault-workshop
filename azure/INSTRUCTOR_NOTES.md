@@ -5,7 +5,7 @@ If you have access to the HashiCorp Azure Demo environment, you can simply brows
 
 1. Enter your Azure Dev/Test lab page on the Azure portal.
 1. Click on the blue plus sign at the top of the page: `+Add`
-1. Browse to your workstation image. In the HashiCorp SE account it is called hc-training-workstation-2019-02-08-3
+1. Browse to your workstation image. In the HashiCorp SE account it is called hc-training-workstation-2019-04-29
 1. Give the virtual machine a name. Pick something simple and short, preferably without special characters.
 1. For user name enter `hashicorp`
 1. For the password you can set your own. Make sure it meets the complexity requirements for Windows 10.
