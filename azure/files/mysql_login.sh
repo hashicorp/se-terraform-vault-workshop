@@ -4,4 +4,4 @@
 { read USER; read PASS; } < <(curl --header 'X-Vault-Token: root' http://localhost:8200/v1/lob_a/workshop/database/creds/workshop-app-long | jq -r '.data | .username,.password')
 
 mysql -h ${MYSQL_HOST}.mysql.database.azure.com \
--u ${USER}@${MYSQL_HOST} -p${PASS}
+-u ${USER}@${MYSQL_HOST} -p${PASS} -e "show databases"
