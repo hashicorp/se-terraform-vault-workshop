@@ -34,7 +34,7 @@ control 'create-vault-policies' do
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
     plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/create_policies.sh"'
   ) do
-    its('stdout') { should match(/foo/) }
+    its('stdout') { should match(/Script complete./) }
   end
 end
   
@@ -46,7 +46,7 @@ control 'bob-and-sally-exercise-1' do
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
     plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/bob_and_sally.sh"'
   ) do
-    its('stdout') { should match(/foo/) }
+    its('stdout') { should match(/Script complete./) }
   end
 end
   
@@ -58,7 +58,7 @@ control 'bob-and-sally-exercise-2' do
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
     plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/recreate_sally.sh"'
   ) do
-    its('stdout') { should match(/foo/) }
+    its('stdout') { should match(/Script complete./) }
   end
 end
 
@@ -85,7 +85,7 @@ control 'get-dynamic-creds-cli' do
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
     plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root vault read lob_a/workshop/database/creds/workshop-app"'
   ) do
-    its('stdout') { should match(/foo/) }
+    its('stdout') { should match(/v-token-workshop-a/) }
   end
 end
 
@@ -97,6 +97,6 @@ control 'test-mysql-login' do
     '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
     plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root ./mysql_login.sh"'
   ) do
-    its('stdout') { should match(/foo/) }
+    its('stdout') { should match(/Script complete./) }
   end
 end

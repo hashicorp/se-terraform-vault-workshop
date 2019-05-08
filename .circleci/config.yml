@@ -121,7 +121,7 @@ workflows:
             - run-terraform-tests-inspec
       - run-vault-cli-tests-inspec:
           requires:
-            - run-terraform-tests-inspec
+            - run-vault-api-tests-inspec
       - clean-up-uat:
           requires:
             - run-vault-cli-tests-inspec

@@ -11,3 +11,5 @@ vault policy write readonly readonly.hcl
 vault write auth/userpass/users/sally \
     password=foo \
     policies=lob_a,readonly
+
+echo "Script complete."

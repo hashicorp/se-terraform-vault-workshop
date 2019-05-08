@@ -12,3 +12,5 @@ echo 'path "secret/*" {
 # Write the policies
 vault policy write lob_a lob_a_policy.hcl
 vault policy write secret secret.hcl
+
+echo "Script complete."

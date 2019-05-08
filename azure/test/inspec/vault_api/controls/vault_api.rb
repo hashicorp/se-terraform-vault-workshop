@@ -10,7 +10,7 @@ control 'vault-api-status' do
     its('status') { should cmp 200 }
     its('body') { should match /"initialized":true/ }
     its('body') { should match /"sealed":false/ }
-    its('body') { should match /"version":"1.1.0"/ }
+    its('body') { should match /"version":"1.1.1"/ }
   end
 end
 

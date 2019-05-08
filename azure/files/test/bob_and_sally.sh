@@ -11,3 +11,5 @@ vault write auth/userpass/users/bob \
 vault write auth/userpass/users/sally \
     password=foo \
     policies=lob_a
+
+echo "Script complete."

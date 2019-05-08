@@ -5,3 +5,5 @@
 
 mysql -h ${MYSQL_HOST}.mysql.database.azure.com \
 -u ${USER}@${MYSQL_HOST} -p${PASS} -e "show databases"
+
+echo "Script complete."
