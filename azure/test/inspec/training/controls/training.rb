@@ -315,6 +315,30 @@ control 'vault-test-api-call' do
   end
 end
 
+# Lab exercise 4a - create some policies
+control 'create-vault-policies' do
+  impact 1.0
+  desc 'Create some vault policies'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/create_policies.sh"'
+  ) do
+    its('stdout') { should match(/foo/) }
+  end
+end
+
+# Lab exercise 5a - Bob and Sally
+control 'bob-and-sally' do
+  impact 1.0
+  desc 'Create user accounts for Bob and Sally'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/test/bob_and_sally.sh"'
+  ) do
+    its('stdout') { should match(/foo/) }
+  end
+end
+
 # Verifies that we can connect via SSH and run our database_setup.sh script
 # Since we're not using SSH keys we have to do this in two steps, first 
 # we find and store the server host public key fingerprint, then we use 
