@@ -1106,173 +1106,155 @@ name: Chapter-8
 class: center,middle
 .section[
 Chapter 8  
-Example Engine Two: Encryption as a Service
+Encryption as a Service (EaaS)
 ]
 
 ---
-name: Encryption-as-a-Service
-Encryption as a Service: Immense Value Delivered
+name: Vault-Transit-Engine
+Vault Transit - Encryption as a Service
 -------------------------
+.center[![:scale 100%](images/vault-eaas.webp)]
 
-The last thing we'll touch on today is probably the most valuable feature Vault has to offer.  Using Vault's transit engine, or Encryption as a Service, can keep your company out of the news.
+* Vault has an encryption-as-a-service secrets engine called **transit**.
+* The transit engine is API-driven encryption
+* Centralized key management
+* Ensure only approved ciphers and algorithms are used
+* Developers never have to worry about managing keys
+* Supports automated key rotation and re-wrapping
 
-EEAS has many benefits:
-  * Centralized key management
-  * Automated key rotation and re-wrapping
-  * Ensuring only approved encryption algorithms are used
-  * Allowing developers to encrypt data while never giving them access to the key itself
-  * Audit trail for both access and operational tasks like rotation
-  * And more...
+???
+This is encryption that is secure, accessible and relatively easy to implement. Instead of forcing developers to learn cryptography, we present them with a familiar API that can be used to encrypt, decrypt, or both.
 
 ---
-name: Encryption-as-a-Service-1
-Encryption as a Service: Example Application
+name: Vault-Transit-Engine-1
+Vault Transit - Example Application
 -------------------------
+In the next lab we'll set up a demo application that uses Vault transit to encrypt and decrypt data. Our app will store its data in the MySQL database we created earlier.  
 
-We will demonstrate EaaS with an example application hosted on the Vault server.  It uses the Azure mySQL database we deployed earlier.  
-
-We need to make some config file changes and start the application. Run these commands inside your SSH session:
-
-Commands:
-```bash
-cd transit-app-example/backend/
-nano config.ini 
-```
-
----
-name: Encryption-as-a-Service-2
-Encryption as a Service: Example Application (Continued)
--------------------------
-Make the following changes to your config file. In the Database section update the Address, User, and Password sections.  In the Vault section change Enabled to False:
-```bash
-[DEFAULT]
-LogLevel = DEBUG # Change this to debug if you wish
-
-[DATABASE]
-#Address=localhost
-Address=YOURNAME-mysql-server.mysql.database.azure.com
-Port=3306
-#User=root
-User=hashicorp@YOURNAME-mysql-server
-#Password=root
-Password=Password123!
-Database=my_app
-
-[VAULT]
-#Enabled = True
-Enabled = False
-DynamicDBCreds = False
-...
-```
-
----
-name: Encryption-as-a-Service-3
-Encryption as a Service: Example Application (Continued)
--------------------------
-Once you have saved the changes to the config file you can start the application.
+From your Vault server SSH session run the following command:
 
 Command:
 ```bash
+./transit_setup.sh
+```
+
+The script may take a few minutes to complete while it downloads and configures our application.
+
+---
+name: Vault-Transit-Engine-2
+Vault Transit - Start the Application
+-------------------------
+First we'll start up the demo application without Vault enabled. Run the following commands to start your app:
+
+Commands:
+```bash
+cd ~/transit-app-example/backend/
 python3 app.py
+```
+
+Output:
+```tex
+In Main...
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+2019-05-09 18:35:46,596 -     INFO -  werkzeug -            _log -  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 ```
 
 This is a Python Flask application. The app listens on port 5000 for traffic.
 
 ---
-name: Encryption-as-a-Service-1
-Encryption as a Service: Example Application
+name: Vault-Transit-Engine-3
+Vault Transit - Open the App
 -------------------------
-Open a browser, and navigate to the address of your Vault server on port 5000.
+Open a browser tab and navigate to the address of your Vault server on port 5000.
 
-Example:
-.center[![:scale 80%](images/transit_app.png)]
+.center[![:scale 80%](images/transit_app.png)<br>
+http://PREFIX.centralus.cloudapp.azure.com:5000]
+
+???
+Replace the 'PREFIX' part with your own settings.
 
 ---
-name: Encryption-as-a-Service-2
-Encryption as a Service: Example Application (Continued)
+name: Vault-Transit-Engine-4
+Vault Transit - Application Views
 -------------------------
+<br><br>
 There are two main sections in the application.
-1. Records View
+1. **Records View**
   * The records view displays records in plain text.
-  * This view represents what a human customer service rep may see, or the data needed by an order processing system.
-1. Database View
+  * This view represents what a logged in user or authenticated application might be able to see.
+
+1. **Database View**
   * This view shows the raw records in the database.
   * It is the equivalent of the following SQL statement:
-  ```sql
-  SELECT * FROM users
-  ```
+
+```sql
+SELECT * FROM users
+```
 
 ---
-name: Encryption-as-a-Service-3
-Encryption as a Service: Application Records and Database Entries
+name: Vault-Transit-Engine-5
+Vault Transit - Records View
 -------------------------
-If you click around you may wonder what we are looking at.  The Records view looks very much like the Database view. Initially, the application is not configured to use Vault.  Click the "Add Record" button, and let's enter some data (any data will do):
+.center[![:scale 100%](images/records_view.png)]
 
-.center[![:scale 60%](images/add_user.png)]
+As we would expect an authorized user is able to see some of the sensitive data.
 
 ---
-name: Encryption-as-a-Service-4
-Encryption as a Service: Application Records and Database Entries (Continued)
+name: Vault-Transit-Engine-6
+Vault Transit - Add a Record
 -------------------------
-You should see a success message after you click submit, and your new record at the bottom of the list.
+Click the "Add Record" button and enter some data. Don't use your real social security number here.
 
-Click on the Database View. You should see the same data you entered in plain text.  
-
-Can we do better?
+.center[![:scale 80%](images/add_user.png)]
 
 ---
-name: Encryption-as-a-Service-5
-Encryption as a Service: Protecting PII From Internal And External Threats
+name: Vault-Transit-Engine-7
+Vault Transit - View the Record
 -------------------------
-Yes we can!  Vault can encrypt and decrypt data in transit. The user or application receives what they expect while the source of truth is encrypted and protected.
+<br><br><br>
+Click on **Records** at the top of the page. Notice your new record at the bottom of the list.
 
-Vault has an API endpoint that accepts plaintext, and returns encrypted ciphertext. We can store this ciphertext to protect our valuable personal data from both internal and external threats.
+Next click on **Database View**. You should see the exact same data. This means that PII (Personally Identifiable Data) is being stored in plain text in our database records.
+
+How can we improve this? Let's enable Vault Transit and see.
+
+---
+name: Vault-Transit-Engine-7
+Vault Transit - Enable EaaS
+-------------------------
+Return to your shell and stop the application with the **CTRL-C** command. 
+
+Next you'll need to make one change to your config.ini file. You may use **nano** or **vi** to edit the file. The line you need to edit is highlighted below. Change where it says `Enabled = False` to `Enabled = True`:
 
 Command:
 ```bash
-vault write lob_a/workshop/transit/encrypt/customer-key \
-plaintext=$(base64 <<< "Protect me!")
+nano config.ini
 ```
 
-The above demonstrates encrypting some plain text using Vault's transit engine.  While we all love a good shell command this would normally be done as part of an application.  Let's see that next.
-
----
-name: Encryption-as-a-Service-6
-Encryption as a Service: Protecting PII Using Vault
--------------------------
-
-Return to your shell, and stop the application (ctrl + c).  We need to edit our config.ini file. Change the Enabled value in the Vault section to True.
+Line to change:
 ```bash
-[DEFAULT]
-LogLevel = DEBUG # Change this to debug if you wish
-
-[DATABASE]
-#Address=localhost
-Address=YOURNAME-mysql-server.mysql.database.azure.com
-Port=3306
-#User=root
-User=hashicorp@YOURNAME-mysql-server
-#Password=root
-Password=Password123!
-Database=my_app
-
+...
 [VAULT]
-*Enabled = True ## <-- Change me to True
-#Enabled = False
+*Enabled = True
 DynamicDBCreds = False
+ProtectRecords=False
 ...
 ```
 
----
-name: Encryption-as-a-Service-7
-Encryption as a Service: Protecting PII Using Vault (Continued)
--------------------------
+Save and exit the file.
 
-After you have made that change save the file, and restart the application:
+---
+name: Vault-Transit-Engine-8
+Vault Transit - Enable EaaS
+-------------------------
+After you have enabled Vault, start the application back up:
 
 Commands:
 ```bash
-nano config.ini 
 python3 app.py 
 ```
 
@@ -1289,33 +1271,54 @@ Output:
 ```
 
 ---
-name: Encryption-as-a-Service-8
-Encryption as a Service: Protecting PII Using Vault
--------------------------
+name: chapter-8a-lab
+.center[.lab-header[👩‍🔬 Lab Exercise 8a: EaaS]]
+<br><br>
+**Exercise 1:**<br>
+Enter some more fake employee data into the application.
 
-Now that we have enabled the Vault integration in our application we can observe the difference.  Add another record as you did before.
+Browse to the records view. What do you see?
 
-The record view shouldn't change.  You will still see the unencrypted data one would expect.  
+Now browse to the database view? What's different now?
 
-What about the Database View?
-
----
-name: Encryption-as-a-Service-9
-Encryption as a Service: Protecting PII Using Vault (Continued)
--------------------------
-
-When we look at the Database View we can see that our records are no longer stored in plaintext.  We see ciphertext instead.
-
-Using Vault in this way significantly reduces the threat of a harmful breach.  Unencrypted PII is very valuable.  Ciphertext is virtually worthless!
+???
+TODO:  Fix this exercise #2
+**Exercise 2:**<br>
+Go back through and edit some existing records. What happens to them in the database?
 
 ---
-name: Encryption-as-a-Service-10
-Encryption as a Service: Conclusion
+name: chapter-8a-lab-answers
+.center[.lab-header[👩‍🔬 Lab Exercise 8a: Answers]]
+<br><br><br>
+.center[![:scale 100%](images/fred_flintstone.png)]
+
+When you enabled Vault each new record entered into the database has it's PII send through Vault *before* being written to the database. This greatly reduces the risk of sensitive data being compromised. 
+
+Even if an attacker manages to get access to the database they will only be able to see ciphertext (which is useless without the decryption keys that are safely stored in Vault.)
+
+---
+name: chapter-8-review
+📝 Chapter 8 Review
 -------------------------
+<br>
+.contents[
+Vault Transit - Encryption as a Service
+* API-driven encryption
+* Centralized key management
+* Ensures only algorithms are used
+* Users never touch encryption keys
+* Supports automated key rotation
+* ...and more
+]
 
-That concludes this chapter and the workshop.  We hope you enjoyed your time with us, and leave with a better understanding of Vault and how it can help your organization.
-
-Thank you!
-
+---
+name: Vault-Workshop-Conclusion
+Thank You for Participating!
+-------------------------
 .center[![:scale 80%](images/vault_logo.png)]
 
+For more information please refer to the following links:
+
+* https://www.vaultproject.io/docs/
+* https://www.vaultproject.io/api/
+* https://learn.hashicorp.com/vault/

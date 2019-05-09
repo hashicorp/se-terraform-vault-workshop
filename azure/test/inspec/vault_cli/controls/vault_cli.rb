@@ -100,3 +100,27 @@ control 'test-mysql-login' do
     its('stdout') { should match(/Script complete./) }
   end
 end
+
+# Chapter 8 - database setup script
+control 'transit-setup-script' do
+  impact 1.0
+  desc 'Run the transit setup script.'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/transit_setup.sh"'
+  ) do
+    its('stdout') { should match(/Script complete./) }
+  end
+end
+
+# Chapter 8 - setup Python app
+control 'transit-setup-script' do
+  impact 1.0
+  desc 'Run the transit setup script.'
+  describe powershell(
+    '$HOSTKEY=(ssh-keyscan -H uat-tf-vault-lab.centralus.cloudapp.azure.com | Select-String -Pattern "ed25519" | Select -ExpandProperty line);
+    plink.exe -ssh hashicorp@uat-tf-vault-lab.centralus.cloudapp.azure.com -pw Password123! -hostkey $HOSTKEY "VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root MYSQL_HOST=uat-tf-vault-lab-mysql-server ~/transit_setup.sh"'
+  ) do
+    its('stdout') { should match(/Script complete./) }
+  end
+end
