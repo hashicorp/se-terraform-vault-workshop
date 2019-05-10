@@ -1272,7 +1272,7 @@ Output:
 
 ---
 name: chapter-8a-lab
-.center[.lab-header[👩‍🔬 Lab Exercise 8a: EaaS]]
+.center[.lab-header[👩‍🔬👩‍💻 Lab Exercise 8a: EaaS]]
 <br><br>
 **Exercise 1:**<br>
 Enter some more fake employee data into the application.
@@ -1282,7 +1282,11 @@ Browse to the records view. What do you see?
 Now browse to the database view? What's different now?
 
 **Exercise 2:**<br>
-Go into the Vault UI and click on **lob_a/workshop/transit** from the **Secrets** page. Click on **customer-key**, then click on **versions**. Click on the **Rotate encryption key** button at the bottom. Now go back to the app and add another record. What do you see in the database view?
+Go into the Vault UI and click on **lob_a/workshop/transit** from the **Secrets** page.<br>
+Click on **customer-key**, then click on **versions**.<br>
+Click on the **Rotate encryption key** button at the bottom.
+
+Now go back to the app and add another record. What do you see in the database view?
 
 ???
 NOTE: There's a known bug in the UI that causes all the dates to be Jan. 1970. These are correct if you query the API.
