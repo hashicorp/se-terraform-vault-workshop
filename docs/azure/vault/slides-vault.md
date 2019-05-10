@@ -1245,7 +1245,7 @@ ProtectRecords=False
 ...
 ```
 
-Save and exit the file.
+Save and exit the file. `CTRL-x` in Nano, `:wq` in vim.
 
 ---
 name: Vault-Transit-Engine-8
