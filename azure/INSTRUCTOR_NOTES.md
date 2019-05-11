@@ -5,7 +5,7 @@ If you have access to the HashiCorp Azure Demo environment, you can simply brows
 
 1. Enter your Azure Dev/Test lab page on the Azure portal.
 1. Click on the blue plus sign at the top of the page: `+Add`
-1. Browse to your workstation image. In the HashiCorp SE account it is called hc-training-workstation-2019-04-29
+1. Browse to your workstation image. In the HashiCorp SE account it is called `hc-training-workstation-2019-05-12`
 1. Give the virtual machine a name. Pick something simple and short, preferably without special characters.
 1. For user name enter `hashicorp`
 1. For the password you can set your own. Make sure it meets the complexity requirements for Windows 10.
@@ -106,5 +106,5 @@ cd C:\windows\system32\sysprep
 ```
 
 10.  Click the 'generalize' box and set the pulldown to "shutdown". Wait and give it a good ten minutes to fully shutdown.
-11.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-04-29`
+11.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-05-12`
 12. Use the image to spin up your workstations.
