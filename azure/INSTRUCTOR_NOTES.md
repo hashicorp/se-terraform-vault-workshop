@@ -17,6 +17,7 @@ If you have access to the HashiCorp Azure Demo environment, you can simply brows
 1. Hit the Submit button at the bottom.
 1. Wait about 15-20 minutes. When your machines are done building you'll see a little notification icon in the upper right corner.
 1. Distribute the public URLs, username, and password to your students.
+1. RDP is running on ports 80, 443, and 3389. If the default port (3389) seems blocked, try adding `:80` or `:443` to the end of the workstation URL.
 
 ## Building an Azure Windows 10 Workstation
 Follow this process to build a Windows 10 workstation image in your own account or location.
@@ -106,5 +107,5 @@ cd C:\windows\system32\sysprep
 ```
 
 10.  Click the 'generalize' box and set the pulldown to "shutdown". Wait and give it a good ten minutes to fully shutdown.
-11.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-05-12`
+11d.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-05-12`
 12. Use the image to spin up your workstations.
