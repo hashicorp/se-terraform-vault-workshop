@@ -879,6 +879,7 @@ westus     - California
 uksouth    - London
 southindia - Chennai
 eastasia   - Hong Kong
+canadacentral - Toronto
 ```
 
 ???
