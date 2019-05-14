@@ -57,7 +57,7 @@ control 'az-group-delete' do
     }'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/PAYG/) }
+    its('stdout') { should match(/Solutions/) }
     its('stderr') { should match(//) }
   end
 end
