@@ -116,7 +116,7 @@ jobs:
           no_output_timeout: 45m
           command: |
             # Delete the UAT environment
-            az login --service-principal -u 91299f64-f951-4462-8e97-9efb1d215501 -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID;
+            az login --service-principal -u 91299f64-f951-4462-8e97-9efb1d215501 -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID;
             az group delete -y --name uat-tf-vault-lab-workshop;
 workflows:
   version: 2
