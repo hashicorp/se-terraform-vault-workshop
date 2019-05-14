@@ -37,7 +37,7 @@ control 'vault-version' do
   impact 1.0
   desc 'Checks to see that Vault is installed and working.'
   describe powershell('vault --version') do
-    its('stdout') { should match(/v1.1.1/) }
+    its('stdout') { should match(/v1.1.2/) }
   end
 end
 
@@ -55,7 +55,7 @@ control 'vsc-version' do
   impact 1.0
   desc 'Checks to see that Visual Studio Code is installed and working.'
   describe powershell('code --version') do
-    its('stdout') { should match(/1.31.1/) }
+    its('stdout') { should match(/1.33.1/) }
   end
 end
 
