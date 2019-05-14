@@ -48,7 +48,7 @@ control 'az-group-delete' do
   impact 1.0
   desc 'Clean up from any previous test run.'
   describe powershell(
-    'az login --service-principal -u http://SE-Training-Workstation-Creds -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID;
+    'az login --service-principal -u 91299f64-f951-4462-8e97-9efb1d215501 -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID;
     if ($(az group exists --name uat-tf-vault-lab-workshop).exit) {
       Write-Host "Deleting existing UAT environment.";
       az group delete -y --name uat-tf-vault-lab-workshop;
@@ -57,7 +57,7 @@ control 'az-group-delete' do
     }'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/PAYG/) }
+    its('stdout') { should match(/Solutions/) }
     its('stderr') { should match(//) }
   end
 end
