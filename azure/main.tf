@@ -172,17 +172,17 @@ provisioners including Bash, Powershell and Chef. */
 #     disable_password_authentication = false
 #   }
 
-#   provisioner "file" {
-#     source      = "files"
-#     destination = "/home/${var.admin_username}/"
+#    provisioner "file" {
+#      source      = "files/"
+#      destination = "/home/${var.admin_username}/"
 
-#     connection {
-#       type     = "ssh"
-#       user     = "${var.admin_username}"
-#       password = "${var.admin_password}"
-#       host     = "${azurerm_public_ip.vault-pip.fqdn}/"
-#     }
-#   }
+#      connection {
+#        type     = "ssh"
+#        user     = "${var.admin_username}"
+#        password = "${var.admin_password}"
+#        host     = "${azurerm_public_ip.vault-pip.fqdn}"
+#      }
+#    }
 
 #   provisioner "remote-exec" {
 #     inline = [
