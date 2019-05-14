@@ -1245,7 +1245,7 @@ ProtectRecords=False
 ...
 ```
 
-Save and exit the file.
+Save and exit the file. `CTRL-x` in Nano, `:wq` in vim.
 
 ---
 name: Vault-Transit-Engine-8
@@ -1272,7 +1272,7 @@ Output:
 
 ---
 name: chapter-8a-lab
-.center[.lab-header[👩‍🔬 Lab Exercise 8a: EaaS]]
+.center[.lab-header[👩‍🔬👩‍💻 Lab Exercise 8a: EaaS]]
 <br><br>
 **Exercise 1:**<br>
 Enter some more fake employee data into the application.
@@ -1281,20 +1281,29 @@ Browse to the records view. What do you see?
 
 Now browse to the database view? What's different now?
 
-???
-TODO:  Fix this exercise #2
 **Exercise 2:**<br>
-Go back through and edit some existing records. What happens to them in the database?
+Go into the Vault UI and click on **lob_a/workshop/transit** from the **Secrets** page.<br>
+Click on **customer-key**, then click on **versions**.<br>
+Click on the **Rotate encryption key** button at the bottom.
+
+Now go back to the app and add another record. What do you see in the database view?
+
+???
+NOTE: There's a known bug in the UI that causes all the dates to be Jan. 1970. These are correct if you query the API.
 
 ---
 name: chapter-8a-lab-answers
 .center[.lab-header[👩‍🔬 Lab Exercise 8a: Answers]]
-<br><br><br>
+<br>
 .center[![:scale 100%](images/fred_flintstone.png)]
 
+**Exercise 1:**<br>
 When you enabled Vault each new record entered into the database has it's PII send through Vault *before* being written to the database. This greatly reduces the risk of sensitive data being compromised. 
 
 Even if an attacker manages to get access to the database they will only be able to see ciphertext (which is useless without the decryption keys that are safely stored in Vault.)
+
+**Exercise 2:**<br>
+Even when we rotate the encryption key, the app is unaware of any changes. Once the key is rotated all new records will be encrypted with the new key. Old records can still be decrypted because Vault is using a keyring. If you feel that somehow one of the old keys was compromised you can force all new encryption or decryption to be done with a newer version of the key. Data can also be re-encrypted using the rewrap function.
 
 ---
 name: chapter-8-review

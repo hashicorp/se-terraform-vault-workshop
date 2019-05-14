@@ -5,7 +5,7 @@ If you have access to the HashiCorp Azure Demo environment, you can simply brows
 
 1. Enter your Azure Dev/Test lab page on the Azure portal.
 1. Click on the blue plus sign at the top of the page: `+Add`
-1. Browse to your workstation image. In the HashiCorp SE account it is called hc-training-workstation-2019-04-29
+1. Browse to your workstation image. In the HashiCorp SE account it is called `hc-training-workstation-2019-05-12`
 1. Give the virtual machine a name. Pick something simple and short, preferably without special characters.
 1. For user name enter `hashicorp`
 1. For the password you can set your own. Make sure it meets the complexity requirements for Windows 10.
@@ -17,6 +17,7 @@ If you have access to the HashiCorp Azure Demo environment, you can simply brows
 1. Hit the Submit button at the bottom.
 1. Wait about 15-20 minutes. When your machines are done building you'll see a little notification icon in the upper right corner.
 1. Distribute the public URLs, username, and password to your students.
+1. RDP is running on ports 80, 443, and 3389. If the default port (3389) seems blocked, try adding `:80` or `:443` to the end of the workstation URL.
 
 ## Building an Azure Windows 10 Workstation
 Follow this process to build a Windows 10 workstation image in your own account or location.
@@ -67,25 +68,25 @@ vault token create -policy=se-workshop-creds -ttl 2160h
 # Fix git line ending settings on Windows
 Set-Content -Path 'C:\Users\hashicorp\.gitconfig' -Value "[core]`n        autocrlf = false"
 
-$VAULT_TOKEN = $env:SETUP_VAULT_TOKEN 
+$VAULT_TOKEN = $env:SETUP_VAULT_TOKEN
 $VAULT_ADDR = $env:SETUP_VAULT_ADDR
 
 Write-Host -ForegroundColor Magenta "Fetching dynamic Azure credentials from HashiCorp Vault..."
 
-$CREDS=(Invoke-RestMethod -Headers @{"X-Vault-Token" = ${VAULT_TOKEN}; "X-Vault-Namespace" = "Sales/SE"} -Method GET -Uri ${VAULT_ADDR}/v1/azure/creds/se-training-workstation-payg).data
+$CREDS=(Invoke-RestMethod -Headers @{"X-Vault-Token" = ${VAULT_TOKEN}; "X-Vault-Namespace" = "Sales/SE"} -Method GET -Uri ${VAULT_ADDR}/v1/azure/creds/se-training-workstation).data
 
-#write-host $CREDS
+# write-host $CREDS
 $CLIENT_ID=$CREDS.client_id
 $CLIENT_SECRET=$CREDS.client_secret
 
 Do {
     Write-Host -ForegroundColor White "Waiting for Azure credentials to be ready..."
     Start-Sleep 3
-} Until (az login --service-principal -u http://SE-Training-Workstation-Creds -p $CLIENT_SECRET --tenant $env:ARM_TENANT_ID 2> $null)
+} Until (az login --service-principal -u 91299f64-f951-4462-8e97-9efb1d215501 -p $CLIENT_SECRET --tenant $env:ARM_TENANT_ID --allow-no-subscription 2> $null)
 
 Write-Host -ForegroundColor Yellow "Storing credentials as system environment variables..."
 
-[Environment]::SetEnvironmentVariable("ARM_SUBSCRIPTION_ID", "8708baf2-0a54-4bb4-905b-78d21ac150da", "Machine")
+[Environment]::SetEnvironmentVariable("ARM_SUBSCRIPTION_ID", "14692f20-9428-451b-8298-102ed4e39c2a", "Machine")
 [Environment]::SetEnvironmentVariable("ARM_TENANT_ID", "0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec", "Machine")
 [Environment]::SetEnvironmentVariable("ARM_CLIENT_ID", "${CLIENT_ID}", "Machine")
 [Environment]::SetEnvironmentVariable("ARM_CLIENT_SECRET", "${CLIENT_SECRET}", "Machine")
@@ -93,7 +94,7 @@ Write-Host -ForegroundColor Yellow "Storing credentials as system environment va
 Write-Host -ForegroundColor DarkGreen "Dynamic credentials are good for 8 hours. You may proceed with the workshop."
 
 # This is just for fun
-# Get-Content -Path C:\Users\Public\banner.txt
+Get-Content -Path C:\Users\Public\banner.txt
 
 Read-Host -Prompt "Press Enter to Continue..."
 ```
@@ -106,5 +107,5 @@ cd C:\windows\system32\sysprep
 ```
 
 10.  Click the 'generalize' box and set the pulldown to "shutdown". Wait and give it a good ten minutes to fully shutdown.
-11.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-04-29`
+11d.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-05-12`
 12. Use the image to spin up your workstations.
