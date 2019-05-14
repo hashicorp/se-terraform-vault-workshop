@@ -73,7 +73,7 @@ $VAULT_ADDR = $env:SETUP_VAULT_ADDR
 
 Write-Host -ForegroundColor Magenta "Fetching dynamic Azure credentials from HashiCorp Vault..."
 
-$CREDS=(Invoke-RestMethod -Headers @{"X-Vault-Token" = ${VAULT_TOKEN}; "X-Vault-Namespace" = "Sales/SE"} -Method GET -Uri ${VAULT_ADDR}/v1/azure/creds/se-training-workstation-payg).data
+$CREDS=(Invoke-RestMethod -Headers @{"X-Vault-Token" = ${VAULT_TOKEN}; "X-Vault-Namespace" = "Sales/SE"} -Method GET -Uri ${VAULT_ADDR}/v1/azure/creds/se-training-workstation).data
 
 #write-host $CREDS
 $CLIENT_ID=$CREDS.client_id
@@ -86,7 +86,7 @@ Do {
 
 Write-Host -ForegroundColor Yellow "Storing credentials as system environment variables..."
 
-[Environment]::SetEnvironmentVariable("ARM_SUBSCRIPTION_ID", "8708baf2-0a54-4bb4-905b-78d21ac150da", "Machine")
+[Environment]::SetEnvironmentVariable("ARM_SUBSCRIPTION_ID", "14692f20-9428-451b-8298-102ed4e39c2a", "Machine")
 [Environment]::SetEnvironmentVariable("ARM_TENANT_ID", "0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec", "Machine")
 [Environment]::SetEnvironmentVariable("ARM_CLIENT_ID", "${CLIENT_ID}", "Machine")
 [Environment]::SetEnvironmentVariable("ARM_CLIENT_SECRET", "${CLIENT_SECRET}", "Machine")
