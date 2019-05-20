@@ -92,3 +92,7 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
 }
+
+.pipe { 
+  vertical-align: middle;
+}
