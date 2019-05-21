@@ -2361,6 +2361,8 @@ Outputs:
 catapp_url = http://seanclab-meow.centralus.cloudapp.azure.com
 ```
 
+**Note**: There is a known bug with the null_provisioner that might cause your run to hang. https://github.com/hashicorp/terraform/issues/12596
+
 ---
 name: unleash-the-felis-catus
 Kittens as a Service (KaaS)
@@ -2539,13 +2541,29 @@ credentials "app.terraform.io" {
 terraform {
   backend "remote" {
     hostname = "app.terraform.io"
-    organization = "YOURORG"
+    organization = "ORGNAME"
     workspaces {
       name = "YOURNAME-catapp"
     }
   }
 }
 ```
+
+---
+name: create-a-workspace-gui
+Create a New Workspace
+-------------------------
+.center[![:scale 80%](images/create_workspace_gui.png)]
+
+With paid and trial accounts, you must create a workspace before migrating to remote state. Make sure you are in the workshop organization (not your sandbox), then create a new workspace.
+
+---
+name: change-to-local-exec
+Change to Local Execution
+-------------------------
+.center[![:scale 100%](images/change_to_local.png)]
+
+Go into the **General** settings for your workspace and change the execution mode to **Local**. Save your settings.
 
 ---
 name: chapter-4-tfe-lab
@@ -2567,13 +2585,13 @@ credentials "app.terraform.io" {
 }
 ```
 
-* Create a **remote_backend.tf** file in your local workspace. It should contain the following code. Replace YOURORG and YOURNAME with your own settings. The workspace will be created on-demand.
+* Create a **remote_backend.tf** file in your local workspace. It should contain the following code. Replace ORGNAME and YOURNAME with your own settings. The workspace will be created on-demand.
 
 ```hcl
 terraform {
   backend "remote" {
     hostname = "app.terraform.io"
-    organization = "YOURORG"
+    organization = "ORGNAME"
     workspaces {
       name = "YOURNAME-catapp"
     }
@@ -2690,7 +2708,7 @@ ARM_TENANT_ID                  0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec
 ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
 ```
 
-HINT: You'll need to find the **Variables** section of your workspace settings.
+HINT: You'll need to find the **Environment Variables** section of your workspace settings.
 
 ---
 name: chapter-5a-tfe-lab-solution
@@ -2862,6 +2880,11 @@ Your instructor will enable a Sentinel policy across the entire organization.
 
 A robot now stands guard between your Terraform code and the Azure APIs.
 
+Take a break or discuss Sentinel testing while **`terraform destroy`** is running.
+
+???
+Instructor notes: take a break here. Deleting a single VM in Azure can sometimes take upwards of ten minutes. Or do a side panel discussion on how Sentinel works. Either way you need to buy some time.
+
 ---
 name: create-your-application
 Re-deploy Your Application
@@ -2971,12 +2994,13 @@ Until now all our code changes have been done on our workstation. Let's upgrade 
 name: delete-and-destroy
 Delete the App & Destroy the Workspace
 -------------------------
-
+<br><br><br>
 First we need to move our workspace out of the training organization and into our sandbox organization.
 
 1. Go into the **Destruction and Deletion** settings for your workspace.
-2. Click on the **Queue Destroy Plan** button and wait until your app has been destroyed completely.
-3. Go back to the **Destruction and Deletion** settings and click on the red **Delete from Terraform Enterprise** button.
+2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
+
+Move on to the next slides while the destroy run proceeds.
 
 ---
 name: switch-back-to-sandbox
@@ -3052,8 +3076,8 @@ Click **Create Policy Set** at the bottom to save and activate your new policy.
 Now your policy will be enforced for all workspaces across your sandbox organization.
 
 ---
-name: chapter-7-tfe-lab
-.center[.lab-header[👩🏽‍🏫 Lab Exercise 7: Integrate with Github]]
+name: chapter-7a-tfe-lab
+.center[.lab-header[👩🏽‍🏫 Lab Exercise 7a: Integrate with Github]]
 <br><br>
 .center[![:scale 70%](images/integrate_github.png)]
 During this lab you'll follow the instructions on the Terraform docs site for connecting to Github. Visit the link below and carefully follow the instructions to integrate your Terraform Cloud organization with your Github account.
@@ -3061,8 +3085,8 @@ During this lab you'll follow the instructions on the Terraform docs site for co
 .center[https://www.terraform.io/docs/enterprise/vcs/github.html]
 
 ---
-name: chapter-7-tfe-lab-solution
-.center[.lab-header[👩🏽‍🏫 Lab Exercise 7: Solution]]
+name: chapter-7a-tfe-lab-solution
+.center[.lab-header[👩🏽‍🏫 Lab Exercise 7a: Solution]]
 <br><br>
 .center[![:scale 100%](images/vcs_success.png)]
 If you successfully connected your Terraform Cloud organization to Github, you'll see the above text in the VCS Providers section of your organization settings. 
@@ -3070,23 +3094,51 @@ If you successfully connected your Terraform Cloud organization to Github, you'l
 Congratulations, you can now create repo-backed Terraform workspaces.
 
 ---
-name: delete-local-creds
-Delete Your Local Azure Credentials
+name: create-new-workspace
+Create a New  Workspace
+-------------------------
+.center[![:scale 90%](images/create_repo_workspace.png)]
+Create a new workspace. This time you'll see an option to choose a git repository to connect to. Find your forked copy of the **`hashicat`** repo and click on **Create Workspace**.
+
+---
+name: recreate-all-variables
+Recreate Your Variables
 -------------------------
 <br><br>
-Now that our Azure creds are stored in our Terraform Cloud workspace, it's safe to delete them from our local machine.
+You'll need to recreate the environment variables and terraform variables in your workspace. Visit the [Chapter 5 Lab](#chapter-5-tfe-lab) to review how that's done.
 
-Commands:
-```powershell
-[Environment]::SetEnvironmentVariable("ARM_SUBSCRIPTION_ID", $null, "Machine")
-[Environment]::SetEnvironmentVariable("ARM_TENANT_ID", $null, "Machine")
-[Environment]::SetEnvironmentVariable("ARM_CLIENT_ID", $null, "Machine")
-[Environment]::SetEnvironmentVariable("ARM_CLIENT_SECRET", $null, "Machine")
-```
+Is there a faster way to do this?  Yes, there is a [Terraform Provider](https://www.terraform.io/docs/providers/tfe/index.html) for Terraform Enterprise that allows you to automate the configuration of workspaces and variables.
 
-Close and re-open Visual Studio Code to refresh your environment variables.
+You can also use the Terraform Enterprise API to populate variables in your workspaces.
 
-Now you can run **`terraform plan`** and **`terraform apply`** without stored credentials.
+---
+name: queue-a-run
+Queue Up a Run
+-------------------------
+<br><br><br>
+Use the **Queue Run** button in the UI to kick off a Terraform run. If your credentials variables were entered correctly you should see a plan and policy check fire off. 
+
+Don't confirm and apply yet. Click on the **Discard Run** button instead.
+
+---
+name: chapter-7b-tfe-lab
+.center[.lab-header[👩🏽‍🏫 Lab Exercise 7b: Sentinel and VCS]]
+<br><br>
+In this lab we'll experiment with the Sentinel policy we created earlier.
+
+Create a new variable called **vm_size** and set it to **Standard_A2**. Queue up a plan. What does the policy check say?
+
+Now set the **vm_size** back to **Standard_A0**. Does it pass this time? Go ahead and confirm the apply and build your webapp again.
+
+---
+name: chapter-7b-tfe-lab-solution
+.center[.lab-header[👩🏽‍🏫 Lab Exercise 7b: Solution]]
+<br><br>
+The Sentinel policy you created earlier checks any Azure Virtual Machines that appear in the plan, and looks at the configured vm_size. This is compared to the list of approved types which includes only **Standard_A0** and **Standard_A1**. Anything outside of these two approved sizes of VM will be flagged by Sentinel.
+
+Because you are the admin of your organization, you have the ability to override soft failures like this one. Ordinary users would have to ask an admin to override the policy failure for them. 
+
+We'll learn more about collaboration and access controls in the next chapters.
 
 ---
 name: TFE-Chapter-8
