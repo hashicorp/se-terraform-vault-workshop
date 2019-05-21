@@ -2363,6 +2363,11 @@ catapp_url = http://seanclab-meow.centralus.cloudapp.azure.com
 
 **Note**: There is a known bug with the null_provisioner that might cause your run to hang. https://github.com/hashicorp/terraform/issues/12596
 
+???
+When this happens (terminal hangs for more than 30 seconds), have your student simply click on the little trash can icon in VSC, then reopen the terminal and run `terraform apply` again.  The problem should be gone, as the run did complete successfully.  
+
+**We've built some terraform here that you probably wouldn't use in the real world.  It's been customized so that you can finish a run in 15 seconds instead of five to ten minutes. Some of what we did here is a bit unorthodox, for the sake of speed.**
+
 ---
 name: unleash-the-felis-catus
 Kittens as a Service (KaaS)
@@ -2385,17 +2390,18 @@ Redeploy your app with a different height and width and reload the page. If you 
 
 https://www.terraform.io/docs/configuration/variables.html#variables-on-the-command-line
 
+???
+The taint command described below is no longer necessary since our custom provisioner runs every time terraform runs.
 **HINT:** You'll need to run the **`terraform taint`** command on **`null_resource.configure-cat-app`** before you run **`terraform apply`**.
 
 ---
 name: chapter-2-tfe-lab-solution
 .center[.lab-header[👩🏽‍🔬 Lab Exercise 2: Solution]]
 <br><br><br>
-The **taint** command forces our provisioner to run again without rebuilding the entire VM. This allows us to test our changes quickly. Here's an example where we simply override variables on the command line:
+Here's an example where we simply override variables on the command line:
 
 Commands:
 ```powershell
-terraform taint null_resource.configure-cat-app
 terraform apply -var placeholder=fillmurray.com -var height=500 -var width=500
 ```
 
@@ -2775,15 +2781,8 @@ Remote execution is now enabled. The results of your apply will still stream bac
 ---
 name: chapter-5b-tfe-lab
 .center[.lab-header[👩🏻‍🏫 Lab Exercise 5b: Terraform UI Runs]]
-<br><br>
+<br><br><br>
 Configure three more variables in your workspace. These are the same **height**, **width**, and **placeholder** variables that we used before.
-
-Run a **`terraform taint`** command from your workstation. **`terraform taint`** is not supported in the GUI yet.
-
-Command:
-```powershell
-terraform taint null_resource.configure-cat-app
-```
 
 Now kick off a run in the using the **Queue Plan** button. Watch the results of your run in the UI.
 
@@ -3163,3 +3162,4 @@ class: center,middle
 Chapter 10  
 Private Module Registry
 ]
+
