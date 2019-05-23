@@ -1272,7 +1272,7 @@ Output:
 
 ---
 name: chapter-8a-lab
-.center[.lab-header[👩‍🔬👩‍💻 Lab Exercise 8a: EaaS]]
+.center[.lab-header[👩‍💻 Lab Exercise 8a: EaaS]]
 <br><br>
 **Exercise 1:**<br>
 Enter some more fake employee data into the application.

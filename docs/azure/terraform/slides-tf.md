@@ -2871,7 +2871,7 @@ Do not click the red Destroy from Terraform Enterprise button. This will delete 
 
 ---
 name: instructor-enable-sentinel
-🤖 Enable Sentinel Policy Enforcement 🤖 
+🤖 Sentinel Policy Enforcement 🤖 
 -------------------------
 .center[![:scale 60%](images/kitt_scanner.gif)]
 
