@@ -229,7 +229,6 @@ https://www.terraform.io/docs/providers/azurerm/r/mysql_server.html */
 #   administrator_login          = "${var.admin_username}"
 #   administrator_login_password = "${var.admin_password}"
 #   version                      = "5.7"
-#   ssl_enforcement              = "Disabled"
 # }
 
 /* This is a sample database that we'll populate with data from our app.

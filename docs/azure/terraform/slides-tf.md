@@ -2663,14 +2663,6 @@ ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
 ```
 
 ---
-name: a-better-way-creds
-A Better Way to Store Sensitive Data
--------------------------
-.center[![:scale 100%](images/encrypted_vars.png)]
-
-Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text. 
-
----
 name: enable-remote-execution
 Enable Remote Execution
 -------------------------
@@ -2678,6 +2670,14 @@ Enable Remote Execution
 .center[![:scale 100%](images/remote_execution.png)]
 
 Before we migrate our sensitive API credentials into the application we need to enable remote execution. Under the **General** settings for your workspace, change the Execution Mode to **Remote**. Click the **Save Settings** button at the bottom of the page.
+
+---
+name: a-better-way-creds
+A Better Way to Store Sensitive Data
+-------------------------
+.center[![:scale 100%](images/encrypted_vars.png)]
+
+Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text. 
 
 ---
 name: delete-state-file
