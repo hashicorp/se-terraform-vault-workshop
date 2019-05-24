@@ -38,6 +38,7 @@ choco install winscp -y
 choco install visualstudiocode -y
 choco install googlechrome -y
 choco install poshgit -y
+choco install jq -y
 
 # Create a Desktop shortcut for Cmder
 # Note: Set your default shell to Powershell the first time you run this.
