@@ -2609,8 +2609,31 @@ terraform {
 name: chapter-4-tfe-lab-solution-2
 .center[.lab-header[👩🏽‍🔬 Lab Exercise 4: Solution Part 2]]
 <br><br>
-Run a **`terraform init`** command to migrate to remote state.
+Run a **`terraform init`** command to migrate to remote state.  You should see output similar to what's below. Answer **`yes`** to the confirmation prompt:
 
+Command:
+```powershell
+terraform init
+```
+
+Output:
+```tex
+Initializing the backend...
+Do you want to copy existing state to the new backend?
+  Pre-existing state was found while migrating the previous "local" backend to the
+  newly configured "remote" backend. No existing state was found in the newly
+  configured "remote" backend. Do you want to copy this state to the new "remote"
+  backend? Enter "yes" to copy and "no" to start with an empty state.
+
+  Enter a value: yes
+
+*Successfully configured the backend "remote"! Terraform will automatically
+*use this backend unless the backend configuration changes.
+```
+---
+name: chapter-4-tfe-lab-solution-3
+.center[.lab-header[👩🏽‍🔬 Lab Exercise 4: Solution Part 3]]
+<br><br>
 Now when you run **`terraform apply`**, your state is automatically stored in your Terraform Cloud account. This feature is available to all free and paid tier users.
 
 .center[![:scale 100%](images/remote_state_free.png)]
@@ -2986,15 +3009,20 @@ Version control systems are applications that allow users to store, track, test,
 name: tfe-infra-as-code-workflow
 Infrastructure as Code
 -------------------------
+<br><br>
 Terraform Enterprise can directly integrate with source code repos in Github Enteprise, Gitlab, and Bitbucket. This allows you to build simple devops workflows with code reviews, testing and approvals.
 
 Until now all our code changes have been done on our workstation. Let's upgrade our workspace to use the repository fork we created earlier. 
 
+???
+TODO: Add an image to this slide.
+
 ---
-name: delete-and-destroy
-Delete the App & Destroy the Workspace
+name: delete-the-app
+Delete the App
 -------------------------
-<br><br><br>
+.center[![:scale 100%](images/queue_destroy_plan.png)]
+
 First we need to move our workspace out of the training organization and into our sandbox organization.
 
 1. Go into the **Destruction and Deletion** settings for your workspace.
@@ -3006,26 +3034,33 @@ Move on to the next slides while the destroy run proceeds.
 name: switch-back-to-sandbox
 Change to Your Sandbox Org
 -------------------------
-.center[![:scale 70%](images/choose_org.png)]
+<br>
+.center[![:scale 50%](images/choose_org.png)]
+
 Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Cloud.
 
 ---
-name: restrict-vm-types
-Restrict Allowed VM Types
+name: create-a-new-policy-0
+Create a New Sentinel Policy
 -------------------------
-<br><br>Before we re-create your workspace, let's implement a simple Sentinel policy for our organization. 
+.center[![:scale 70%](images/create_a_new_policy.png)]
+Before we re-create your workspace, let's implement a simple Sentinel policy for our organization. 
 
 Under your **Organization** settings select **Policies** and then **Create a New Policy**. 
 
-Name it **restrict_allowed_vm_types**. 
+---
+name: create-a-new-policy-1
+Create a New Sentinel Policy
+-------------------------
+.center[![:scale 45%](images/policy_name_and_mode.png)]
 
-The Sentinel code for your policy is on the next slide.
+Name it **restrict_allowed_vm_types**. You can put whatever you like in the description.
 
-Set your enforcement mode to **soft-mandatory**. Save the policy.
+The Sentinel code for your policy is on the next slide. Copy and paste it into the **Policy Code** field.
 
 ---
-name: restrict-vm-types-code
-Restrict Allowed VM Types - Code
+name: create-a-new-policy-2
+Sentinel Policy Code - Copy & Paste
 -------------------------
 ```hcl
 import "tfplan"
@@ -3058,17 +3093,42 @@ main = rule {
 ```
 
 ---
-name: create-policy-set
+name: create-a-new-policy-3
+Create a New Sentinel Policy
+-------------------------
+.center[![:scale 60%](images/create_policy_button.png)]
+<br><br>
+Leave the Policy Sets box alone for now. We will create a policy set on the next slide.
+
+Click **Create Policy** to proceed.
+
+
+---
+name: create-policy-set-0
 Create a Policy Set
 -------------------------
-This is how you determine where your policy gets applied. 
+.center[![:scale 60%](images/create_a_new_policy_set_gui.png)]
+<br>
+**Policy Sets** determine where your policies are applied. Policies can be applied to groups of workspaces, or to your entire organization.
 
 Under **Policy Sets** select **Create a New Policy Set**.
 
-Call it **global_restrict_vm_size**.
+---
+name: create-policy-set-1
+Create a Policy Set
+-------------------------
+.center[![:scale 50%](images/policy_set_settings.png)]
+<br>
+Name your policy set **global_restrict_vm_size**.
 
 Make sure **Policies enforced on all workspaces** is selected.
 
+---
+name: create-policy-set-2
+Create a Policy Set
+-------------------------
+.center[![:scale 60%](images/add_policy_to_policy_set.png)]
+<br>
 Add the **restrict_allowed_vm_types** policy you created in the previous step to your policy set. 
 
 Click **Create Policy Set** at the bottom to save and activate your new policy.
@@ -3095,50 +3155,244 @@ Congratulations, you can now create repo-backed Terraform workspaces.
 
 ---
 name: create-new-workspace
-Create a New  Workspace
+Create a New Workspace
 -------------------------
-.center[![:scale 90%](images/create_repo_workspace.png)]
+.center[![:scale 50%](images/create_repo_workspace.png)]
 Create a new workspace. This time you'll see an option to choose a git repository to connect to. Find your forked copy of the **`hashicat`** repo and click on **Create Workspace**.
 
 ---
-name: recreate-all-variables
-Recreate Your Variables
+name: update-remote-backend
+Update the Remote Backend
 -------------------------
-<br><br>
-You'll need to recreate the environment variables and terraform variables in your workspace. Visit the [Chapter 5 Lab](#chapter-5-tfe-lab) to review how that's done.
+Update your **remote_backend.tf** file so that the organization matches your sandbox org:
 
-Is there a faster way to do this?  Yes, there is a [Terraform Provider](https://www.terraform.io/docs/providers/tfe/index.html) for Terraform Enterprise that allows you to automate the configuration of workspaces and variables.
+```hcl
+terraform {
+  backend "remote" {
+    hostname = "app.terraform.io"
+*   organization = "seanc-sandbox"
+    workspaces {
+      name = "seanc-catapp"
+    }
+  }
+}
+```
 
-You can also use the Terraform Enterprise API to populate variables in your workspaces.
+Save the **remote_backend.tf** file.
 
 ---
-name: queue-a-run
-Queue Up a Run
+name: migrate-remote-backend
+Migrate the State
 -------------------------
-<br><br><br>
-Use the **Queue Run** button in the UI to kick off a Terraform run. If your credentials variables were entered correctly you should see a plan and policy check fire off. 
+Command:
+```powershell
+terraform init
+```
 
-Don't confirm and apply yet. Click on the **Discard Run** button instead.
+Output:
+```tex
+Terraform has detected that the configuration specified for the backend
+has changed. Terraform will now check for existing state in the backends.
+
+Acquiring state lock. This may take a few moments...
+Do you want to copy existing state to the new backend?
+  Pre-existing state was found while migrating the previous "remote" backend to the
+  newly configured "remote" backend. No existing state was found in the newly
+  configured "remote" backend. Do you want to copy this state to the new "remote"
+  backend? Enter "yes" to copy and "no" to start with an empty state.
+
+  Enter a value: yes
+
+Releasing state lock. This may take a few moments...
+
+*Successfully configured the backend "remote"! Terraform will automatically
+*use this backend unless the backend configuration changes.
+```
+
+???
+We're actually moving your state file from one organization to another. Cool!
+
+---
+name: switch-to-git-bash
+Switch to Git Bash
+-------------------------
+For the next lab we're going to change our local shell to Git Bash.
+
+Hold down the **CTRL** and **SHIFT** keys and press **P**. **CTRL-SHIFT-P** is the Visual Studio Code shortcut for the **Command Palette**.
+
+.center[![:scale 100%](images/command_shift_p.png)]
+
+When the Command Palette opens up type in "terminal default shell". This will bring you to the options page for your Terminal shell.
+
+---
+name: switch-to-git-bash
+Switch to Git Bash
+-------------------------
+.center[![:scale 100%](images/select_git_bash_2.png)]
+
+Change your default shell to Git Bash. 
+
+Open a new terminal window in VSC. You should now have a bash prompt. Try a **`pwd`** command:
+
+Command:
+```bash
+pwd
+```
+
+Output:
+```bash
+/c/Users/hashicorp/Desktop/hashicat
+```
+
+---
+name: install-terraform-helper-0
+Install the Terraform Helper Tool
+-------------------------
+Terraform Helper is a command line tool that makes it easier to manage Terraform Enterprise workspaces and variables. The source code can be found at the following URL:
+
+https://github.com/hashicorp-community/tf-helper
+
+**Step 1**: Run the **`install_tfh.sh`** script. You may simply copy and paste the commands below:
+
+```bash
+cd ~/Desktop/hashicat/files
+./install_tfh.sh
+source ~/.bash_profile
+```
+
+**Step 2**: Configure the required environment variables. _Replace with your own organization and workspace._
+
+```bash
+export TFH_org=ORGNAME
+export TFH_name=WORKSPACENAME
+```
+
+_Instructions continue on the next slide..._
+
+---
+name: install-terraform-helper-1
+Install the Terraform Helper Tool
+-------------------------
+**Step 3**: Auto-generate your curlrc file with the curl-config helper subcommand:
+
+Command:
+```bash
+tfh curl-config -tfrc
+```
+
+Output:
+```bash
+/c/Users/hashicorp/.tfh/curlrc generated from /c/Users/hashicorp/.terraformrc
+```
+
+Now you are ready to use the **`tfh`** command line tool. Proceed to the next slide.
 
 ---
 name: chapter-7b-tfe-lab
-.center[.lab-header[👩🏽‍🏫 Lab Exercise 7b: Sentinel and VCS]]
-<br><br>
-In this lab we'll experiment with the Sentinel policy we created earlier.
+.center[.lab-header[⚗️ Lab Exercise 7b: Upload Variables]]
+<br>
+You'll need to recreate the environment variables and terraform variables in your workspace. This is fairly easy to do with the Terraform Helper tool. Run the following command, and _don't forget to change **yourprefix** to your own prefix_. The rest of the command can remain the same.
 
-Create a new variable called **vm_size** and set it to **Standard_A2**. Queue up a plan. What does the policy check say?
+Command:
+```bash
+tfh pushvars -overwrite-all -dry-run false -senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" -env-var "ARM_TENAN
+T_ID=$ARM_TENANT_ID" -env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" -env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID"
+-var "prefix=yourprefix"
+```
 
-Now set the **vm_size** back to **Standard_A0**. Does it pass this time? Go ahead and confirm the apply and build your webapp again.
+Output:
+```tex
+Updating prefix type:terraform hcl:false sensitive:false value:hashicat
+Updating ARM_TENANT_ID type:env hcl:false sensitive:false value:0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec
+Updating ARM_SUBSCRIPTION_ID type:env hcl:false sensitive:false value:14692f20-9428-451b-8298-102ed4e39c2a
+Updating ARM_CLIENT_ID type:env hcl:false sensitive:false value:91299f64-f951-4462-8e97-9efb1d215501
+Updating ARM_CLIENT_SECRET type:env hcl:false sensitive:true value:REDACTED
+```
 
 ---
 name: chapter-7b-tfe-lab-solution
-.center[.lab-header[👩🏽‍🏫 Lab Exercise 7b: Solution]]
-<br><br>
-The Sentinel policy you created earlier checks any Azure Virtual Machines that appear in the plan, and looks at the configured vm_size. This is compared to the list of approved types which includes only **Standard_A0** and **Standard_A1**. Anything outside of these two approved sizes of VM will be flagged by Sentinel.
+.center[.lab-header[⚗️ Lab Exercise 7b: Solution]]
+<br>
+.center[![:scale 100%](images/encrypted_vars.png)]
+You should now see all your variables stored safely in the Terraform Enterprise console.
 
-Because you are the admin of your organization, you have the ability to override soft failures like this one. Ordinary users would have to ask an admin to override the policy failure for them. 
+---
+name: chapter-7c-tfe-lab-part-3
+.center[.lab-header[⚗️ Lab 7c: Add More Variables]]
+<br><br><br>
+**Extra Credit:**
 
-We'll learn more about collaboration and access controls in the next chapters.
+See if you can add your **height**, **width**, and **placeholder** variables to your workspace by editing the command we ran in on the last slide.
+
+Read up on the **`-overwrite-all`** and **`-dry-run`** flags.
+
+---
+name: run-terraform-apply-vcs
+Run Terraform Apply
+-------------------------
+Command:
+```bash
+terraform apply -auto-approve
+```
+
+Output:
+```json
+...
+## Policy 1: restrict_allowed_vm_types.sentinel (soft-mandatory)
+
+Result: true
+
+TRUE - restrict_allowed_vm_types.sentinel:21:1 - Rule "main"
+  TRUE - restrict_allowed_vm_types.sentinel:15:5 - all vms as _, instances {
+        all instances as index, r {
+                r.applied.vm_size in allowed_vm_sizes
+        }
+}
+
+TRUE - restrict_allowed_vm_types.sentinel:14:1 - Rule "vm_size_allowed"
+...
+```
+
+The Sentinel policy we created earlier is passing, so we are allowed to proceed. You can now rebuild the app via the GUI or command line.
+
+???
+Instructor note: you must run `terraform apply` at least once on the command line before GUI-driven queues will work. You don't necessarily need to point this out unless someone has an Error Queueing Plan message.
+
+---
+name: delete-local-creds
+Delete Local Credentials
+-------------------------
+<br>
+It is now safe to delete the ARM_CLIENT_SECRET environment variable from your workstation. You can do this from either Git Bash or Powershell:
+
+Git Bash:
+```bash
+unset ARM_CLIENT_SECRET
+```
+
+Powershell:
+```powershell
+Remove-Item env:ARM_CLIENT_SECRET
+```
+
+Congratulations, you just made your Terraform workstation more secure! 
+
+---
+name: tfe-chapter-7-review
+📝 Chapter 7 Review
+-------------------------
+.contents[
+In this chapter we:
+* Connected our Organization to VCS
+* Created a New Workspace
+* Added a Sentinel Policy
+* Migrated Terraform State
+* Installed the TFH Tool
+* Uploaded Environment Variables
+* Tested the Sentinel Policy
+* Re-Deployed our Application from VCS
+* Deleted Insecure Local Credentials
+]
 
 ---
 name: TFE-Chapter-8
@@ -3147,6 +3401,27 @@ class: center,middle
 Chapter 8  
 Collaboration for Teams
 ]
+
+---
+name: chapter-8a-tfe-lab
+.center[.lab-header[👩🏽‍🏫 Lab Exercise 8a: Sentinel and VCS]]
+<br>
+.center[![:scale 100%](images/standard_a2.png)]
+In this lab we'll experiment with the Sentinel policy we created earlier.
+
+Create a new variable called **vm_size** and set it to **Standard_A2**. Run **`terraform apply`** on the command line. What does the policy check say?
+
+Now set the **vm_size** back to **Standard_A0**. Does it pass this time? Go ahead and confirm the apply.
+
+---
+name: chapter-8a-tfe-lab-solution
+.center[.lab-header[👩🏽‍🏫 Lab Exercise 8a: Solution]]
+<br><br>
+The Sentinel policy you created earlier checks any Azure Virtual Machines that appear in the plan, and looks at the configured vm_size. This is compared to the list of approved types which includes only **Standard_A0** and **Standard_A1**. Anything outside of these two approved sizes of VM will be flagged by Sentinel.
+
+Because you are the admin of your organization, you have the ability to override soft failures like this one. Ordinary users would have to ask an admin to override the policy failure for them. 
+
+We'll learn more about collaboration and access controls in the next chapters.
 
 ---
 name: TFE-Chapter-9
