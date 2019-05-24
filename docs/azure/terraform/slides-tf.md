@@ -2680,20 +2680,6 @@ A Better Way to Store Sensitive Data
 Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text. 
 
 ---
-name: delete-state-file
-Delete Your State File
--------------------------
-<br><br><br>
-**WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Cloud.
-
-Once you've confirmed that remote state is working, go ahead and delete the **terraform.tfstate** file from your local workspace directory.
-
-Command:
-```powershell
-Remove-Item terraform.tfstate
-```
-
----
 name: chapter-5-tfe-lab
 .center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Sensitive Variables]]
 <br><br>
@@ -2777,6 +2763,20 @@ https://app.terraform.io/app/hashicorp-workshop/seanc-catapp/runs/run-1F94Y1fTNs
 ```
 
 Remote execution is now enabled. The results of your apply will still stream back into your console window, but Terraform is now running in the cloud. You can also watch the Terraform apply output in the GUI.
+
+---
+name: delete-state-file
+Delete Your State File
+-------------------------
+<br><br><br>
+**WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Cloud.
+
+Once you've confirmed that remote state is working, go ahead and delete the **terraform.tfstate** file from your local workspace directory.
+
+Command:
+```powershell
+Remove-Item terraform.tfstate
+```
 
 ---
 name: chapter-5b-tfe-lab
