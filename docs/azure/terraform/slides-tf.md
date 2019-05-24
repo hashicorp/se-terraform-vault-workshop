@@ -2618,6 +2618,20 @@ Now when you run **`terraform apply`**, your state is automatically stored in yo
 Enterprise users gain extra features like remote execution, secure variable storage, code reviews, and collaboration tools.
 
 ---
+name: delete-state-file
+Delete Your State File
+-------------------------
+<br><br><br>
+**WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Cloud.
+
+Once you've confirmed that remote state is working, go ahead and delete the **terraform.tfstate** file from your local workspace directory.
+
+Command:
+```powershell
+Remove-Item terraform.tfstate
+```
+
+---
 name: tfe-chapter-4-review
 📝 Chapter 4 Review
 -------------------------
@@ -2763,20 +2777,6 @@ https://app.terraform.io/app/hashicorp-workshop/seanc-catapp/runs/run-1F94Y1fTNs
 ```
 
 Remote execution is now enabled. The results of your apply will still stream back into your console window, but Terraform is now running in the cloud. You can also watch the Terraform apply output in the GUI.
-
----
-name: delete-state-file
-Delete Your State File
--------------------------
-<br><br><br>
-**WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Cloud.
-
-Once you've confirmed that remote state is working, go ahead and delete the **terraform.tfstate** file from your local workspace directory.
-
-Command:
-```powershell
-Remove-Item terraform.tfstate
-```
 
 ---
 name: chapter-5b-tfe-lab
