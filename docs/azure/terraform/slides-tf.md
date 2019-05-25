@@ -3468,7 +3468,7 @@ name: chapter-7d-tfe-lab-solution
 <br>
 You can click the source code button on the left side of VSC, enter a comment, commit your changes, then push them to the remote repo:
 
-.center[![:scale 70%](images/git_commit_push.png)]
+.center[![:scale 80%](images/git_commit_push.png)]
 
 Or via the command line:
 
