@@ -1073,6 +1073,16 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
 
 ---
+name: what-did-we-build
+What Did We Build?
+-------------------------
+.center[![:scale 60%](images/blast_radius_graph_1.png)]
+This graph represents the infrastructure we just built. You can see the azurerm provider, your resource group, and two variables, location and prefix.
+
+???
+The grayed out items are variables that we're not using yet, and therefore they have no dependencies. This graph was created with the free Blast Radius tool.
+
+---
 name: terraform-plan-again
 Terraform Plan - Repeat
 -------------------------
@@ -1295,6 +1305,16 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 The auto-approve flag is so we don't have to type 'yes' every time we run terraform.
 
 ---
+name: tf-dependency-map
+Expanding the Graph
+-------------------------
+.center[![:scale 50%](images/blast_radius_graph_3.png)]
+The terraform resource graph has expanded to include our virtual network.
+
+???
+This is a good spot to talk a bit about how the dependency graph gets formed.
+
+---
 name: chapter-3c-lab
 .center[.lab-header[👩🏽‍💻 Lab Exercise 3c: Build the Vault Lab]]
 <br><br><br>
@@ -1338,6 +1358,16 @@ resource "azurerm_subnet" "subnet" {
 ```
 
 ---
+name: tf-full-graph
+Terraform Graph
+-------------------------
+.center[![:scale 70%](images/blast_radius_graph_2.png)]
+This graph represents your entire lab environment. Check out the free [Blast Radius](https://github.com/28mm/blast-radius) tool to generate your own terraform graphs.
+
+???
+
+
+---
 name: chapter-3-review
 📝 Chapter 3 Review
 -------------------------
@@ -1347,6 +1377,7 @@ In this chapter we:
 * Ran terraform plan, graph, apply and destroy
 * Learned about dependencies
 * Built the lab environment
+* Viewed a graph of the lab
 ]
 
 ---
@@ -1361,7 +1392,7 @@ Organizing Your Terraform Code
 name: organizing-your-terraform
 Organize Your Terraform Code
 -------------------------
-.center[![:scale 70%](images/terraform_config_files.png)]
+.center[![:scale 85%](images/terraform_config_files.png)]
 You should have three files that end in the \*.tf extension on your workstation. The convention is to have a main.tf, variables.tf, and outputs.tf. You may add more tf files if you wish.
 
 ---
@@ -1755,7 +1786,17 @@ terraform taint azurerm_virtual_machine.vault
 terraform apply -auto-approve
 ```
 
-.center[![:scale 60%](images/hashimoo.png)]
+```bash
+(remote-exec): ___________
+(remote-exec):< Mooooooo! >
+(remote-exec): -----------
+(remote-exec):        \   ^__^
+(remote-exec):         \  (oo)\_______
+(remote-exec):            (__)\       )\/\
+(remote-exec):                ||----w |
+(remote-exec):                ||     ||
+ Creation complete after 4m20s...
+```
 
 ???
 You might walk through this one with your students, showing them how easy it is to run commands on your target machine. The cowsay program was installed on your Linux target by the setup.sh script in the files directory.
@@ -1920,50 +1961,9 @@ Please run **`terraform destroy`** if you're not doing the Vault workshop. This 
 [Intro to Terraform Enterprise](#Intro-to-Terraform-Enterprise) - Explore Terraform Cloud and Enterprise
 
 ---
-name: Appendix-A-Terraform-Graph
+name: Appendix-A-Intro-to-TF-Enterprise
 class: center,middle
-Appendix A - Terraform Graph
-=========================
-???
-These are currently broken in VSC. Hopefully a fix comes soon.
-
----
-name: terraform-graph
-Terraform Graph
--------------------------
-<br><br><br>
-Let's take a closer look at what Terraform wants to build. Use the command palette menu, or the CTRL-SHIFT-P keyboard shortcut to bring up the Command Palette.
-
-.center[![:scale 60%](images/command_palette.png)]
-
----
-name: terraform-graph-2
-Terraform Graph
--------------------------
-<br><br><br>
-Start typing 'terraform' into the Command Palette and you'll see some different options in a pull-down menu. Choose the Terraform: Preview Graph option. Select graph type 'plan'.
-
-.center[![:scale 80%](images/preview_graph.png)]
-
----
-name: terraform-graph-3
-Terraform Graph
--------------------------
-You'll see a graph pop up in a new tab. This is a map of all the resources and dependencies that Terraform is keeping track of.
-
-.center[![:scale 100%](images/resource_graph.png)]
-
-???
-**This is the graph for the fully completed workshop lab once it is built.**
-
-**You might have noticed that we have a bunch of variables that we aren't using yet. Don't worry, we will use them as the workshop progresses. You can click on any of the nodes in the graph to jump to the specific part of your code where it is being referenced. Any time you want to update the graph simply use the Command Palette to regenerate it.**
-
-NOTE: The graph is a bit more visible with a 'light' color theme.
-
----
-name: Appendix-B-Intro-to-TF-Enterprise
-class: center,middle
-Appendix B - Intro to Terraform Enterprise
+Appendix A - Intro to Terraform Enterprise
 =========================
 
 ---
@@ -1990,7 +1990,7 @@ Table of Contents
 5. Protecting Sensitive Variables
 6. Sentinel Policy Enforcement
 7. Version Control Systems (VCS) and Terraform
-8. Collaboration for Teams
+8. VCS Collaboration for Teams
 9. Access Controls
 10. Private Module Registry
 ]
@@ -2161,7 +2161,7 @@ Terraform Workstation Requirements
 -------------------------
 <br><br>In order to proceed you'll need a Terraform workstation and valid Azure account credentials. You will also need a free [github.com](https://github.com) account, and have both git and terraform installed on your workstation.
 
-**Option 1:** Use a cloud-based workstation. Visit the [Set Up Your Workstation](#Chapter-1) chapter of the Intro to Terraform workshop.
+**Option 1:** Use a cloud-based workstation. Your instructor will provide you with the address and RDP credentials.
 
 **Option 2:** Bring your own Azure account and use Azure Cloudshell.
 
@@ -2273,7 +2273,7 @@ I've seen this popup sometimes take two tries to save properly. It might be a bu
 
 ---
 name: tfe-workstation-setup-9
-Clone the Training Repo
+Clone Your Training Repo
 -------------------------
 <br><br>
 Run the following commands to clone the training repository from GitHub. Replace **GITUSER** with your own git username.
@@ -2365,10 +2365,10 @@ Outputs:
 catapp_url = http://seanclab-meow.centralus.cloudapp.azure.com
 ```
 
-**Note**: There is a known bug with the null_provisioner that might cause your run to hang. https://github.com/hashicorp/terraform/issues/12596
+**Note**: There is a known bug with the null_provisioner that *may* cause your run to hang. https://github.com/hashicorp/terraform/issues/12596
 
 ???
-When this happens (terminal hangs for more than 30 seconds), have your student simply click on the little trash can icon in VSC, then reopen the terminal and run `terraform apply` again.  The problem should be gone, as the run did complete successfully.  
+When this happens (terminal hangs for more than 30 seconds), have your student simply click on the little trash can icon in VSC, then reopen the terminal and run `terraform apply` again.  The problem should be gone, as the run did complete successfully.  NOTE: This issue appears to be fixed with Terraform 0.12
 
 **We've built some terraform here that you probably wouldn't use in the real world.  It's been customized so that you can finish a run in 15 seconds instead of five to ten minutes. Some of what we did here is a bit unorthodox, for the sake of speed.**
 
@@ -2448,7 +2448,7 @@ Terraform Cloud or Terraform Enterprise?
 
 **[Terraform Enterprise](https://www.hashicorp.com/go/terraform-enterprise)** is the same application, but it runs in your cloud environment or data center. Some users require more control over the Terraform Enterprise application, or wish to run it in restricted networks behind corporate firewalls.
 
-The feature list for these two offerings is nearly identical. We will be using free Terraform Cloud accounts for our lab exercises today.*
+The feature list for these two offerings is nearly identical. We will be using Terraform Cloud accounts for our lab exercises today.*
 
 ???
 At the instructor's discretion, this course can also be taught with an on-prem Terraform Enterprise server. We highly recommend sticking to the cloud based training though, to avoid any blockers or issues in the enterprise...
@@ -2518,11 +2518,14 @@ Create an Organization
 
 Create a new organization for your own development work. Name it **yourname-sandbox**. We'll be using this later in the training.
 
+???
+Instructors, have your students write their org names on a piece of paper or the whiteboard. You'll need to go into the admin console and upgrade them all to trial organizations.
+
 ---
 name: tfe-choose-an-org
 Select the Workshop Organization
 -------------------------
-.center[![:scale 70%](images/choose_org.png)]
+.center[![:scale 70%](images/choose_training_org.png)]
 Your instructor will invite you to the workshop organization. Once you've been invited you'll see a second organization in the org pull-down menu. Change from your sandbox organization into the workshop organization.
 
 ---
@@ -2550,6 +2553,7 @@ Remote State
 name: why-remote-state
 Why Remote State?
 -------------------------
+<br>
 ```tex
   "primary": {
       "id": "/subscriptions/14692f20-9428-451b-8298-102ed4e39c2a/resourceGroups/seanclab-workshop/providers/Microsoft.Network/networkInterfaces/seanclab-catapp-nic",
@@ -2590,7 +2594,7 @@ terraform {
     hostname = "app.terraform.io"
     organization = "ORGNAME"
     workspaces {
-      name = "YOURNAME-catapp"
+      name = "YOURWORKSPACE"
     }
   }
 }
@@ -2635,7 +2639,7 @@ credentials "app.terraform.io" {
 }
 ```
 
-* Create a **remote_backend.tf** file in your local workspace. It should contain the following code. Replace ORGNAME and YOURNAME with your own settings. The workspace will be created on-demand.
+* Rename the **remote_backend.tf.disabled** file to **remote_backend.tf**. It should contain the following code. Replace ORGNAME and YOURWORKSPACE with your own settings.
 
 ```hcl
 terraform {
@@ -2643,7 +2647,7 @@ terraform {
     hostname = "app.terraform.io"
     organization = "ORGNAME"
     workspaces {
-      name = "YOURNAME-catapp"
+      name = "YOURWORKSPACE"
     }
   }
 }
@@ -2847,7 +2851,7 @@ Remote execution is now enabled. The results of your apply will still stream bac
 
 ---
 name: chapter-5b-tfe-lab
-.center[.lab-header[👩🏻‍🏫 Lab Exercise 5b: Terraform UI Runs]]
+.center[.lab-header[🖱️ Lab Exercise 5b: Terraform UI Runs]]
 <br><br><br>
 Configure three more variables in your workspace. These are the same **height**, **width**, and **placeholder** variables that we used before.
 
@@ -2855,7 +2859,7 @@ Now kick off a run in the using the **Queue Plan** button. Watch the results of 
 
 ---
 name: chapter-5b-tfe-lab-solution
-.center[.lab-header[👩🏻‍🏫 Lab Exercise 5b: Solution]]
+.center[.lab-header[🖱️ Lab Exercise 5b: Solution]]
 <br><br>
 .center[![:scale 100%](images/variables_answer.png)]
 The local variables on your workstation are no longer used. Variables are now all stored in your workspace.
@@ -3082,7 +3086,7 @@ name: switch-back-to-sandbox
 Change to Your Sandbox Org
 -------------------------
 <br>
-.center[![:scale 50%](images/choose_org.png)]
+.center[![:scale 70%](images/choose_org.png)]
 
 Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Cloud.
 
@@ -3211,6 +3215,7 @@ Create a new workspace. This time you'll see an option to choose a git repositor
 name: update-remote-backend
 Update the Remote Backend
 -------------------------
+<br><br>
 Update your **remote_backend.tf** file so that the organization matches your sandbox org:
 
 ```hcl
@@ -3263,6 +3268,7 @@ We're actually moving your state file from one organization to another. Cool!
 name: switch-to-git-bash
 Switch to Git Bash
 -------------------------
+<br>
 For the next lab we're going to change our local shell to Git Bash.
 
 Hold down the **CTRL** and **SHIFT** keys and press **P**.
@@ -3279,9 +3285,7 @@ Switch to Git Bash
 -------------------------
 .center[![:scale 100%](images/select_git_bash_2.png)]
 
-Change your default shell to Git Bash. 
-
-Open a new terminal window in VSC. You should now have a bash prompt. Try a **`pwd`** command:
+Change your default shell to Git Bash and launch a new Terminal window. The rest of the training commands will be run inside this shell. Note that your file paths look different under Git Bash:
 
 Command:
 ```bash
@@ -3292,6 +3296,9 @@ Output:
 ```bash
 /c/Users/hashicorp/Desktop/hashicat
 ```
+
+???
+Terraform is a multi-platform tool and can be run on Mac or Windows, Bash or Powershell.
 
 ---
 name: install-terraform-helper-0
@@ -3339,13 +3346,16 @@ Now you are ready to use the **`tfh`** command line tool. Proceed to the next sl
 ---
 name: chapter-7b-tfe-lab
 .center[.lab-header[⚗️ Lab Exercise 7b: Upload Variables]]
-<br>
+<br><br>
 You'll need to recreate the environment variables and terraform variables in your workspace. This is fairly easy to do with the Terraform Helper tool. Run the following command, and _don't forget to change **yourprefix** to your own prefix_. The rest of the command can remain the same.
 
 Command:
 ```bash
-tfh pushvars -overwrite-all -dry-run false -senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" -env-var "ARM_TENAN
-T_ID=$ARM_TENANT_ID" -env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" -env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID"
+tfh pushvars -overwrite-all -dry-run false \
+-senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" \
+-env-var "ARM_TENANT_ID=$ARM_TENANT_ID" \
+-env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" \
+-env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID" \
 -var "prefix=yourprefix"
 ```
 
@@ -3361,7 +3371,7 @@ Updating ARM_CLIENT_SECRET type:env hcl:false sensitive:true value:REDACTED
 ---
 name: chapter-7b-tfe-lab-solution
 .center[.lab-header[⚗️ Lab Exercise 7b: Solution]]
-<br>
+<br><br>
 .center[![:scale 100%](images/encrypted_vars.png)]
 You should now see all your variables stored safely in the Terraform Enterprise console.
 
@@ -3369,7 +3379,7 @@ You should now see all your variables stored safely in the Terraform Enterprise 
 name: chapter-7c-tfe-lab-part-3
 .center[.lab-header[🐱 Lab 7c: Add More Variables]]
 <br><br><br>
-**Extra Credit:**
+**Extra Credit Lab:**
 
 See if you can add your **height**, **width**, and **placeholder** variables to your workspace by editing the command we ran in on the last slide.
 
@@ -3383,10 +3393,16 @@ Simply add more **`-var`** flags at the end of the command to update your variab
 
 Command:
 ```bash
-tfh pushvars -overwrite-all -dry-run false -senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" -env-var "ARM_TENAN
-T_ID=$ARM_TENANT_ID" -env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" -env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID"
--var "prefix=yourprefix" -var "height=600" -var "width=800" -var "placeholder=fillmurray.com"
+tfh pushvars -overwrite-all -dry-run false \
+-senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" \
+-env-var "ARM_TENANT_ID=$ARM_TENANT_ID" \
+-env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" \
+-env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID" \
+-var "prefix=yourprefix" -var "height=600" -var "width=800" \
+-var "placeholder=fillmurray.com"
 ```
+
+NOTE: The **`\`** characters indicate that the command should continue on the next line. This entire block of text should be copied and pasted into the terminal all at once.
 
 ---
 name: run-terraform-apply-vcs
@@ -3398,26 +3414,18 @@ terraform apply -auto-approve
 ```
 
 Output:
-```json
-...
-## Policy 1: restrict_allowed_vm_types.sentinel (soft-mandatory)
-Result: true
+```tex
+Error: Apply not allowed for workspaces with a VCS connection
 
-TRUE - restrict_allowed_vm_types.sentinel:21:1 - Rule "main"
-  TRUE - restrict_allowed_vm_types.sentinel:15:5 - all vms as _, instances {
-        all instances as index, r {
-                r.applied.vm_size in allowed_vm_sizes
-        }
-}
-
-TRUE - restrict_allowed_vm_types.sentinel:14:1 - Rule "vm_size_allowed"
-...
+A workspace that is connected to a VCS requires the VCS-driven workflow to
+ensure that the VCS remains the single source of truth.
 ```
 
-The Sentinel policy we created earlier is passing, so we are allowed to proceed. You may now rebuild the app via the GUI or command line. Trigger some runs from the command line and GUI to test it out.
+Now that we have migrated to a VCS-backed configuration, the **`terraform apply`** command no longer works. This is to ensure that the VCS is the single source of truth, and that all changes to your infrastructure must be recorded and approved.
+
+You may still trigger runs on-demand via the GUI or API.
 
 ???
-Instructor note: you must run `terraform apply` at least once on the command line before GUI-driven queues will work. You don't necessarily need to point this out unless someone has an Error Queueing Plan message.
 
 ---
 name: enable-auto-apply
@@ -3440,8 +3448,8 @@ Before you can push changes to your fork of the hashicat repo, you'll need to co
 
 Commands:
 ```bash
-git config --global user.email "email@example.com"
-git config --global user.name "Bruce Wayne"
+git config --global user.email "ada@example.com"
+git config --global user.name "Ada Lovelace"
 ```
 
 ---
@@ -3463,12 +3471,12 @@ When you are done editing the file save it and push the change to your remote re
 Observe the terraform run that kicks off as soon as you push your code to the master branch. Check your website and see if the content was updated correctly.
 
 ---
-name: chapter-7d-tfe-lab-solution
-.center[.lab-header[💾 Lab Exercise 7d: Solution]]
+name: chapter-7d-tfe-lab-solution-1
+.center[.lab-header[💾 Lab Exercise 7d: Solution Part 1]]
 <br>
-You can click the source code button on the left side of VSC, enter a comment, commit your changes, then push them to the remote repo:
+You can click the source code button on the left side of VSC, enter a comment, commit your changes, then push them to the remote repo. You will be prompted on whether you wish to **stage** your changes first. This is part of the git workflow.
 
-.center[![:scale 80%](images/git_commit_push.png)]
+.center[![:scale 60%](images/git_commit_push.png)]
 
 Or via the command line:
 
@@ -3478,6 +3486,18 @@ git commit -m "Updated website."
 git push origin master
 ```
 
+???
+Instructors:  Depending upon your students' familiarity with git, you may need to review some basic git commands here like `git add`, `git commit`, and `git push`.
+
+---
+name: chapter-7d-tfe-lab-solution-2
+.center[.lab-header[💾 Lab Exercise 7d: Solution Part 2]]
+<br>
+.center[![:scale 80%](images/git_commit_gui.png)]
+ Most git commands can be run from the VSC menu. Click the branch icon and then click on the triple dot menu.
+
+.center[![:scale 80%](images/git_triggered_run.png)]
+You can see which git commit triggered the run in the Terraform Enterprise UI.
 
 ---
 name: delete-local-creds
@@ -3520,29 +3540,64 @@ name: TFE-Chapter-8
 class: center,middle
 .section[
 Chapter 8  
-Collaboration for Teams
+VCS Collaboration for Teams
 ]
 
 ---
+name: vcs-driven-workflow
+Collaboration With VCS
+-------------------------
+.center[![:scale 100%](images/git_workflow_tests.png)]
+
+When your Terraform code is stored in a version control system, you unlock extra features like pull requests, code reviews and testing. Here's an example showing the tests that run on our training lab repo.
+
+You can configure rules like requiring tests to pass, code reviews, approvals and more. Let's do a code collaboration exercise.
+
+---
 name: chapter-8a-tfe-lab
-.center[.lab-header[👩🏽‍🏫 Lab Exercise 8a: Sentinel and VCS]]
+.center[.lab-header[👫 Lab Exercise 8a: VCS Collaboration]]
 <br>
-.center[![:scale 100%](images/standard_a2.png)]
-In this lab we'll experiment with the Sentinel policy we created earlier.
+One of your team members needs to make a change to your shared dev environment. Break into pairs and exchange the URLs of your hashicat repo forks. Take turns doing the steps below:
 
-Create a new variable called **vm_size** and set it to **Standard_A2**. Run **`terraform apply`** on the command line. What does the policy check say?
+**Partner 1:**
+1. Navigate to your partner's git repo URL.
+2. Click on the **`files/`** directory then click on **`deploy_app.sh`**.
+3. Click on the pencil ✏️ icon on the upper right side of the page.
+4. Make some edits to your partner's webapp code.
+5. Submit a pull request.
 
-Now set the **vm_size** back to **Standard_A0**. Does it pass this time? Go ahead and confirm the apply.
+**Partner 2:**
+1. Log onto github and view your new pull request.
+2. Post a comment about the proposed changes.
+3. Merge the pull request to the master branch.
+4. Pull up the Terraform Enterprise UI and observe the git-triggered run.
+5. Check your webapp and see the changes you approved.
+
+Exchange roles and repeat the lab exercise.
 
 ---
 name: chapter-8a-tfe-lab-solution
-.center[.lab-header[👩🏽‍🏫 Lab Exercise 8a: Solution]]
-<br><br>
-The Sentinel policy you created earlier checks any Azure Virtual Machines that appear in the plan, and looks at the configured vm_size. This is compared to the list of approved types which includes only **Standard_A0** and **Standard_A1**. Anything outside of these two approved sizes of VM will be flagged by Sentinel.
+.center[.lab-header[👬 Lab Exercise 8a: Solution]]
+<br>
+.center[![:scale 100%](images/merge_pull_request.png)]
 
-Because you are the admin of your organization, you have the ability to override soft failures like this one. Ordinary users would have to ask an admin to override the policy failure for them. 
+You can enable different pre-merge checks and options in your git repo settings. Explore the **Settings** >> **Branches** menu to learn more about Branch Protection Rules.
 
-We'll learn more about collaboration and access controls in the next chapters.
+???
+In the real world we might run a bunch of automated tests, and require one or more approvers to do a code review before any changes are merged.
+
+---
+name: tfe-chapter-8-review
+📝 Chapter 8 Review
+-------------------------
+.contents[
+In this chapter we:
+* Edited a file on our partner's repo
+* Created a fork and submitted a pull request
+* Reviewed and discussed the pull request
+* Merged changes into the code repo
+* Triggered a Terraform run from a git merge
+]
 
 ---
 name: TFE-Chapter-9
@@ -3553,6 +3608,78 @@ Access Controls
 ]
 
 ---
+name: terraform-rbac
+Role Based Access Controls (RBAC)
+-------------------------
+.center[![:scale 60%](images/teams_list.png)]
+
+In the previous chapter we made a change by merging a code change into the source code repo. Your users can also collaborate within the Terraform UI. 
+
+Terraform Enterprise is a multi-tenanted application that supports fine-grained access controls. You can create multiple organizations, each containing its own teams and users.
+
+---
+name: chapter-9a-tfe-lab
+.center[.lab-header[👭 Lab Exercise 9a: Share the Sandbox]]
+<br><br>
+This is another partner exercise. In this lab you'll invite your partner to your organization.
+
+**Partner 1**:
+1. Go into your organization's team settings and create a new team called **developers**. 
+2. Visit your workspace's **Team Access** menu and grant **write** access to your developers team.
+3. Invite your partner to your organization's **developers** team.
+
+**Partner 2**:
+Verify that you are able to see your partner's organization and workspace.
+
+Trade roles and repeat the lab exercise.
+
+---
+name: chapter-9a-tfe-lab-solution
+.center[.lab-header[👭 Lab Exercise 9a: Solution]]
+<br><br>
+.center[![:scale 60%](images/team_workspace_acls.png)]
+Users can be members of multiple organizations, and multiple teams within each organization. Teams are granted different levels of access to workspaces within the organization depending on their role.
+
+You can learn more about workspace permissions on the [Terraform Enterprise Docs](https://www.terraform.io/docs/enterprise/users-teams-organizations/permissions.html)
+
+---
+name: chapter-9b-tfe-lab
+.center[.lab-header[🔒 Lab Exercise 9b: RBAC Controls]]
+<br><br><br>
+One of your team members needs a larger virtual machine size for load testing. This is another partner exercise.
+
+**Partner 1**:
+In Partner 2's workspace, create a new variable called **vm_size** and set it to **Standard_A1_v2**. Click on the **Queue Run** button to trigger a new terraform plan. What happens? Are you able to override the Sentinel failure and continue?
+
+**Partner 2**:
+Log onto your workspace and navigate to the current run. Have a discussion with Partner 1 about why they need a larger VM. Agree upon a solution and redeploy the application.
+
+Exchange roles and repeat the lab exercise.
+
+---
+name: chapter-9b-tfe-lab-solution
+.center[.lab-header[🔒 Lab Exercise 9b: Solution]]
+<br><br>
+.center[![:scale 100%](images/standard_a1_v2.png)]
+The Sentinel policy you created earlier checks any Azure Virtual Machines that appear in the plan, and looks at the configured vm_size. This is compared to the list of approved types which includes only **Standard_A0** and **Standard_A1**. Anything outside of these two approved sizes of VM will be flagged by Sentinel.
+
+There's no single correct answer to this lab. You may decide that partner 1 doesn't need such a large VM for their development work. Or partner 2 might grant an exception and use their admin powers to override the Sentinel failure. Or perhaps the new VM size could be added to the Sentinel rule to allow it as a new option.
+
+---
+name: tfe-chapter-9-review
+📝 Chapter 9 Review
+-------------------------
+<br>
+.contents[
+In this chapter we:
+* Created a new team for developers
+* Granted devs write access to our workspace
+* Added our partner to the devs team
+* Tested our Sentinel policy
+* Collaborated on an infrastructure change
+]
+
+---
 name: TFE-Chapter-10
 class: center,middle
 .section[
@@ -3560,3 +3687,37 @@ Chapter 10
 Private Module Registry
 ]
 
+---
+name: private-module-registry
+TFE Private Module Registry
+-------------------------
+.center[![:scale 100%](images/pmr.png)]
+
+Terraform modules are reusable packages of Terraform code that you can use to build your infrastructure. Terraform Enterprise includes a Private Module Registry where you can store, version, and distribute modules to your organizations and teams.
+
+---
+name: chapter-10a-tfe-lab
+.center[.lab-header[📚 Lab Exercise 10a: Install a Module]]
+<br><br><br>
+This is an individual lab. 
+
+1. Visit the Terraform public module registry and navigate to the [Azure Compute Module](https://registry.terraform.io/modules/Azure/compute/azurerm).
+2. Find the github source code link on the page and click on it.
+3. Fork the module repo into your own github account.
+4. Back in your TFE organization, navigate to the **modules** section and add the Azure Compute module to your private registry.
+
+---
+name: chapter-10a-tfe-lab-solution
+.center[.lab-header[📚 Lab Exercise 10a: Solution]]
+<br><br>
+.center[![:scale 75%](images/add_a_module.png)]
+If you have a valid VCS connection, the private module registry can find any git repositories that you have access to. These module repos can be imported into Terraform Enterprise, where your users can easily access them.
+
+---
+name: use-a-module
+Use the Compute Module
+-------------------------
+
+NOTE: The compute module is not compatible with TF 0.12 (yet)
+
+https://github.com/Azure/terraform-azurerm-compute/issues/99
