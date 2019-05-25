@@ -3717,7 +3717,27 @@ If you have a valid VCS connection, the private module registry can find any git
 name: use-a-module
 Use the Compute Module
 -------------------------
-
 NOTE: The compute module is not compatible with TF 0.12 (yet)
 
 https://github.com/Azure/terraform-azurerm-compute/issues/99
+
+```terraform
+module "linuxservers" {
+  source              = "app.terraform.io/seanc-sandbox/compute/azurerm"
+  location            = "${var.location}"
+  vm_os_simple        = "UbuntuServer"
+  public_ip_dns       = ["${var.prefix}-moduletest"] // change to a unique name per datacenter region
+  vnet_subnet_id      = "${azurerm_subnet.subnet.id}"
+  remote_port         = "80"
+  custom_data         = <<EOM
+wget https://raw.githubusercontent.com/scarolan/hashicat/master/files/deploy_app.sh
+chmod 755 deploy_app.sh
+PLACEHOLDER=${var.placeholder} HEIGHT=${var.height} WIDTH=${var.width} PREFIX=${var.prefix} ./deploy_app.sh
+echo "Script complete."
+EOM
+}
+
+output "linux_vm_public_name"{
+  value = "${module.linuxservers.public_ip_dns_name}"
+}
+```
