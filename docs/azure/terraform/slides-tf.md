@@ -2308,6 +2308,8 @@ Change where it says "yourname" to your own name. No spaces or special character
 
 The **terraform.tfvars** file is your own personal settings file. You can use it to set or override any of the default variables in the variables.tf file.
 
+**Everyone must choose a unique prefix. 5-12 characters. All lowercase or numbers.**
+
 ???
 **Let's go ahead and set this variable in a file so we don't have to type it in every time we run terraform commands. You're going to simply rename the terraform.tfvars.example file to terraform.tfvars. Terraform knows to look for files that end in .tf or .tfvars. You can right click the file right inside VSC to rename it. You may put any text you like here but be sure and avoid very common names and words, or add a number to the end to guarantee it is unique.**
 
