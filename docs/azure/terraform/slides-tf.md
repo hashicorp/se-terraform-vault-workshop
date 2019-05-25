@@ -2336,7 +2336,7 @@ Initializing provider plugins...
 Terraform has been successfully initialized!
 ```
 
-Terraform fetches any required providers and modules and stores them in the .terraform directory. You can take a peek inside that directory where you'll see the plugins folder.
+Terraform fetches any required providers and modules and stores them in the **.terraform** directory. You can take a peek inside that directory where you'll see the plugins folder.
 
 ???
 **Terraform has an extendible architecture. You download the core program, terraform, then it fetches plugins and modules that are required for your code.**
@@ -2390,13 +2390,11 @@ The application has three variables that you can set to change the look and feel
 
 They are **height**, **width**, and **placeholder**. 
 
-Redeploy your app with a different height and width and reload the page. If you need a refresher on variables visit the docs:
+Redeploy your app with a different height and width and reload the page.
+
+If you need a refresher on variables visit the docs:
 
 https://www.terraform.io/docs/configuration/variables.html#variables-on-the-command-line
-
-???
-The taint command described below is no longer necessary since our custom provisioner runs every time terraform runs.
-**HINT:** You'll need to run the **`terraform taint`** command on **`null_resource.configure-cat-app`** before you run **`terraform apply`**.
 
 ---
 name: chapter-2-tfe-lab-solution
@@ -2409,7 +2407,7 @@ Commands:
 terraform apply -var placeholder=fillmurray.com -var height=500 -var width=500
 ```
 
-Try some different placeholder image sites. Here are some examples: [placedog.net](placedog.net), [placebear.com](placebear.com), [fillmurray.com](fillmurray.com), [placecage.com](placecage.com), [placebeard.it](placebeard.it), [loremflickr.com](loremflickr.com), [baconmockup.com](baconmockup.com), and [placeimg.com](placeimg.com).
+Try some different placeholder image sites. Here are some examples: [placedog.net](http://placedog.net), [placebear.com](http://placebear.com), [fillmurray.com](http://fillmurray.com), [placecage.com](http://placecage.com), [placebeard.it](http://placebeard.it), [loremflickr.com](http://loremflickr.com), [baconmockup.com](http://baconmockup.com), and [placeimg.com](http://placeimg.com).
 
 ???
 Point out that we're doing some things here that you shouldn't do in production (like using null_resource for our provisioner.) You can also review the different ways to set variables:
@@ -2472,6 +2470,45 @@ Join an Existing Team
 .center[![:scale 90%](images/tf_cloud_welcome.png)]
 
 Before you go further, provide your username to your instructor. This is so you can be invited to the workshop organization.
+
+???
+Instructor - you should have an organization ready for training. Invite all your students to your organization. You can put them all on a team called "students" and give them "Manage Workspaces" permissions. You should also create a global sentinel policy called `block_allow_all_http` and populate it with the following Sentinel code.
+
+TODO: Copy this into the instructor guide.
+
+```
+import "tfplan"
+
+get_sgs = func() {
+    sgs = []
+    for tfplan.module_paths as path {
+        sgs += values(tfplan.module(path).resources.azurerm_network_security_group) else []
+    }
+    return sgs
+}
+
+network_sgs = get_sgs()
+
+disallowed_cidr_blocks = [
+  "0.0.0.0/0",
+  "0.0.0.0",
+  "*",
+]
+
+block_allow_all = rule {
+  all network_sgs as _, instances {
+    all instances as _, sg {
+    	all sg.applied.security_rule as _, sr {
+        not (sr.destination_port_range == "80" and sr.source_address_prefix in disallowed_cidr_blocks) or (sr.access == "Deny")
+    	}
+    }
+  }
+}
+
+main = rule {
+  (block_allow_all) else true
+}
+```
 
 ---
 name: tfe-create-an-org
@@ -2558,6 +2595,9 @@ terraform {
   }
 }
 ```
+
+???
+You need two config files to get remote state working. First is your .terraformrc (or terraform.rc on Windows), and the second is a remote_backend.tf with the terraform block of code in it. The credentials file holds your token, while the config file tells terraform where to store your state file.  We'll be creating these two files in a moment.
 
 ---
 name: create-a-workspace-gui
@@ -2704,6 +2744,14 @@ ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
 ```
 
 ---
+name: a-better-way-creds
+A Better Way to Store Sensitive Data
+-------------------------
+.center[![:scale 100%](images/encrypted_vars.png)]
+
+Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text. 
+
+---
 name: enable-remote-execution
 Enable Remote Execution
 -------------------------
@@ -2711,14 +2759,6 @@ Enable Remote Execution
 .center[![:scale 100%](images/remote_execution.png)]
 
 Before we migrate our sensitive API credentials into the application we need to enable remote execution. Under the **General** settings for your workspace, change the Execution Mode to **Remote**. Click the **Save Settings** button at the bottom of the page.
-
----
-name: a-better-way-creds
-A Better Way to Store Sensitive Data
--------------------------
-.center[![:scale 100%](images/encrypted_vars.png)]
-
-Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text. 
 
 ---
 name: chapter-5-tfe-lab
@@ -2910,7 +2950,7 @@ A robot now stands guard between your Terraform code and the Azure APIs.
 Take a break or discuss Sentinel testing while **`terraform destroy`** is running.
 
 ???
-Instructor notes: take a break here. Deleting a single VM in Azure can sometimes take upwards of ten minutes. Or do a side panel discussion on how Sentinel works. Either way you need to buy some time.
+Instructor notes: take a break here. Deleting a single VM in Azure can sometimes take upwards of ten minutes. Or do a side panel discussion on how Sentinel works. Either way you need to buy some time. While your students are on break, go into your organization settings and flip the block_allow_all_http enforcement mode to hard-mandatory.
 
 ---
 name: create-your-application
@@ -2943,7 +2983,7 @@ Oh no! Our **`terraform apply`** failed. How can we fix our code?
 
 ---
 name: chapter-6-tfe-lab
-.center[.lab-header[👩🏼‍🏫 Lab Exercise 6: Secure the App]]
+.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Secure the App]]
 <br><br>
 The security team has a new requirement: Development applications should not be exposed to the public Internet.
 
@@ -2958,9 +2998,12 @@ Fix the code on your local workstation so that it passes the Sentinel check. Run
 
 You may also simply type "What is my IP address?" into your browser search bar.
 
+???
+Instructors: Have fun with this exercise. Pull up your organization's homepage on the projector screen. You can make a game out of it, see who gets their code compliant first.
+
 ---
 name: chapter-6-tfe-lab-solution
-.center[.lab-header[👩🏼‍🏫 Lab Exercise 6: Solution]]
+.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Solution]]
 <br><br>
 Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace 127.0.0.1 below with your own source IP, then run **`terraform apply`**.
 
@@ -3141,7 +3184,7 @@ Now your policy will be enforced for all workspaces across your sandbox organiza
 
 ---
 name: chapter-7a-tfe-lab
-.center[.lab-header[👩🏽‍🏫 Lab Exercise 7a: Integrate with Github]]
+.center[.lab-header[👩🏼‍🔧 Lab Exercise 7a: Integrate with Github]]
 <br><br>
 .center[![:scale 70%](images/integrate_github.png)]
 During this lab you'll follow the instructions on the Terraform docs site for connecting to Github. Visit the link below and carefully follow the instructions to integrate your Terraform Cloud organization with your Github account.
@@ -3150,7 +3193,7 @@ During this lab you'll follow the instructions on the Terraform docs site for co
 
 ---
 name: chapter-7a-tfe-lab-solution
-.center[.lab-header[👩🏽‍🏫 Lab Exercise 7a: Solution]]
+.center[.lab-header[👩🏼‍🔧 Lab Exercise 7a: Solution]]
 <br><br>
 .center[![:scale 100%](images/vcs_success.png)]
 If you successfully connected your Terraform Cloud organization to Github, you'll see the above text in the VCS Providers section of your organization settings. 
@@ -3222,7 +3265,9 @@ Switch to Git Bash
 -------------------------
 For the next lab we're going to change our local shell to Git Bash.
 
-Hold down the **CTRL** and **SHIFT** keys and press **P**. **CTRL-SHIFT-P** is the Visual Studio Code shortcut for the **Command Palette**.
+Hold down the **CTRL** and **SHIFT** keys and press **P**.
+
+**CTRL-SHIFT-P** is the Visual Studio Code shortcut for the **Command Palette**.
 
 .center[![:scale 100%](images/command_shift_p.png)]
 
@@ -3328,7 +3373,20 @@ name: chapter-7c-tfe-lab-part-3
 
 See if you can add your **height**, **width**, and **placeholder** variables to your workspace by editing the command we ran in on the last slide.
 
-Read up on the **`-overwrite-all`** and **`-dry-run`** flags.
+Read up on the **`-overwrite-all`** and **`-dry-run`** flags in the [TF Helper docs](https://github.com/hashicorp-community/tf-helper/blob/master/tfh/usr/share/doc/tfh/tfh_pushvars.md).
+
+---
+name: chapter-7c-tfe-lab-solution
+.center[.lab-header[⚗️ Lab 7c: Solution]]
+<br><br><br>
+Simply add more **`-var`** flags at the end of the command to update your variables.
+
+Command:
+```bash
+tfh pushvars -overwrite-all -dry-run false -senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" -env-var "ARM_TENAN
+T_ID=$ARM_TENANT_ID" -env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" -env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID"
+-var "prefix=yourprefix" -var "height=600" -var "width=800" -var "placeholder=fillmurray.com"
+```
 
 ---
 name: run-terraform-apply-vcs
@@ -3343,7 +3401,6 @@ Output:
 ```json
 ...
 ## Policy 1: restrict_allowed_vm_types.sentinel (soft-mandatory)
-
 Result: true
 
 TRUE - restrict_allowed_vm_types.sentinel:21:1 - Rule "main"
@@ -3357,17 +3414,77 @@ TRUE - restrict_allowed_vm_types.sentinel:14:1 - Rule "vm_size_allowed"
 ...
 ```
 
-The Sentinel policy we created earlier is passing, so we are allowed to proceed. You can now rebuild the app via the GUI or command line.
+The Sentinel policy we created earlier is passing, so we are allowed to proceed. You may now rebuild the app via the GUI or command line. Trigger some runs from the command line and GUI to test it out.
 
 ???
 Instructor note: you must run `terraform apply` at least once on the command line before GUI-driven queues will work. You don't necessarily need to point this out unless someone has an Error Queueing Plan message.
+
+---
+name: enable-auto-apply
+Enable Auto Apply
+-------------------------
+<br><br>
+.center[![:scale 100%](images/enable_auto_apply.png)]
+In some environments you may wish to enable auto apply.
+
+This means that TFE will automatically apply changes when a plan is successful. Any push to the default branch of the source code repo will trigger a **plan** and **apply**.
+
+Enable auto apply on your workspace now.
+
+---
+name: configure-git-bash
+Configure Git Identity
+-------------------------
+<br><br><br>
+Before you can push changes to your fork of the hashicat repo, you'll need to configure your email and username settings. Run the commands below with your own email address and name:
+
+Commands:
+```bash
+git config --global user.email "email@example.com"
+git config --global user.name "Bruce Wayne"
+```
+
+---
+name: chapter-7d-tfe-lab
+.center[.lab-header[💾 Lab Exercise 7d: Push Change to VCS]]
+<br><br>
+Your boss has asked you to update the content on the website. Edit the **files/deploy_app.sh** script and add your own content between the BEGIN and END tags.
+
+```html
+  <!-- BEGIN -->
+  <center><img src="http://${PLACEHOLDER}/${WIDTH}/${HEIGHT}"></img></center>
+  <center><h2>Meow World!</h2></center>
+  Welcome to ${PREFIX}'s app. Replace this text with your own. 
+  <!-- END -->
+```
+
+When you are done editing the file save it and push the change to your remote repo. You can do this on the command line or via the VCS Branch button in Visual Studio Code.
+
+Observe the terraform run that kicks off as soon as you push your code to the master branch. Check your website and see if the content was updated correctly.
+
+---
+name: chapter-7d-tfe-lab-solution
+.center[.lab-header[💾 Lab Exercise 7d: Solution]]
+<br>
+You can click the source code button on the left side of VSC, enter a comment, commit your changes, then push them to the remote repo:
+
+.center[![:scale 70%](images/git_commit_push.png)]
+
+Or via the command line:
+
+```bash
+git add .
+git commit -m "Updated website."
+git push origin master
+```
+
 
 ---
 name: delete-local-creds
 Delete Local Credentials
 -------------------------
 <br>
-It is now safe to delete the ARM_CLIENT_SECRET environment variable from your workstation. You can do this from either Git Bash or Powershell:
+It is safe to delete the ARM_CLIENT_SECRET environment variable from your workstation. You can do this from either Git Bash or Powershell:
 
 Git Bash:
 ```bash
