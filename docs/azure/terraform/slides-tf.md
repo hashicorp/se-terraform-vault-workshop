@@ -3367,7 +3367,7 @@ You should now see all your variables stored safely in the Terraform Enterprise 
 
 ---
 name: chapter-7c-tfe-lab-part-3
-.center[.lab-header[⚗️ Lab 7c: Add More Variables]]
+.center[.lab-header[🐱 Lab 7c: Add More Variables]]
 <br><br><br>
 **Extra Credit:**
 
@@ -3377,7 +3377,7 @@ Read up on the **`-overwrite-all`** and **`-dry-run`** flags in the [TF Helper d
 
 ---
 name: chapter-7c-tfe-lab-solution
-.center[.lab-header[⚗️ Lab 7c: Solution]]
+.center[.lab-header[🐱 Lab 7c: Solution]]
 <br><br><br>
 Simply add more **`-var`** flags at the end of the command to update your variables.
 
