@@ -3701,53 +3701,41 @@ name: chapter-10a-tfe-lab
 <br><br><br>
 This is an individual lab. 
 
-1. Visit the Terraform public module registry and navigate to the [Azure Compute Module](https://registry.terraform.io/modules/Azure/compute/azurerm).
+1. Visit the Terraform public module registry and navigate to the [Web App Container Module](https://registry.terraform.io/modules/innovationnorway/web-app-container/azurerm).
 2. Find the github source code link on the page and click on it.
 3. Fork the module repo into your own github account.
 4. Back in your TFE organization, navigate to the **modules** section and add the Azure Compute module to your private registry.
 
 ???
-This needs to be updated to point at my forked copy of the module, which has the following customizations.  Maybe this can be it's own exercise or lab...
-
-* Updated version constraint for `random`
-* Removed requirement for an ssh_key
-* Bumped version up
+Updated to deploy an arcade game in a container.
 
 ---
 name: chapter-10a-tfe-lab-solution
 .center[.lab-header[📚 Lab Exercise 10a: Solution]]
 <br><br>
-.center[![:scale 75%](images/add_a_module.png)]
+.center[![:scale 100%](images/add_a_module.png)]
 If you have a valid VCS connection, the private module registry can find any git repositories that you have access to. These module repos can be imported into Terraform Enterprise, where your users can easily access them.
 
 ---
 name: use-a-module
 Use the Compute Module
 -------------------------
+Add the following code at the end of your main.tf file. Be sure to replace YOURORGNAME with your own organization name.
+
 ```terraform
-module "linuxservers" {
-  source              = "app.terraform.io/seanc-sandbox/compute/azurerm"
-  version             = "1.2.3"
-  resource_group_name = "${var.prefix}-moduletest"
-  admin_username      = "${var.admin_username}"
-  admin_password      = "${var.admin_password}"
-  location            = "${var.location}"
-  vm_size             = "Standard_DS1_v2"
-  vm_os_simple        = "UbuntuServer"
-  public_ip_dns       = ["${var.prefix}-moduletest"]
-  vnet_subnet_id      = "${azurerm_subnet.subnet.id}"
-  remote_port         = "80"
-  custom_data         = <<-EOM
-      #!/bin/bash
-      apt -y install apache2 wget; systemctl start apache2
-      wget https://raw.githubusercontent.com/scarolan/hashicat/master/files/deploy_game.sh -O /tmp/deploy_game.sh
-      chmod +x /tmp/deploy_game.sh
-      /tmp/deploy_game.sh
-      echo "Script complete. "
-      EOM
+module "web_app_container" {
+  source              = "app.terraform.io/YOURORGNAME/web-app-container/azurerm"
+  name                = "${var.prefix}"
+  port                = "80"
+  resource_group_name = "${azurerm_resource_group.myresourcegroup.name}"
+  container_type      = "docker"
+  container_image     = "scarolan/pacman:latest"
 }
 
-output "linux_vm_module_fqdn" {
-  value = "${module.linuxservers.public_ip_dns_name}"
+output "container_app_url" {
+  value = "https://${module.web_app_container.hostname}"
 }
 ```
+
+Run a terraform apply, and check the outputs. You should now have a second webapp listed there:
+
