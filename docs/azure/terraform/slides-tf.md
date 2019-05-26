@@ -3222,9 +3222,9 @@ Update your **remote_backend.tf** file so that the organization matches your san
 terraform {
   backend "remote" {
     hostname = "app.terraform.io"
-*   organization = "seanc-sandbox"
+*   organization = "YOURNAME-sandbox"
     workspaces {
-      name = "seanc-catapp"
+      name = "YOURNAME-catapp"
     }
   }
 }
@@ -3617,6 +3617,9 @@ In the previous chapter we made a change by merging a code change into the sourc
 
 Terraform Enterprise is a multi-tenanted application that supports fine-grained access controls. You can create multiple organizations, each containing its own teams and users.
 
+???
+TODO: Find a better image for this slide.
+
 ---
 name: chapter-9a-tfe-lab
 .center[.lab-header[👭 Lab Exercise 9a: Share the Sandbox]]
@@ -3641,6 +3644,9 @@ name: chapter-9a-tfe-lab-solution
 Users can be members of multiple organizations, and multiple teams within each organization. Teams are granted different levels of access to workspaces within the organization depending on their role.
 
 You can learn more about workspace permissions on the [Terraform Enterprise Docs](https://www.terraform.io/docs/enterprise/users-teams-organizations/permissions.html)
+
+???
+TODO: Put a better image on this slide.
 
 ---
 name: chapter-9b-tfe-lab
@@ -3737,7 +3743,7 @@ output "container_app_url" {
 }
 ```
 
-Commit your code and push your changes to the remote repo. This will trigger a terraform run. You should now have a second application URL listed there:
+Commit your code and push your changes to the remote repo. This will trigger a terraform run. You should now have a second application URL listed in the outputs:
 
 ```hcl
 catapp_url = http://myprefix-meow.centralus.cloudapp.azure.com
