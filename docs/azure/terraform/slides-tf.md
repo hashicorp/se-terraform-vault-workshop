@@ -3720,11 +3720,11 @@ If you have a valid VCS connection, the private module registry can find any git
 name: use-a-module
 Use the Compute Module
 -------------------------
-Add the following code at the end of your main.tf file. Be sure to replace YOURORGNAME with your own organization name.
+Add the following code at the end of your main.tf file. Be sure to replace **`YOURORGNAME`** with your own organization name.
 
 ```terraform
 module "web_app_container" {
-  source              = "app.terraform.io/YOURORGNAME/web-app-container/azurerm"
+* source              = "app.terraform.io/YOURORGNAME/web-app-container/azurerm"
   name                = "${var.prefix}"
   port                = "80"
   resource_group_name = "${azurerm_resource_group.myresourcegroup.name}"
@@ -3737,5 +3737,31 @@ output "container_app_url" {
 }
 ```
 
-Run a terraform apply, and check the outputs. You should now have a second webapp listed there:
+Commit your code and push your changes to the remote repo. This will trigger a terraform run. You should now have a second application URL listed there:
 
+```hcl
+catapp_url = http://myprefix-meow.centralus.cloudapp.azure.com
+container_app_url = https://myprefix.azurewebsites.net
+```
+
+---
+name: shall-we-play-a-game
+.center[🕹️ Shall We Play a Game? 👾
+-------------------------]
+
+.center[![:scale 80%](images/welcome_arcade.png)]
+
+---
+name: tfe-chapter-10-review
+📝 Chapter 10 Review
+-------------------------
+<br>
+.contents[
+In this chapter we:
+* Explored the public module registry
+* Forked the container webapp module
+* Added the module into our registry
+* Used the module in our terraform code
+* Pushed a change to the master branch
+* Deployed a container application
+]
