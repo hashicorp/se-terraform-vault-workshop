@@ -3706,6 +3706,13 @@ This is an individual lab.
 3. Fork the module repo into your own github account.
 4. Back in your TFE organization, navigate to the **modules** section and add the Azure Compute module to your private registry.
 
+???
+This needs to be updated to point at my forked copy of the module, which has the following customizations.  Maybe this can be it's own exercise or lab...
+
+* Updated version constraint for `random`
+* Removed requirement for an ssh_key
+* Bumped version up
+
 ---
 name: chapter-10a-tfe-lab-solution
 .center[.lab-header[📚 Lab Exercise 10a: Solution]]
@@ -3717,27 +3724,31 @@ If you have a valid VCS connection, the private module registry can find any git
 name: use-a-module
 Use the Compute Module
 -------------------------
-NOTE: The compute module is not compatible with TF 0.12 (yet)
-
-https://github.com/Azure/terraform-azurerm-compute/issues/99
-
 ```terraform
 module "linuxservers" {
   source              = "app.terraform.io/seanc-sandbox/compute/azurerm"
+  version             = "1.2.3"
+  resource_group_name = "${var.prefix}-moduletest"
+  admin_username      = "${var.admin_username}"
+  admin_password      = "${var.admin_password}"
   location            = "${var.location}"
+  vm_size             = "Standard_DS1_v2"
   vm_os_simple        = "UbuntuServer"
-  public_ip_dns       = ["${var.prefix}-moduletest"] // change to a unique name per datacenter region
+  public_ip_dns       = ["${var.prefix}-moduletest"]
   vnet_subnet_id      = "${azurerm_subnet.subnet.id}"
   remote_port         = "80"
-  custom_data         = <<EOM
-wget https://raw.githubusercontent.com/scarolan/hashicat/master/files/deploy_app.sh
-chmod 755 deploy_app.sh
-PLACEHOLDER=${var.placeholder} HEIGHT=${var.height} WIDTH=${var.width} PREFIX=${var.prefix} ./deploy_app.sh
-echo "Script complete."
-EOM
+  custom_data         = <<-EOM
+      wget https://raw.githubusercontent.com/scarolan/hashicat/master/files/deploy_app.sh
+      sudo apt -y install apache2
+      sudo systemctl start apache2
+      sudo chown -R ${var.admin_username}:${var.admin_username} /var/www/html
+      chmod +x deploy_app.sh
+      PLACEHOLDER=${var.placeholder} HEIGHT=${var.height} WIDTH=${var.width} PREFIX=${var.prefix} ./deploy_app.sh
+      echo "Script complete."
+      EOM
 }
 
-output "linux_vm_public_name"{
+output "linux_vm_module_fqdn" {
   value = "${module.linuxservers.public_ip_dns_name}"
 }
 ```
