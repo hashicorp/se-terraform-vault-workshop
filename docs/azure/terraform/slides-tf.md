@@ -3691,7 +3691,7 @@ Private Module Registry
 name: private-module-registry
 TFE Private Module Registry
 -------------------------
-.center[![:scale 100%](images/pmr.png)]
+.center[![:scale 80%](images/pmr.png)]
 
 Terraform modules are reusable packages of Terraform code that you can use to build your infrastructure. Terraform Enterprise includes a Private Module Registry where you can store, version, and distribute modules to your organizations and teams.
 
@@ -3738,13 +3738,12 @@ module "linuxservers" {
   vnet_subnet_id      = "${azurerm_subnet.subnet.id}"
   remote_port         = "80"
   custom_data         = <<-EOM
-      wget https://raw.githubusercontent.com/scarolan/hashicat/master/files/deploy_app.sh
-      sudo apt -y install apache2
-      sudo systemctl start apache2
-      sudo chown -R ${var.admin_username}:${var.admin_username} /var/www/html
-      chmod +x deploy_app.sh
-      PLACEHOLDER=${var.placeholder} HEIGHT=${var.height} WIDTH=${var.width} PREFIX=${var.prefix} ./deploy_app.sh
-      echo "Script complete."
+      #!/bin/bash
+      apt -y install apache2 wget; systemctl start apache2
+      wget https://raw.githubusercontent.com/scarolan/hashicat/master/files/deploy_game.sh -O /tmp/deploy_game.sh
+      chmod +x /tmp/deploy_game.sh
+      /tmp/deploy_game.sh
+      echo "Script complete. "
       EOM
 }
 
