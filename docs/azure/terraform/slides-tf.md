@@ -3733,6 +3733,7 @@ module "web_app_container" {
 * source              = "app.terraform.io/YOURORGNAME/web-app-container/azurerm"
   name                = "${var.prefix}"
   port                = "80"
+  https_only          = "false"
   resource_group_name = "${azurerm_resource_group.myresourcegroup.name}"
   container_type      = "docker"
   container_image     = "scarolan/pacman:latest"
@@ -3843,10 +3844,7 @@ name: chapter-11-tfe-lab-1
 <br>
 **Setup Part 2: Add a Sentinel Policy**
 1. Create a new Sentinel policy called **enforce_https**
-2. Paste the following content into the code field:
-```hcl
-SENTINEL POLICY HERE
-```
+2. Copy the code in the **`files/enforce_https.sentinel`** file into the policy code field.
 3. Set the policy enforcement level to soft-mandatory.
 4. Create a policy set to apply the policy globally across all workspaces.
 5. If you need a refresher on policies and policy sets head back to [Chapter 7](#create-a-new-policy-0)
