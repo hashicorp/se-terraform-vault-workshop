@@ -3771,3 +3771,144 @@ In this chapter we:
 * Pushed a change to the master branch
 * Deployed a container application
 ]
+
+---
+name: before-you-go
+Before You Go...
+-------------------------
+Please run **`terraform destroy`** command to delete your lab environment(s) before you go. This helps us keep our cloud costs under control.
+
+Command:
+```powershell
+terraform destroy
+```
+
+Output:
+```tex
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+Destroy complete! Resources: 15 destroyed.
+```
+
+---
+name: additional-resources-tfe
+Additional Resources
+-------------------------
+If you'd like to learn more about Terraform Enterprise visit the links below:
+
+Terraform Enterprise Product Page
+https://www.hashicorp.com/products/terraform/
+
+Why Consider Terraform Enterprise Over Open Source?
+https://www.hashicorp.com/resources/why-consider-terraform-enterprise-over-open-source
+
+Terraform Enterprise Docs
+https://www.terraform.io/docs/enterprise/index.html
+
+Terraform Azurerm Provider Documentation  
+https://www.terraform.io/docs/providers/azurerm/
+
+Link to this Slide Deck  
+https://bit.ly/hashiazure
+
+---
+name: TFE-Chapter-11
+class: center,middle
+.section[
+⚔️   ~Chapter 11~   🐲   
+The Gauntlet
+]
+
+---
+name: chapter-11-tfe-lab-0
+.center[.lab-header[🏆 Lab Exercise 11: The Gauntlet]]
+<br>
+This challenging lab brings together everything you learned in previous chapters. Each partner should complete the setup, then your instructor will start the clock for **The Gauntlet**.
+
+**Setup Part 1: Create a UAT Branch**
+1. Go into your fork of the hashicat repo and create a new branch called **`uat`**:
+.center[![:scale 40%](images/uat_branch.png)]
+2. Click on the **Settings** menu then click on **Collaborators**. Add your partner's github username and click **Add Collaborator**.
+3. Share the invite link with your partner. Accept your partner's invite link to join their repository as a collaborator.
+
+.center[_Setup instructions continue on the next slide..._]
+
+---
+name: chapter-11-tfe-lab-1
+.center[.lab-header[💎 Lab Exercise 11: The Gauntlet]]
+<br>
+**Setup Part 2: Add a Sentinel Policy**
+1. Create a new Sentinel policy called **enforce_https**
+2. Paste the following content into the code field:
+```hcl
+SENTINEL POLICY HERE
+```
+3. Set the policy enforcement level to soft-mandatory.
+4. Create a policy set to apply the policy globally across all workspaces.
+5. If you need a refresher on policies and policy sets head back to [Chapter 7](#create-a-new-policy-0)
+
+.center[_Setup instructions continue on the next slide..._]
+
+---
+name: chapter-11-tfe-lab-2
+.center[.lab-header[🧙🏾‍♂️ Lab Exercise 11: The Gauntlet]]
+<br>
+**Setup Part 3: Protect the Master (production) Branch**
+
+.center[![:scale 90%](images/protect_master.png)]
+
+1. Click on the **Branches** menu and click on the  **Add Rule** button.  
+2. Type **master** into the **Branch name pattern** field.  
+3. Check the following boxes:  
+.center[☑️ Require pull request reviews before merging  
+☑️ Require status checks to pass before merging  
+  ☑️ sentinel/yourorghere/yourworkspacehere]
+4. Click the **Create** button at the bottom of the page.  
+
+---
+name: chapter-11-tfe-lab-3
+.center[.lab-header[🧝‍♀️ Lab Exercise 11: The Gauntlet]]
+<br>
+**Setup Part 4: Set Up UAT and Production**
+
+1. Back in the TFE console, create a new workspace called **webapp-uat** and connect it to the **uat** branch of your repo.  
+2. Use the tfh tool to upload all your variables into the new workspace:
+```bash
+export TFH_name=webapp-uat
+tfh pushvars -overwrite-all -dry-run false \
+-senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" \
+-env-var "ARM_TENANT_ID=$ARM_TENANT_ID" \
+-env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" \
+-env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID" \
+-var "prefix=yourprefix"
+```
+3. In Visual Studio Code clone a copy of your **partner's** repository:
+```bash
+cd Desktop
+git clone https://github.com/mypartner/hashicat uat-webapp
+cd uat-webapp
+git checkout uat
+code -r .
+```
+
+---
+name: chapter-11-tfe-lab-4
+.center[.lab-header[💰 Lab Exercise 11: The Gauntlet]]
+<br>
+You are now ready to run **The Gauntlet**. 
+
+**The Scenario**: Management wants to try a new look and feel for the production website. 
+
+**Your Mission**: Update the content of the website in UAT, make sure all Sentinel tests pass, and then submit a pull request to get your changes into production.
+
+Replace the game code on your arcade app with the code below (you may have to scroll right to copy all of it.) Or triple-click in the box below to select all the code:
+
+```html
+<iframe src="//www.retrogames.cc/embed/21684-gauntlet-ii-usa.html" width="600" height="450" frameborder="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" scrolling="no"></iframe>
+```
+
+Your instructor will start the timer once everyone is ready. How fast can you get through **The Gauntlet**?
