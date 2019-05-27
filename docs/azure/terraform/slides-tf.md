@@ -3905,10 +3905,6 @@ You are now ready to run **The Gauntlet**.
 
 **Your Mission**: Update the content of the website in UAT, make sure all Sentinel tests pass, and then submit a pull request to get your changes into production.
 
-Replace the game code on your arcade app with the code below (you may have to scroll right to copy all of it.) Or triple-click in the box below to select all the code:
-
-```html
-<iframe src="//www.retrogames.cc/embed/21684-gauntlet-ii-usa.html" width="600" height="450" frameborder="no" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" scrolling="no"></iframe>
-```
+Change the **`container_image`** parameter in your Terraform code to **`scarolan/gauntlet`**.
 
 Your instructor will start the timer once everyone is ready. How fast can you get through **The Gauntlet**?
