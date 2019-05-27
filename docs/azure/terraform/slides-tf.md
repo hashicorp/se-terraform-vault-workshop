@@ -3736,7 +3736,7 @@ module "web_app_container" {
   https_only          = "false"
   resource_group_name = "${azurerm_resource_group.myresourcegroup.name}"
   container_type      = "docker"
-  container_image     = "scarolan/pacman:latest"
+  container_image     = "scarolan/pacman"
 }
 
 output "container_app_url" {
