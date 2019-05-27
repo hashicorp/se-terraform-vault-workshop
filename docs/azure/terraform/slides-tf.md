@@ -3899,7 +3899,7 @@ name: chapter-11-tfe-lab-4
 <br>
 You are now ready to run **The Gauntlet**. 
 
-**The Scenario**: Management wants to try a new look and feel for the production website. 
+**The Scenario**: The manager of the Palace Arcade has asked you to update the company website. He would like to replace the game on the homepage with a newer one.
 
 **Your Mission**: Update the content of the website in UAT, make sure all Sentinel tests pass, and then submit a pull request to get your changes into production.
 
