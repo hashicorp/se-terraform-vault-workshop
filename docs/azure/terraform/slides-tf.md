@@ -1996,7 +1996,7 @@ Table of Contents
 ]
 
 ???
-This workshop is meant to give a basic introduction to all the major features of Terraform Cloud and Enterprise.  
+**This workshop is meant to give a basic introduction to all the major features of Terraform Cloud and Enterprise.**
 
 ---
 name: TFE-Chapter-1
@@ -2171,6 +2171,8 @@ Terraform Workstation Requirements
 **Option 3:** [Generate a Service Principal](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/terraform-install-configure#configure-terraform-environment-variables) - for advanced users.
 
 ???
+**Today we'll be using cloud-based workstations that have all the software you need pre-installed. There are no firewalls, no ticketing systems and no blockers in the lab environment. It is your own personal Terraform playground. All the skills you learn here today can be applied to your own Terraform Cloud or Enterprise account as well. All the exercises will be done in our Azure training account. Please be kind to our training account, no bittorrent or crypto mining please.**
+
 The expectation here is that everybody starts the workshop with a workstation that can run `terraform apply` and build things in an Azure account. You should always default to Option 1.  If advanced students want to try options #2 and #3 tell them they are on their own for troubleshooting.
 
 ---
@@ -2183,6 +2185,9 @@ Log onto your github account and navigate to this URL:
 .center[https://github.com/scarolan/hashicat]
 
 Click on the **Fork** button in the upper right corner. This will create an exact copy of the repo in your own account. Keep the new repo open in your web browser.
+
+???
+**You'll need your own copy of this repo for some of the labs we'll be doing today.**
 
 ---
 name: tfe-workstation-setup-2
@@ -2214,9 +2219,9 @@ Right click on the file called 'setup' on your desktop and select 'Run with Powe
 **WARNING:** Do not skip this step. It is required to set up your connection to Azure Cloud.
 
 ???
-If anyone is curious what this powershell script does, it's disabling windows line endings for git clone. It also fetches dynamic Azure credentials that are good for 8 hours.
-
 **This handy script does some setup and fetches dynamic Azure credentials from our training Vault server. Right click on the setup.ps1 file and select the "Run with Powershell" option. It may take a minute or two to finish.**
+
+If anyone is curious what this powershell script does, it's disabling windows line endings for git clone. It also fetches dynamic Azure credentials that are good for 8 hours.
 
 ---
 name: tfe-workstation-setup-4
@@ -2236,9 +2241,9 @@ Open Visual Studio Code
 Click the little gear icon in the lower left corner. You can adjust your Color Theme, File Icon Theme, and other settings such as Font Size. Choose a color theme and font size that are comfortable for you.
 
 ???
-I like to demo this part for the students. My personal favorites are Dracula and vscode-icons. Be sure and reload if you add any new extensions or themes. Remember that some of these folks have never used Visual Studio Code before. Know where the font, color, and icon settings are and show them how to change these.
-
 **Let's take a moment to move in and get comfortable. You can click on this little gear icon in the lower left corner to access your settings. Pick a color theme and font size that are easy on the eyes. You can also adjust your icons. I like the vscode-icons set, which has an icon for almost every type of file you can imagine.**
+
+I like to demo this part for the students. My personal favorites are Dracula and vscode-icons. Be sure and reload if you add any new extensions or themes. Remember that some of these folks have never used Visual Studio Code before. Know where the font, color, and icon settings are and show them how to change these.
 
 ---
 name: tfe-workstation-setup-6
@@ -2272,7 +2277,7 @@ Open the Integrated Terminal
 Open the integrated VSC terminal using the menu or keyboard shortcut. You'll be asked to choose a default shell the first time you do this. Select Powershell as your default shell. You can change this later in your settings if you wish.
 
 ???
-I've seen this popup sometimes take two tries to save properly. It might be a bug. In any case it shouldn't matter because the default is Powershell which is what we want.
+We've seen this popup sometimes take two tries to save properly. It might be a bug. In any case it shouldn't matter because the default is Powershell which is what we want. You can also try git bash although it hasn't been tested with *all* the exercises in the lab. YMMV.
 
 ---
 name: tfe-workstation-setup-9
@@ -2293,6 +2298,9 @@ Now reload your text editor in the current directory with the code command:
 code -r .
 ```
 
+???
+`code -r .` means 'reload the editor in the current directory'.
+
 ---
 name: tfe-workstation-setup-10
 Optional - Install posh-git
@@ -2304,6 +2312,8 @@ Commands:
 install-module posh-git
 import-module posh-git
 ```
+???
+**This extension helps you see at a glance the current status of a Git repository. This will only enable it for the current shell. If you want to make it permanent the import module command can be added to your Powershell profile. We're not going to cover that in this class.**
 
 Output
 ```tex
@@ -2333,7 +2343,7 @@ Change where it says "yourname" to your own name. No spaces or special character
 
 The **terraform.tfvars** file is your own personal settings file. You can use it to set or override any of the default variables in the variables.tf file.
 
-**Everyone must choose a unique prefix. 5-12 characters. All lowercase or numbers.**
+**Everyone must choose a unique prefix. 5-12 characters. All lowercase and/or numbers.**
 
 ???
 **Let's go ahead and set this variable in a file so we don't have to type it in every time we run terraform commands. You're going to simply rename the terraform.tfvars.example file to terraform.tfvars. Terraform knows to look for files that end in .tf or .tfvars. You can right click the file right inside VSC to rename it. You may put any text you like here but be sure and avoid very common names and words, or add a number to the end to guarantee it is unique.**
@@ -2393,9 +2403,9 @@ catapp_url = http://seanclab-meow.centralus.cloudapp.azure.com
 **Note**: There is a [known bug](https://github.com/hashicorp/terraform/issues/12596) with the null_provisioner that *may* cause your run to hang if you're using Terraform 0.11.x.
 
 ???
-When this happens (terminal hangs for more than 30 seconds), have your student simply click on the little trash can icon in VSC, then reopen the terminal and run `terraform apply` again.  The problem should be gone, as the run did complete successfully.  NOTE: This issue appears to be fixed with Terraform 0.12
-
 **We've built some terraform here that you probably wouldn't use in the real world.  It's been customized so that you can finish a run in 15 seconds instead of five to ten minutes. Some of what we did here is a bit unorthodox, for the sake of speed.**
+
+When this happens (terminal hangs for more than 30 seconds), have your student simply click on the little trash can icon in VSC, then reopen the terminal and run `terraform apply` again.  The problem should be gone, as the run did complete successfully.  NOTE: This issue appears to be fixed with Terraform 0.12
 
 ---
 name: unleash-the-felis-catus
@@ -2462,7 +2472,7 @@ Terraform Enterprise
 ]
 
 ???
-In this chapter we'll sign up for a free Terraform Cloud account
+**In this chapter we'll sign up for a free Terraform Cloud account.**
 
 ---
 name: tfe-terraform-cloud-enterprise
@@ -2488,6 +2498,9 @@ Sign Up for a Free Account
 
 .center[https://app.terraform.io/signup/account]
 
+???
+**Go ahead and sign up for a new account if you don't have one already. Once you've signed up wait for more instructions.**
+
 ---
 name: tfe-join-a-team
 Join an Existing Team
@@ -2497,6 +2510,8 @@ Join an Existing Team
 Before you go further, provide your username to your instructor. This is so you can be invited to the workshop organization.
 
 ???
+**Now I need you all to write your TFE username on the whiteboard. This is so I can invite you to our shared training organization.**
+
 Instructor - you should have an organization ready for training. Invite all your students to your organization. You can put them all on a team called "students" and give them "Manage Workspaces" permissions. You should also create a global sentinel policy called `block_allow_all_http` and populate it with the following Sentinel code. The policy enforcement mode should be set to advisory at the beginning of the training.
 
 TODO: Copy this into the instructor guide.
@@ -2544,6 +2559,8 @@ Create an Organization
 Create a new organization for your own development work. Name it **yourname-sandbox**. We'll be using this later in the training.
 
 ???
+**Okay, now everybody should create a new sandbox organization. Write those down too so I can upgrade them to trial organizations. This will just take a moment.**
+
 Instructors, have your students write their org names on a piece of paper or the whiteboard. You'll need to go into the admin console and upgrade them all to trial organizations.
 
 ---
@@ -2629,7 +2646,7 @@ terraform {
 ```
 
 ???
-You need two config files to get remote state working. First is your .terraformrc (or terraform.rc on Windows), and the second is a remote_backend.tf with the terraform block of code in it. The credentials file holds your token, while the config file tells terraform where to store your state file.  We'll be creating these two files in a moment.
+**You need two config files to get remote state working. First is your .terraformrc (or terraform.rc on Windows), and the second is a remote_backend.tf with the terraform block of code in it. The credentials file holds your token, while the config file tells terraform where to store your state file.  We'll be creating these two files in a moment.**
 
 ---
 name: create-a-workspace-gui
@@ -2639,6 +2656,9 @@ Create a New Workspace
 
 With paid and trial accounts, you must create a workspace before migrating to remote state. Make sure you are in the workshop organization (not your sandbox), then create a new workspace.
 
+???
+**Make sure you are in the shared workshop organization, not your personal sandbox org.**
+
 ---
 name: change-to-local-exec
 Change to Local Execution
@@ -2646,6 +2666,9 @@ Change to Local Execution
 .center[![:scale 100%](images/change_to_local.png)]
 
 Go into the **General** settings for your workspace and change the execution mode to **Local**. Save your settings.
+
+???
+**This is important. All we want to do is store our state file remotely for now. Later on we'll learn about remote execution.**
 
 ---
 name: chapter-4-tfe-lab
@@ -2709,6 +2732,9 @@ Do you want to copy existing state to the new backend?
 *Successfully configured the backend "remote"! Terraform will automatically
 *use this backend unless the backend configuration changes.
 ```
+???
+Instructor note: You might want to walk through this with some or all of your students. Finding the right file path can be a little bit tricky on Windows machines.
+
 ---
 name: chapter-4-tfe-lab-solution-3
 .center[.lab-header[👩🏽‍🔬 Lab Exercise 4: Solution Part 3]]
@@ -2732,6 +2758,9 @@ Command:
 ```powershell
 Remove-Item terraform.tfstate
 ```
+
+???
+**Now our state file is safely stored and encrypted in Terraform Enterprise. There's actually a small Vault instance running under the hood that handles all our encryption needs.**
 
 ---
 name: tfe-chapter-4-review
@@ -2778,6 +2807,9 @@ ARM_TENANT_ID                  0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec
 ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
 ```
 
+???
+**Note how our API keys are just sitting there in plain text. This isn't the most secure way to build cloud resources.**
+
 ---
 name: a-better-way-creds
 A Better Way to Store Sensitive Data
@@ -2785,6 +2817,9 @@ A Better Way to Store Sensitive Data
 .center[![:scale 100%](images/encrypted_vars.png)]
 
 Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text. 
+
+???
+**Before we store our sensitive variables in Terraform Enterprise, we must enable Remote Execution.**
 
 ---
 name: enable-remote-execution
@@ -2794,6 +2829,9 @@ Enable Remote Execution
 .center[![:scale 100%](images/remote_execution.png)]
 
 Before we migrate our sensitive API credentials into the application we need to enable remote execution. Under the **General** settings for your workspace, change the Execution Mode to **Remote**. Click the **Save Settings** button at the bottom of the page.
+
+???
+**When remote execution is enabled, all of your variables are stored in Terraform Enterprise, and the `terraform plan` and `terraform apply` commands now happen on the server instead of on your workstation. State is still stored remotely as before. Your command line simply becomes a tool for driving the remote execution.**
 
 ---
 name: chapter-5-tfe-lab
@@ -2859,6 +2897,9 @@ Set Your Prefix Variable
 .center[![:scale 100%](images/set_prefix_gui.png)]
 Go back to the **Variables** settings again, this time create a regular Terraform variable called **prefix**. Replace YOURNAME with the prefix you stored in your terraform.tfvars file earlier.
 
+???
+**Note that this is a regular Terraform variable, not an environment variable. You can change any of the defaults found in variables.tf with these fields.**
+
 ---
 name: terraform-apply-remote
 Run Terraform Apply
@@ -2882,6 +2923,9 @@ https://app.terraform.io/app/hashicorp-workshop/seanc-catapp/runs/run-1F94Y1fTNs
 ```
 
 Remote execution is now enabled. The results of your apply will still stream back into your console window, but Terraform is now running in the cloud. You can also watch the Terraform apply output in the GUI.
+
+???
+**Now you can run terraform either from the command line or from the GUI.**
 
 ---
 name: chapter-5b-tfe-lab
@@ -2948,6 +2992,11 @@ Sentinel is HashiCorp's policy enforcement language. Sentinel policies are check
 
 Sentinel rules help enforce compliance and security requirements in the cloud.
 
+???
+**Think of all the dos and do-nots that you want to enforce in your cloud environments. Maybe you want to limit the sizes of virtual machines, or to force web applications to always use SSL. Sentinel rules can be customized for most common security and compliance requirements.**
+
+Talk about Sentinel and some other things you can do with it.
+
 ---
 name: enable-workspace-destroy
 Appetite for Destruction
@@ -2957,6 +3006,9 @@ For the next lab we'll need to destroy and recreate your lab environment. Terraf
 .center[![:scale 100%](images/confirm_destroy.png)]
 
 Create a new Environment Variable named **`CONFIRM_DESTROY`** and set the value to **`1`**.
+
+???
+**This is a safety switch, it's there to prevent us from shooting ourselves in the foot and deleting production.**
 
 ---
 name: destroy-your-application
@@ -3037,6 +3089,8 @@ Fix the code on your local workstation so that it passes the Sentinel check. Run
 You may also simply type "What is my IP address?" into your browser search bar.
 
 ???
+**I'm going to keep the organization view up here on the projector screen. Let's see how fast everyone can get their code compliant and have a clean terraform apply.**
+
 Instructors: Have fun with this exercise. Pull up your organization's homepage on the projector screen. You can make a game out of it, see who gets their code compliant first.
 
 ---
