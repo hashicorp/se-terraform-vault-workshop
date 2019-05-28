@@ -4036,7 +4036,7 @@ name: chapter-11-tfe-lab-4
 <br>
 You are now ready to run **The Gauntlet**. 
 
-**The Scenario**: You are a sysadmin at the Palace Arcade. The company has just been acquired by larger rival Pizza Planet. Pizza Planet management has asked your team to update the website to match the our new company brand and logo. Pizza Planet's security team also requires that all public-facing websites run only in SSL (https only) mode.
+**The Scenario**: You are a sysadmin at the Palace Arcade. The company has just been acquired by larger rival Pizza Planet. Pizza Planet management has asked your team to update the website to match the new company brand and logo. Pizza Planet's security team also requires that all public-facing websites run only in SSL (https only) mode.
 
 **Your Mission**: Update the content of the website in UAT, make sure all Sentinel tests pass, and then submit a pull request to get your changes into production.
 
