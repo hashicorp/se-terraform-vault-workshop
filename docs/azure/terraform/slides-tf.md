@@ -2140,6 +2140,9 @@ Follow along on your own computer at this link:
 https://bit.ly/hashiazure
 =========================
 ]
+<br><br>
+.center[
+You can advance to slide #120 with the arrow keys.]
 
 ???
 TODO:  Update this link once the TFE intro deck has it's own home. Currently it is stored as Appendix B
@@ -2291,6 +2294,28 @@ code -r .
 ```
 
 ---
+name: tfe-workstation-setup-10
+Optional - Install posh-git
+-------------------------
+If you'd like a fancy git-enabled shell prompt try the posh-git extension. This is an optional step.
+
+Commands:
+```powershell
+install-module posh-git
+import-module posh-git
+```
+
+Output
+```tex
+Untrusted repository
+You are installing the modules from an untrusted repository. If you trust this repository, change its InstallationPolicy value by running the
+Set-PSRepository cmdlet. Are you sure you want to install the modules from 'PSGallery'?
+[Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "N"): Y
+
+C:\Users\hashicorp\Desktop\hashicat [master ≡]>
+```
+
+---
 name: tfe-set-prefix
 Set the Prefix Variable
 -------------------------
@@ -2365,7 +2390,7 @@ Outputs:
 catapp_url = http://seanclab-meow.centralus.cloudapp.azure.com
 ```
 
-**Note**: There is a known bug with the null_provisioner that *may* cause your run to hang. https://github.com/hashicorp/terraform/issues/12596
+**Note**: There is a [known bug](https://github.com/hashicorp/terraform/issues/12596) with the null_provisioner that *may* cause your run to hang if you're using Terraform 0.11.x.
 
 ???
 When this happens (terminal hangs for more than 30 seconds), have your student simply click on the little trash can icon in VSC, then reopen the terminal and run `terraform apply` again.  The problem should be gone, as the run did complete successfully.  NOTE: This issue appears to be fixed with Terraform 0.12
@@ -2472,7 +2497,7 @@ Join an Existing Team
 Before you go further, provide your username to your instructor. This is so you can be invited to the workshop organization.
 
 ???
-Instructor - you should have an organization ready for training. Invite all your students to your organization. You can put them all on a team called "students" and give them "Manage Workspaces" permissions. You should also create a global sentinel policy called `block_allow_all_http` and populate it with the following Sentinel code.
+Instructor - you should have an organization ready for training. Invite all your students to your organization. You can put them all on a team called "students" and give them "Manage Workspaces" permissions. You should also create a global sentinel policy called `block_allow_all_http` and populate it with the following Sentinel code. The policy enforcement mode should be set to advisory at the beginning of the training.
 
 TODO: Copy this into the instructor guide.
 
@@ -2527,6 +2552,9 @@ Select the Workshop Organization
 -------------------------
 .center[![:scale 70%](images/choose_training_org.png)]
 Your instructor will invite you to the workshop organization. Once you've been invited you'll see a second organization in the org pull-down menu. Change from your sandbox organization into the workshop organization.
+
+???
+**For the first portion of this workshop we'll all be sharing the same sandbox. I've invited you all to this $TRAININGORG where you have the ability to create your own workspaces.**
 
 ---
 name: tfe-chapter-3-review
@@ -2631,8 +2659,11 @@ Click on the **Get Started** button in the Terraform Cloud UI. Follow the instru
 name: chapter-4-tfe-lab-solution-1
 .center[.lab-header[👩🏽‍🔬 Lab Exercise 4: Solution Part 1]]
 * Create a **user token**: https://app.terraform.io/app/settings/tokens
-* Copy your user token into your **`~/.terraformrc`** (Linux) or **`%APPDATA%\terraform.rc`** file (Windows) config file. It should look like this:
+* Edit your **`%APPDATA%\terraform.rc`** config file, replacing where it says REPLACE_ME with your token.
 
+```powershell
+code %APPDATA%/terraform.rc
+```
 ```hcl
 credentials "app.terraform.io" {
   token = "REPLACE_ME"
@@ -2818,6 +2849,9 @@ Waiting for the plan to start...
 
 Looks like we need to set that prefix variable again. With remote execution *all* your variables and settings need to be stored in the app.
 
+???
+**You need to run at least one terraform apply on the command line to activate remote execution.  Don't jump to the GUI controls just yet...**
+
 ---
 name: set-prefix-variable
 Set Your Prefix Variable
@@ -2938,7 +2972,7 @@ terraform destroy -force
 GUI:
 .center[![:scale 100%](images/destroy_gui.png)]
 
-Do not click the red Destroy from Terraform Enterprise button. This will delete your entire workspace.
+Do not click the red Destroy from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
 
 ---
 name: instructor-enable-sentinel
@@ -3080,6 +3114,13 @@ First we need to move our workspace out of the training organization and into ou
 2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
 
 Move on to the next slides while the destroy run proceeds.
+
+???
+Instructors: if anyone's workspace fails to delete, revert your sentinel policy back to 'advisory' and have them run it again. This was observed with Terraform 0.12 when trying to delete.
+
+```
+An error occurred: block_allow_all_http.sentinel:22:10: unsupported type for looping: undefined
+```
 
 ---
 name: switch-back-to-sandbox
@@ -3368,6 +3409,9 @@ Updating ARM_CLIENT_ID type:env hcl:false sensitive:false value:91299f64-f951-44
 Updating ARM_CLIENT_SECRET type:env hcl:false sensitive:true value:REDACTED
 ```
 
+???
+Instructors: You must have the jq tool installed on your workstation to use the tfh tool.
+
 ---
 name: chapter-7b-tfe-lab-solution
 .center[.lab-header[⚗️ Lab Exercise 7b: Solution]]
@@ -3466,9 +3510,9 @@ Your boss has asked you to update the content on the website. Edit the **files/d
   <!-- END -->
 ```
 
-When you are done editing the file save it and push the change to your remote repo. You can do this on the command line or via the VCS Branch button in Visual Studio Code.
+When you are done editing the file save it and push the change to your remote repo. You can do this on the command line or via the VCS Branch button in Visual Studio Code. 
 
-Observe the terraform run that kicks off as soon as you push your code to the master branch. Check your website and see if the content was updated correctly.
+Trigger a new Terraform run from the UI. This must be done manually (or via the API) once. Future commits to the git repo will trigger builds automatically.
 
 ---
 name: chapter-7d-tfe-lab-solution-1
@@ -3498,25 +3542,6 @@ name: chapter-7d-tfe-lab-solution-2
 
 .center[![:scale 80%](images/git_triggered_run.png)]
 You can see which git commit triggered the run in the Terraform Enterprise UI.
-
----
-name: delete-local-creds
-Delete Local Credentials
--------------------------
-<br>
-It is safe to delete the ARM_CLIENT_SECRET environment variable from your workstation. You can do this from either Git Bash or Powershell:
-
-Git Bash:
-```bash
-unset ARM_CLIENT_SECRET
-```
-
-Powershell:
-```powershell
-Remove-Item env:ARM_CLIENT_SECRET
-```
-
-Congratulations, you just made your Terraform workstation more secure! 
 
 ---
 name: tfe-chapter-7-review
@@ -3672,6 +3697,38 @@ The Sentinel policy you created earlier checks any Azure Virtual Machines that a
 There's no single correct answer to this lab. You may decide that partner 1 doesn't need such a large VM for their development work. Or partner 2 might grant an exception and use their admin powers to override the Sentinel failure. Or perhaps the new VM size could be added to the Sentinel rule to allow it as a new option.
 
 ---
+name: reset-environment
+Reset the Lab Environment
+-------------------------
+Before the next chapter we need to make some simple modifications to our **main.tf** and **outputs.tf** files. 
+
+In **main.tf** comment out everything below the first resource in the file:
+
+```hcl
+resource "azurerm_resource_group" "myresourcegroup" {
+  name     = "${var.prefix}-workshop"
+  location = "${var.location}"
+}
+
+# EVERYTHING BELOW HERE GETS COMMENTED OUT
+# resource "azurerm_virtual_network" "vnet" {
+#   name                = "${var.prefix}-vnet"
+```
+
+Comment out your entire **outputs.tf** file too:
+
+```hcl
+# Outputs file
+# output "catapp_url" {
+#   value = "http://${azurerm_public_ip.catapp-pip.fqdn}"
+# }
+```
+Save both files, commit them to git, and push to your remote repository. This will reset your environment to an empty resource group.
+
+???
+Instructor note: The next run will get stopped by your policy. Yes, it feels a bit weird and counterintuitive. That is just the way Sentinel works right now.
+
+---
 name: tfe-chapter-9-review
 📝 Chapter 9 Review
 -------------------------
@@ -3702,6 +3759,14 @@ TFE Private Module Registry
 Terraform modules are reusable packages of Terraform code that you can use to build your infrastructure. Terraform Enterprise includes a Private Module Registry where you can store, version, and distribute modules to your organizations and teams.
 
 ---
+name: clean-up-workspace
+Terraform Apply
+-------------------------
+<br><br><br>
+.center[![:scale 50%](images/rebuild_lab_environment.png)]
+Trigger a terraform run from the GUI. Confirm that it's actually running before you go onto the next lab. You don't need to watch it finish. This run will ensure that you have an empty resource group for the next labs.
+
+---
 name: chapter-10a-tfe-lab
 .center[.lab-header[📚 Lab Exercise 10a: Install a Module]]
 <br><br><br>
@@ -3726,7 +3791,7 @@ If you have a valid VCS connection, the private module registry can find any git
 name: use-a-module
 Use the Compute Module
 -------------------------
-Add the following code at the end of your main.tf file. Be sure to replace **`YOURORGNAME`** with your own organization name.
+Add the following code to your main.tf file, right below the resource group. Be sure to replace **`YOURORGNAME`** with your own organization name.
 
 ```terraform
 module "web_app_container" {
@@ -3736,20 +3801,33 @@ module "web_app_container" {
   https_only          = "false"
   resource_group_name = "${azurerm_resource_group.myresourcegroup.name}"
   container_type      = "docker"
-  container_image     = "scarolan/pacman"
+  container_image     = "scarolan/palacearcade"
 }
 
 output "container_app_url" {
-  value = "https://${module.web_app_container.hostname}"
+  value = "http://${module.web_app_container.hostname}"
 }
 ```
 
-Commit your code and push your changes to the remote repo. This will trigger a terraform run. You should now have a second application URL listed in the outputs:
+Commit your code and push your changes to the remote repo. This will trigger a terraform run. You should have a new application URL in the output:
 
 ```hcl
-catapp_url = http://myprefix-meow.centralus.cloudapp.azure.com
-container_app_url = https://myprefix.azurewebsites.net
+container_app_url = http://yourprefix.azurewebsites.net
 ```
+???
+Instructor note: You might see a git error message when you try to push. This is because your partner pushed changes to your repo, and you need to **`git pull`** his or her changes before you proceed.
+
+If your students have any trouble with stuck state show them how to use the **`terraform state list`** and **`terraform state rm`** commands:
+
+```bash
+hashicorp@seanclab000 MINGW64 ~/Desktop/hashicat (master)
+$ terraform state list
+module.web_app_container.azurerm_app_service_plan.main[0]
+
+hashicorp@seanclab000 MINGW64 ~/Desktop/hashicat (master)
+$ terraform state rm module.web_app_container.azurerm_app_service_plan.main[0]
+```
+
 
 ---
 name: shall-we-play-a-game
@@ -3757,6 +3835,8 @@ name: shall-we-play-a-game
 -------------------------]
 
 .center[![:scale 80%](images/welcome_arcade.png)]
+
+.center[**Congratulations! You made it to the end of the workshop.**]
 
 ---
 name: tfe-chapter-10-review
@@ -3861,10 +3941,13 @@ name: chapter-11-tfe-lab-2
 
 1. Click on the **Branches** menu and click on the  **Add Rule** button.  
 2. Type **master** into the **Branch name pattern** field.  
-3. Check the following boxes:  
-.center[☑️ Require pull request reviews before merging  
+3. Check the following boxes:
+```
+☑️ Require pull request reviews before merging  
 ☑️ Require status checks to pass before merging  
-  ☑️ sentinel/yourorghere/yourworkspacehere]
+ -  ☑️ sentinel/yourorghere/yourworkspacehere  
+ -  ☑️ atlas/yourorghere/yourworkspacehere  
+```
 4. Click the **Create** button at the bottom of the page.  
 
 ---
@@ -3874,7 +3957,7 @@ name: chapter-11-tfe-lab-3
 **Setup Part 4: Set Up UAT and Production**
 
 1. Back in the TFE console, create a new workspace called **webapp-uat** and connect it to the **uat** branch of your repo.  
-2. Use the tfh tool to upload all your variables into the new workspace:
+2. Use the tfh tool to upload all your variables into the new workspace.  **Pick a new prefix for UAT!**
 ```bash
 export TFH_name=webapp-uat
 tfh pushvars -overwrite-all -dry-run false \
@@ -3899,10 +3982,32 @@ name: chapter-11-tfe-lab-4
 <br>
 You are now ready to run **The Gauntlet**. 
 
-**The Scenario**: The manager of the Palace Arcade has asked you to update the company website. He would like to replace the game on the homepage with a newer one.
+**The Scenario**: You are a sysadmin at the Palace Arcade. The company has just been acquired by larger rival Pizza Planet. Pizza Planet management has asked your team to update the website to match the our new company brand and logo. Pizza Planet's security team also requires that all public-facing websites run only in SSL (https only) mode.
 
 **Your Mission**: Update the content of the website in UAT, make sure all Sentinel tests pass, and then submit a pull request to get your changes into production.
 
-Change the **`container_image`** parameter in your Terraform code to **`scarolan/gauntlet`**.
+Change the **`container_image`** parameter in your Terraform code to **`scarolan/pizzaplanet`**.
 
 Your instructor will start the timer once everyone is ready. How fast can you get through **The Gauntlet**?
+
+---
+name: before-you-go
+Before You Go...
+-------------------------
+Please run **`terraform destroy`** command to delete your lab environment(s) before you go. This helps us keep our cloud costs under control.
+
+Command:
+```powershell
+terraform destroy
+```
+
+Output:
+```tex
+Do you really want to destroy all resources?
+  Terraform will destroy all your managed infrastructure, as shown above.
+  There is no undo. Only 'yes' will be accepted to confirm.
+
+  Enter a value: yes
+
+Destroy complete! Resources: 15 destroyed.
+```
