@@ -3,7 +3,7 @@
 ## What is this thing?
 se-training-lab is a virtual classroom environment where you can quickly create Windows 10 workstations with HashiCorp tools pre-installed and ready to use. Windows was chosen as the OS because it commands (75% of the market share)[https://www.statista.com/statistics/218089/global-market-share-of-windows-7/] for desktop operating systems. Windows 10 will be familiar and easy to use for the greatest number of users. These cloud desktop workstations are easy to use and provide a consistent environment for the benefit of instructors and students. The workstation image is currently published in two regions, **centralus** and **uksouth**. See below for a list of what's installed. These workstations can be used with pre-built training curriculum such as https://github.com/hashicorp/se-terraform-vault-workshop or any other lab exercise that requires Terraform or Vault command line tools.
 
-![HashiCorp Windows 10 Cloud Workstation](windows_workstation.png)
+![HashiCorp Windows 10 Cloud Workstation](https://github.com/hashicorp/se-terraform-vault-workshop/blob/master/windows_workstation.png)
 
 ## Setting up the lab
 If you have access to the HashiCorp Azure Demo environment, you can simply browse to the Azure Dev/Test labs section and click on *se-training-lab* or *emea-training-lab*. If you're a partner or external user, skip down to the "Building an Azure Windows 10 Workstation" section to create a reusable custom image. Once you've got your custom Windows 10 image the process is pretty simple:
