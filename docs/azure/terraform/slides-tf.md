@@ -2312,8 +2312,6 @@ Commands:
 install-module posh-git
 import-module posh-git
 ```
-???
-**This extension helps you see at a glance the current status of a Git repository. This will only enable it for the current shell. If you want to make it permanent the import module command can be added to your Powershell profile. We're not going to cover that in this class.**
 
 Output
 ```tex
@@ -2324,6 +2322,9 @@ Set-PSRepository cmdlet. Are you sure you want to install the modules from 'PSGa
 
 C:\Users\hashicorp\Desktop\hashicat [master ≡]>
 ```
+
+???
+**This extension helps you see at a glance the current status of a Git repository. This will only enable it for the current shell. If you want to make it permanent the import module command can be added to your Powershell profile. We're not going to cover that in this class.**
 
 ---
 name: tfe-set-prefix
