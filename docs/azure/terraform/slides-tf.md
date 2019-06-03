@@ -3735,7 +3735,7 @@ name: chapter-9b-tfe-lab
 One of your team members needs a larger virtual machine size for load testing. This is another partner exercise.
 
 **Partner 1**:
-In Partner 2's workspace, create a new variable called **vm_size** and set it to **Standard_A1_v2**. Click on the **Queue Run** button to trigger a new terraform plan. What happens? Are you able to override the Sentinel failure and continue?
+In Partner 2's workspace, create a new variable called **vm_size** and set it to **Standard_A1_v2**. Click on the **Queue Plan** button to trigger a new terraform plan. What happens? Are you able to override the Sentinel failure and continue?
 
 **Partner 2**:
 Log onto your workspace and navigate to the current run. Have a discussion with Partner 1 about why they need a larger VM. Agree upon a solution and redeploy the application.
