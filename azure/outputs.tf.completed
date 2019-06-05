@@ -17,7 +17,7 @@ output "MySQL_Server_FQDN" {
 }
 
 output "Instructions" {
-  value = <<SHELLCOMMANDS
+  value = <<EOF
 
 # Connect to your Linux Virtual Machine
 #
@@ -25,5 +25,5 @@ output "Instructions" {
 # other SSH client. Your password is: ${var.admin_password}
 
 ssh ${var.admin_username}@${azurerm_public_ip.vault-pip.fqdn}
-SHELLCOMMANDS
+EOF
 }

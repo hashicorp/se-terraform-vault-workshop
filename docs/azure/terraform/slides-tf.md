@@ -1469,7 +1469,7 @@ output "MySQL_Server_FQDN" {
 }
 
 output "Instructions" {
-  value = <<SHELLCOMMANDS
+  value = <<EOF
 
 ##############################################################################
 # Connect to your Linux Virtual Machine
@@ -1480,12 +1480,12 @@ output "Instructions" {
 
 ssh ${var.admin_username}@${azurerm_public_ip.vault-pip.fqdn}
 
-SHELLCOMMANDS
+EOF
 }
 ```
 
 ???
-**This bit here with the SHELLCOMMANDS is an example of a HEREDOC. It allows you store multi-line text in an output.**
+**This bit here with the EOF is an example of a HEREDOC. It allows you store multi-line text in an output.**
 
 ---
 name: terraform-outputs
@@ -1503,7 +1503,7 @@ output "MySQL_Server_FQDN" {
 }
 
 output "Instructions" {
-  value = <<SHELLCOMMANDS
+  value = <<EOF
 
 ##############################################################################
 # Connect to your Linux Virtual Machine
@@ -1514,11 +1514,11 @@ output "Instructions" {
 
 ssh ${var.admin_username}@${azurerm_public_ip.vault-pip.fqdn}
 
-SHELLCOMMANDS
+EOF
 }
 ```
 ???
-The bit with SHELLCOMMANDS is called a heredoc. This is how you add multiple lines or a paragraph of text to your outputs.
+The bit with EOF is called a heredoc. This is how you add multiple lines or a paragraph of text to your outputs.
 
 ---
 name: terraform-refresh

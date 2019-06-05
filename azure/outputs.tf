@@ -15,7 +15,7 @@
 #   value = "${azurerm_mysql_server.mysql.fqdn}"
 # }
 # output "Instructions" {
-#   value = <<SHELLCOMMANDS
+#   value = <<EOF
 #
 # # Connect to your Linux Virtual Machine
 # #
@@ -23,6 +23,6 @@
 # # other SSH client. Your password is: ${var.admin_password}
 # 
 # ssh ${var.admin_username}@${azurerm_public_ip.vault-pip.fqdn}
-# SHELLCOMMANDS
+# EOF
 # }
 
