@@ -171,9 +171,6 @@ Follow along on your own computer at this link:
 https://bit.ly/hashiazure
 =========================
 ]
-<br><br>
-.center[
-You can advance to slide #120 with the arrow keys.]
 
 ???
 TODO:  Update this link once the TFE intro deck has it's own home. Currently it is stored as Appendix B
