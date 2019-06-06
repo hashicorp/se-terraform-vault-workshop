@@ -519,6 +519,9 @@ Windows workstation users please proceed to the next slide.
 
 Azure Cloudshell users can jump to the [next section](#workstation-setup-6).
 
+???
+Instructor Note: If your users want to bring their own Azure accounts, they can do all the exercises in Azure Cloudshell. Or if you are able to spin up accounts inside a training account and provide them to your students that's fine too. Otherwise we recommend using the Azure Dev/Test prebuilt workstations described in the instructor notes in this repo.
+
 ---
 name: workstation-setup-1
 Log Onto Your Workstation
