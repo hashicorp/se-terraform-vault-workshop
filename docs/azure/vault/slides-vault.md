@@ -1335,7 +1335,7 @@ For more information please refer to the following links:
 ---
 name: Feedback-Survey
 Workshop Feedback Survey
-=========================
+-------------------------
 <br><br>
 .center[
 Your feedback is important to us! 
@@ -1343,5 +1343,5 @@ Your feedback is important to us!
 The survey is short, we promise:
 
 http://bit.ly/hashiworkshopfeedback
-=========================
+-------------------------
 ]

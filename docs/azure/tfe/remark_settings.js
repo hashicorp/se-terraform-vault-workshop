@@ -6,5 +6,5 @@ var slideshow = remark.create({
   ratio: '4:3',
   highlightStyle: 'tomorrow-night-bright',
   highlightLines: 'true',
-  sourceUrl: './slides-tf.md'
+  sourceUrl: './slides-tfe.md'
 });
