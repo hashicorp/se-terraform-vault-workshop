@@ -502,6 +502,23 @@ Chapter 1
 Set Up Your Workstation
 ]
 
+
+---
+name: workstation-setup-0
+Choose Your Workstation
+-------------------------
+
+Your instructor will provide you with one of the following two options for your workstation:
+
+1. A cloud based Windows workstation with all our tools pre-installed.
+2. An Azure Cloudshell environment which you can use from a web browser.
+
+We may not have both options available with every training. Check with your instructor for details.
+
+Windows workstation users please proceed to the next slide.
+
+Azure Cloudshell users can jump to the [next section](#workstation-setup-6).
+
 ---
 name: workstation-setup-1
 Log Onto Your Workstation
@@ -596,7 +613,7 @@ I've seen this popup sometimes take two tries to save properly. It might be a bu
 name: workstation-setup-6
 Clone the Training Repo
 -------------------------
-Run the following commands to clone the training repository from GitHub. Make sure you are in the 'azure' subdirectory. Run the Windows workstation commands if you have a cloud workstation provided by your instructor. Run the Cloudshell commands if you're using Azure Cloudshell in a browser window.
+Run the following commands to clone the training repository from GitHub. Run the Windows workstation commands if you have a cloud workstation provided by your instructor. Run the Cloudshell commands if you're using Azure Cloudshell in a browser window.
 
 Windows Workstation Commands
 ```powershell
