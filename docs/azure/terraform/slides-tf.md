@@ -596,19 +596,21 @@ I've seen this popup sometimes take two tries to save properly. It might be a bu
 name: workstation-setup-6
 Clone the Training Repo
 -------------------------
-<br><br>
 Run the following commands to clone the training repository from GitHub. Make sure you are in the 'azure' subdirectory.
 
 ```powershell
 cd ~/Desktop
 git clone https://github.com/hashicorp/se-terraform-vault-workshop
 cd se-terraform-vault-workshop/azure
+code -r .
 ```
 
-Now reload your text editor in the current directory with the code command:
+And if you're doing the workshop on Azure cloudshell, run these commands:
 
-```powershell
-code -r .
+```bash
+git clone https://github.com/hashicorp/se-terraform-vault-workshop
+cd se-terraform-vault-workshop/azure
+code .
 ```
 
 ???
