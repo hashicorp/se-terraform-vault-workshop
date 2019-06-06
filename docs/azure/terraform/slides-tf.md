@@ -1950,7 +1950,7 @@ name: Ready-fo-More
 Ready for More?
 =========================
 <br><br><br>
-You can try the [Introduction to Vault](../vault) Workshop, or proceed to the [Intro to Terraform Enterprise](#Intro-to-Terraform-Enterprise) Workshop.
+You can try the [Introduction to Vault](../vault) Workshop, or proceed to the [Intro to Terraform Enterprise](../tfe) Workshop.
 
 The Intro to Vault workshop uses the infrastructure you just built as its lab environment. 
 
@@ -1958,7 +1958,7 @@ Please run **`terraform destroy`** if you're not doing the Vault workshop. This 
 
 [Introduction to Vault](../vault) - Learn the Basics of HashiCorp Vault
 
-[Intro to Terraform Enterprise](#Intro-to-Terraform-Enterprise) - Explore Terraform Cloud and Enterprise
+[Intro to Terraform Enterprise](../tfe) - Explore Terraform Cloud and Enterprise
 
 ---
 name: Feedback-Survey
