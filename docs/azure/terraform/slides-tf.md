@@ -1961,6 +1961,20 @@ Please run **`terraform destroy`** if you're not doing the Vault workshop. This 
 [Intro to Terraform Enterprise](#Intro-to-Terraform-Enterprise) - Explore Terraform Cloud and Enterprise
 
 ---
+name: Feedback-Survey
+Workshop Feedback Survey
+=========================
+<br><br>
+.center[
+Your feedback is important to us! 
+
+The survey is short, we promise:
+
+http://bit.ly/hashiworkshopfeedback
+=========================
+]
+
+---
 name: Appendix-A-Intro-to-TF-Enterprise
 class: center,middle
 Appendix A - Intro to Terraform Enterprise
@@ -3929,6 +3943,20 @@ Do you really want to destroy all resources?
 
 Destroy complete! Resources: 15 destroyed.
 ```
+
+---
+name: Feedback-Survey
+Workshop Feedback Survey
+=========================
+<br><br>
+.center[
+Your feedback is important to us! 
+
+The survey is short, we promise:
+
+http://bit.ly/hashiworkshopfeedback
+=========================
+]
 
 ---
 name: additional-resources-tfe

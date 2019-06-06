@@ -1331,3 +1331,17 @@ For more information please refer to the following links:
 * https://www.vaultproject.io/docs/
 * https://www.vaultproject.io/api/
 * https://learn.hashicorp.com/vault/
+
+---
+name: Feedback-Survey
+Workshop Feedback Survey
+=========================
+<br><br>
+.center[
+Your feedback is important to us! 
+
+The survey is short, we promise:
+
+http://bit.ly/hashiworkshopfeedback
+=========================
+]
