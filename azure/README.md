@@ -1,7 +1,7 @@
 # azure-terraform-vault-workshop
 This repo contains Terraform code for standing up a HashiCorp Vault training lab on Microsoft Azure. You can use it for a half-day Terraform workshop, a half-day Vault workshop or combined day-long workshop covering both. To set up and run either or both workshops, simply follow the instructions below.
 
-There is also an Intro to Terraform Enterprise (beta) workshop in [Appendix A](https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#111). This workshop can be done together with the OSS intro workshops, or as a stand-alone training.
+There is also an [Intro to Terraform Enterprise (beta) workshop](https://hashicorp.github.io/se-terraform-vault-workshop/azure/tfe/). This workshop can be done together with the OSS intro workshops, or as a stand-alone training.
 
 ### Lab Setup
 1. Clone or download the code from here: https://github.com/hashicorp/se-terraform-vault-workshop
