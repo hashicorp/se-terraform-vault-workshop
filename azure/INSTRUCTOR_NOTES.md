@@ -24,8 +24,14 @@ If you have access to the HashiCorp Azure Demo environment, you can simply brows
 1. Distribute the public URLs, username, and password to your students.
 1. RDP is running on ports 80, 443, and 3389. If the default port (3389) seems blocked, try adding `:80` or `:443` to the end of the workstation URL.
 
-## Building an Azure Windows 10 Workstation
-Follow this process to build a Windows 10 workstation image in your own account or location.
+## Building an Azure Windows 10 Workstation - Packer
+NEW: We now have a Packer template for building the workstation image.  You can find it here:
+
+https://github.com/hashicorp/se-training-workstation
+https://circleci.com/gh/hashicorp/se-training-workstation
+
+## Building an Azure Windows 10 Workstation - Manual
+The manual process below will be preserved for posterity.
 
 1. Spin up a standard Windows 10 instance from the marketplace *inside Azure Dev/Test labs*. You'll use this as your base image. It's important that you create your machine inside the lab where you want to snapshot it. Once you're able to log onto the machine, run the steps below.
 
