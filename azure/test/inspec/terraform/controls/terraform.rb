@@ -71,7 +71,7 @@ control 'terraform-init' do
     terraform init'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/"azurerm" \(1.27.0\)/) }
+    its('stdout') { should match(/"\(1.30.1\)/) }
     its('stdout') { should match(/Terraform has been successfully initialized!/) }
     its('stderr') { should match(//) }
   end
@@ -100,7 +100,7 @@ control 'terraform-apply' do
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/name:     "" => "uat-tf-vault-lab-workshop"/) }
+    its('stdout') { should match(/uat-tf-vault-lab-workshop/) }
     its('stderr') { should match(//) }
   end
 end

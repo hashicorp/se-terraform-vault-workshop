@@ -12,7 +12,7 @@ a known working version. If you leave this out you'll get the latest
 version. */
 
 provider "azurerm" {
-  version = "=1.27.0"
+  version = "=1.30.1"
 }
 
 /* First we'll create a resource group. In Azure every resource belongs to a 

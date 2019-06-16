@@ -752,7 +752,7 @@ Output:
 ```tex
 Initializing provider plugins...
 - Checking for available provider plugins on https://releases.hashicorp.com...
-- Downloading plugin for provider "azurerm" (1.27.0)...
+- Downloading plugin for provider "azurerm" (1.30.1)...
 
 Terraform has been successfully initialized!
 ```
@@ -998,12 +998,12 @@ You can manually configure which version(s) of a provider you would like to use.
 
 ```hcl
 provider "azurerm" {
-  version = "=1.27.0"
+  version = "=1.30.1"
 }
 ```
 
 ???
-**Here we have pinned the provider version to 1.27.0. We recommend pinning your provider versions, especially in production.**
+**Here we have pinned the provider version to 1.30.1. We recommend pinning your provider versions, especially in production.**
 
 ---
 name: resources-building-blocks
