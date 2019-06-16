@@ -10,7 +10,7 @@ control 'os-release' do
     it { should eq 'windows' }
   end
   describe os.release do
-    it { should eq '10.0.17763' }
+    it { should eq '10.0.16299' }
   end
 end
 
@@ -28,7 +28,7 @@ control 'terraform-version' do
   impact 1.0
   desc 'Checks to see that Terraform is installed and working.'
   describe powershell('terraform --version') do
-    its('stdout') { should match(/0.11.13/) }
+    its('stdout') { should match(/0.12.1/) }
   end
 end
 
@@ -37,7 +37,7 @@ control 'vault-version' do
   impact 1.0
   desc 'Checks to see that Vault is installed and working.'
   describe powershell('vault --version') do
-    its('stdout') { should match(/v1.1.2/) }
+    its('stdout') { should match(/v1.1.3/) }
   end
 end
 
@@ -46,7 +46,7 @@ control 'git-version' do
   impact 1.0
   desc 'Checks to see that Git is installed and working.'
   describe powershell('git --version') do
-    its('stdout') { should match(/2.21.0.windows.1/) }
+    its('stdout') { should match(/2.22.0.windows.1/) }
   end
 end
 
@@ -55,7 +55,7 @@ control 'vsc-version' do
   impact 1.0
   desc 'Checks to see that Visual Studio Code is installed and working.'
   describe powershell('code --version') do
-    its('stdout') { should match(/1.33.1/) }
+    its('stdout') { should match(/1.35.1/) }
   end
 end
 
