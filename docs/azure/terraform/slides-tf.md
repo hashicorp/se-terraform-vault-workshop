@@ -542,23 +542,23 @@ RDP is installed by default on almost all Windows corporate PCs and laptops. If 
 
 ---
 name: workstation-setup-2
-Run the setup.ps1 script
+Run the setup_azure.ps1 script
 -------------------------
 <br><br>
 .center[![:scale 50%](images/run_setup.png)]
 
-Right click on the file called 'setup' on your desktop and select 'Run with Powershell'. Type Y for Yes when it asks about changing your execution policy.
+Right click on the file called 'setup_azure' on your desktop and select 'Run with Powershell'. Type Y for Yes when it asks about changing your execution policy.
 
 **WARNING:** Do not skip this step. It is required to set up your connection to Azure Cloud.
 
 ???
 If anyone is curious what this powershell script does, it's disabling windows line endings for git clone. It also fetches dynamic Azure credentials that are good for 8 hours.
 
-**This handy script does some setup and fetches dynamic Azure credentials from our training Vault server. Right click on the setup.ps1 file and select the "Run with Powershell" option. It may take a minute or two to finish.**
+**This handy script does some setup and fetches dynamic Azure credentials from our training Vault server. Right click on the setup_azure.ps1 file and select the "Run with Powershell" option. It may take a minute or two to finish.**
 
 ---
 name: workstation-setup-2a
-Run the setup.ps1 script
+Run the setup_azure.ps1 script
 -------------------------
 <br><br>
 .center[![:scale 80%](images/ready_to_terraform.png)]
@@ -788,7 +788,7 @@ persisted to local or remote state storage.
 ???
 **`terraform plan` is a dry run command. We're not actually building anything yet, Terraform is just telling is what it would do if we ran it for real.**
 
-**If you're curious, how are we authenticating to Azure? We saved some Azure credentials on your workstation as environment variables when we ran the setup.ps1 script. You can also use Terraform directly from Azure cloudshell. Terraform is preinstalled in cloudshell and doesn't require any authentication or special configuration.**
+**If you're curious, how are we authenticating to Azure? We saved some Azure credentials on your workstation as environment variables when we ran the setup_azure.ps1 script. You can also use Terraform directly from Azure cloudshell. Terraform is preinstalled in cloudshell and doesn't require any authentication or special configuration.**
 
 ---
 name: terraform-plan-2

@@ -237,7 +237,7 @@ RDP is installed by default on almost all Windows corporate PCs and laptops. If 
 
 ---
 name: tfe-workstation-setup-3
-Run the setup.ps1 script
+Run the setup_azure.ps1 script
 -------------------------
 <br><br>
 .center[![:scale 70%](images/run_setup.png)]
@@ -247,13 +247,13 @@ Right click on the file called 'setup' on your desktop and select 'Run with Powe
 **WARNING:** Do not skip this step. It is required to set up your connection to Azure Cloud.
 
 ???
-**This handy script does some setup and fetches dynamic Azure credentials from our training Vault server. Right click on the setup.ps1 file and select the "Run with Powershell" option. It may take a minute or two to finish.**
+**This handy script does some setup and fetches dynamic Azure credentials from our training Vault server. Right click on the setup_azure.ps1 file and select the "Run with Powershell" option. It may take a minute or two to finish.**
 
 If anyone is curious what this powershell script does, it's disabling windows line endings for git clone. It also fetches dynamic Azure credentials that are good for 8 hours.
 
 ---
 name: tfe-workstation-setup-4
-Run the setup.ps1 script
+Run the setup_azure.ps1 script
 -------------------------
 <br><br>
 .center[![:scale 100%](images/ready_to_terraform.png)]
