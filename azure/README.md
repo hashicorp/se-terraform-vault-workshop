@@ -14,4 +14,4 @@ There is also an [Intro to Terraform Enterprise (beta) workshop](https://hashico
 1. When the setup is done, follow the steps listed in the Terraform output.
 
 ### Note for Instructors:
-If you're teaching this workshop to a class, head on over to the [Instructor Notes](INSTRUCTOR_NOTES.md) page.
+If you're teaching this workshop to a class, head on over to the [Instructor Notes](../INSTRUCTOR_NOTES.md) page.
