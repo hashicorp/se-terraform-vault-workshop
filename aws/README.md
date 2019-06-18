@@ -3,7 +3,7 @@ This repo contains Terraform code for standing up a HashiCorp Vault training lab
 
 ### Lab Setup
 1. Clone or download the code from here: https://github.com/hashicorp/se-terraform-vault-workshop
-1. Open a terminal and cd into the se-terraform-vault-workshop/azure directory
+1. Open a terminal and cd into the se-terraform-vault-workshop/aws directory
 1. Copy the settings in `terraform.tfvars.example` into a `terraform.tfvars` file. Set the prefix variable to your name. This is the only required setting. You can also change the location variable to the AWS region nearest you.
 1. Uncomment the code in main.tf (or simply copy over it with main.tf.completed)
 1. Uncomment the code in outputs.tf (or copy from outputs.tf.completed)
