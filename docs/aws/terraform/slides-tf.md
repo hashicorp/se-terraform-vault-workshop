@@ -182,7 +182,7 @@ name: What-is-Terraform
 What is Terraform?
 -------------------------
 
-![:scale 100%](./images/Azure_tf_code.png)
+![:scale 80%](./images/aws_tf_code.png)
 
 .contents[
 * Executable Documentation
@@ -370,9 +370,9 @@ Name: Terraform-vs-JSON
 Terraform vs. JSON
 -------------------------
 <br><br><br>
-ARM JSON:
+CloudFormation JSON:
 ```json
-"name": "[concat(parameters('PilotServerName'), '3')]",
+{ "Fn::Join" : [ "delimiter", [ PilotServerName,3 ] ] }
 ```
 
 Terraform:
@@ -388,15 +388,6 @@ Terraform code (HCL) is easy to learn and easy to read. It is also 50-70% more c
 https://blog.1password.com/terraforming-1password/
 
 1Password were able to move their entire production infrastructure to Terraform in a few short weeks. Now they can tear down and completely rebuild their production environment in a matter of hours.
-
----
-Name: Why-Terraform
-Why Terraform?
--------------------------
-![:scale 100%](images/AWS-loves-terraform.png)
-
-???
-**Amazon has invested significant resources to ensure that AWS users have a first-class experience when using Terraform to provision on AWS. Your friendly Amazon solutions architect is happy to support you if you choose to use Terraform, especially if you are adopting a multi-cloud strategy. Terraform is even built right into AWS CloudShell. You can use Terraform with zero setup, right from your web browser.**
 
 ---
 Name: Why-Terraform-on-AWS
