@@ -23,94 +23,11 @@ If you have access to the HashiCorp Azure Demo environment, you can simply brows
 1. Wait about 15-20 minutes. When your machines are done building you'll see a little notification icon in the upper right corner.
 1. Distribute the public URLs, username, and password to your students.
 
-## Building an Azure Windows 10 Workstation
-Follow this process to build a Windows 10 workstation image in your own account or location.
+### Optional Workstation DNS Names:
+Use the se-classroom-lab terraform code to give your workstations custom DNS names: https://github.com/hashicorp/se-classroom-lab
 
-1. Spin up a standard Windows 10 instance from the marketplace *inside Azure Dev/Test labs*. You'll use this as your base image. It's important that you create your machine inside the lab where you want to snapshot it. Once you're able to log onto the machine, run the steps below.
+## Building an Azure Windows 10 Workstation - Packer
+NEW: We now have a Packer template for building the workstation image. Standard Windows 10 workstation images are now published to different regions. You can find the source code and CI/CD pipeline here:
 
-2. Run this script.
-```
-Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
-choco install cmder -y
-choco install git -y
-choco install nmap -y
-choco install 7zip -y
-choco install putty -y
-choco install openssh -y
-choco install winscp -y
-choco install visualstudiocode -y
-choco install googlechrome -y
-choco install poshgit -y
-choco install jq -y
-choco install azure-cli -y
-
-# Create a Desktop shortcut for Cmder
-# Note: Set your default shell to Powershell the first time you run this.
-$TargetFile = "C:\tools\cmder\Cmder.exe"
-$ShortcutFile = "C:\Users\Public\Desktop\cmder.lnk"
-$WScriptShell = New-Object -ComObject WScript.Shell
-$Shortcut = $WScriptShell.CreateShortcut($ShortcutFile)
-$Shortcut.TargetPath = $TargetFile
-$Shortcut.Save()
-```
-3. Install vault and terraform in C:\windows\system32. That's right, just toss the binaries in there.
-4. Generate a token on the CAM vault server scoped to the following policy. This needs to be in the `Sales/SE` namespace. The following will create a token valid for 90 days. So remember to rebuild your workstation images at least once a quarter.
-```
-vault token create -policy=se-workshop-creds -ttl 2160h
-```
-5. Bake the token and CAM Vault URL into *system* environment variables. These are used by the setup.ps1 script on the user's desktop.
-```
-[Environment]::SetEnvironmentVariable("SETUP_VAULT_TOKEN", "YOURTOKENHERE", "Machine")
-[Environment]::SetEnvironmentVariable("SETUP_VAULT_ADDR", "https://cam-vault.hashidemos.io:8200", "Machine")
-```
-6. Add a file called `setup.ps1` inside of `C:\Users\Public\Public Desktop`. This will ensure that it shows up on your users desktop when you deploy new workstations. This script fetches Azure credentials that are good for eight hours.
-
-```
-# Fetch dynamic Azure credentials for the workshop.
-# Uses https://cam-vault.hashidemos.io:8200 and the Sales/SE namespace
-
-# Fix git line ending settings on Windows
-Set-Content -Path 'C:\Users\hashicorp\.gitconfig' -Value "[core]`n        autocrlf = false"
-
-$VAULT_TOKEN = $env:SETUP_VAULT_TOKEN
-$VAULT_ADDR = $env:SETUP_VAULT_ADDR
-
-Write-Host -ForegroundColor Magenta "Fetching dynamic Azure credentials from HashiCorp Vault..."
-
-$CREDS=(Invoke-RestMethod -Headers @{"X-Vault-Token" = ${VAULT_TOKEN}; "X-Vault-Namespace" = "Sales/SE"} -Method GET -Uri ${VAULT_ADDR}/v1/azure/creds/se-training-workstation).data
-
-# write-host $CREDS
-$CLIENT_ID=$CREDS.client_id
-$CLIENT_SECRET=$CREDS.client_secret
-
-Do {
-    Write-Host -ForegroundColor White "Waiting for Azure credentials to be ready..."
-    Start-Sleep 3
-} Until (az login --service-principal -u 91299f64-f951-4462-8e97-9efb1d215501 -p $CLIENT_SECRET --tenant $env:ARM_TENANT_ID --allow-no-subscription 2> $null)
-
-Write-Host -ForegroundColor Yellow "Storing credentials as system environment variables..."
-
-[Environment]::SetEnvironmentVariable("ARM_SUBSCRIPTION_ID", "14692f20-9428-451b-8298-102ed4e39c2a", "Machine")
-[Environment]::SetEnvironmentVariable("ARM_TENANT_ID", "0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec", "Machine")
-[Environment]::SetEnvironmentVariable("ARM_CLIENT_ID", "${CLIENT_ID}", "Machine")
-[Environment]::SetEnvironmentVariable("ARM_CLIENT_SECRET", "${CLIENT_SECRET}", "Machine")
-
-Write-Host -ForegroundColor DarkGreen "Dynamic credentials are good for 8 hours. You may proceed with the workshop."
-
-# This is just for fun
-Get-Content -Path C:\Users\Public\banner.txt
-
-Read-Host -Prompt "Press Enter to Continue..."
-```
-
-7.  Run this to sysprep and "Generalize" the machine:
-
-```
-cd C:\windows\system32\sysprep
-.\sysprep.exe /generalize
-```
-
-8.  Click the 'generalize' box and set the pulldown to "shutdown". Wait and give it a good ten minutes to fully shutdown.
-9.  After the machine has been shut down, you can browse to it in the portal click it and create an image from it. Name it hc-training-workstation-DATE.  Example:  `hc-training-workstation-2019-05-12`
-10. Use the image to spin up your workstations.
+https://github.com/hashicorp/se-training-workstation
+https://circleci.com/gh/hashicorp/se-training-workstation
