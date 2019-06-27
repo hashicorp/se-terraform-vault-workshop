@@ -163,8 +163,8 @@ resource "aws_instance" "vault-server" {
   # Put a copy of the ssh key onto the local workstation
   provisioner "local-exec" {
     command = <<-EOF
-              New-Item -ItemType Directory -Force -Path $\{env:HOMEPATH\}\.ssh
-              Write-Output ${module.ssh-keypair-aws.private_key_pem} >> $\{env:HOMEPATH\}\.ssh\id_rsa;
+              New-Item -ItemType Directory -Force -Path $${env:HOMEPATH}\.ssh
+              Write-Output ${module.ssh-keypair-aws.private_key_pem} >> $${env:HOMEPATH}\.ssh\id_rsa;
               EOF
   }
 
