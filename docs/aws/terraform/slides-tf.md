@@ -493,16 +493,9 @@ name: workstation-setup-0
 Choose Your Workstation
 -------------------------
 
-Your instructor will provide you with one of the following two options for your workstation:
+Your instructor will provide you with:
 
-1. A cloud based Windows workstation with all our tools pre-installed.
-2. An AWS Cloudshell environment which you can use from a web browser.
-
-We may not have both options available with every training. Check with your instructor for details.
-
-Windows workstation users please proceed to the next slide.
-
-AWS Cloudshell users can jump to the [next section](#workstation-setup-6).
+* A cloud based Windows workstation with all our tools pre-installed.
 
 ???
 Instructor Note: If your users want to bring their own AWS accounts, they can do all the exercises in AWS Cloudshell. Or if you are able to spin up accounts inside a training account and provide them to your students that's fine too. Otherwise we recommend using the AWS Dev/Test prebuilt workstations described in the instructor notes in this repo.
@@ -527,7 +520,7 @@ RDP is installed by default on almost all Windows corporate PCs and laptops. If 
 
 ---
 name: workstation-setup-2
-Run the setup.ps1 script
+Run the setup_aws.ps1 script
 -------------------------
 <br><br>
 .center[![:scale 50%](images/run_setup.png)]
@@ -609,13 +602,6 @@ cd ~/Desktop
 git clone https://github.com/hashicorp/se-terraform-vault-workshop
 cd se-terraform-vault-workshop/AWS
 code -r .
-```
-
-AWS Cloudshell Commands
-```bash
-git clone https://github.com/hashicorp/se-terraform-vault-workshop
-cd se-terraform-vault-workshop/AWS
-code .
 ```
 
 ???
@@ -737,7 +723,7 @@ Output:
 ```tex
 Initializing provider plugins...
 - Checking for available provider plugins on https://releases.hashicorp.com...
-- Downloading plugin for provider "AWSrm" (1.30.1)...
+- Downloading plugin for provider "aws" (2.16.0)...
 
 Terraform has been successfully initialized!
 ```
@@ -785,11 +771,12 @@ When you run **`terraform plan`** and enter your name, you should see output tha
 ```tex
 Terraform will perform the following actions:
 
-  + AWSrm_resource_group.hashitraining
-      id:       <computed>
-      location: "centralus"
-      name:     "bugsbunny-workshop"
-      tags.%:   <computed>
+  + aws_vpc.workshop
+      id:                               <computed>
+      arn:                              <computed>
+      assign_generated_ipv6_cidr_block: "false"
+      cidr_block:                       "10.0.0.0/16"
+      default_network_acl_id:           <computed>
 
 
 Plan: 1 to add, 0 to change, 0 to destroy.
@@ -854,9 +841,9 @@ variable "prefix" {
   description = "This prefix will be included in the name of most resources."
 }
 
-variable "location" {
+variable "region" {
   description = "The region where the virtual network is created."
-  default     = "centralus"
+  default     = "us-east-1"
 }
 
 variable "address_space" {
@@ -875,19 +862,16 @@ A. In the terraform.tfvars file, or optionally on the command line or via enviro
 name: chapter-2-lab
 .center[.lab-header[👩‍💻 Lab Exercise 2: Set a Variable]]
 
-Choose the AWS location nearest to you and set the 'location' variable. You can find a list of AWS locations here:
+Choose the AWS location nearest to you and set the 'region' variable. You can find a list of AWS regions here:
 
-https://AWS.Amazon.com/en-us/global-infrastructure/locations/
+https://docs.aws.amazon.com/general/latest/gr/rande.html
 
 Examples:
 ```
-centralus  - Iowa
-eastus     - Virginia
-westus     - California
-uksouth    - London
-southindia - Chennai
-eastasia   - Hong Kong
-canadacentral - Toronto
+us-east-2	  - US East (Ohio)
+us-east-1	  - US East (N. Virginia)
+us-west-1	  - US West (N. California)
+us-west-2	  - US West (Oregon)
 ```
 
 ???
@@ -904,7 +888,7 @@ Your **terraform.tfvars** file should now look similar to this:
 # Prefix must be all lowercase letters, no symbols please.
 
 prefix = "yourname"
-location = "uksouth"
+region = "us-west-2"
 ```
 
 If you wish you can run **`terraform plan`** again to see a different result. Notice how your location setting has overridden the default setting.
@@ -965,7 +949,7 @@ Every terraform resource is structured exactly the same way.
 
 *resource* = top level keyword
 
-*type* = this is the name of the resource. The first part tells you which provider it belongs to. Example: `AWSrm_virtual_machine`. This means the provider is AWS and the specific type of resource is a virtual machine.
+*type* = this is the name of the resource. The first part tells you which provider it belongs to. Example: `aws_instance`. This means the provider is AWS and the specific type of resource is a virtual machine.
 
 *name* = arbitrary name to refer to this resource. Used internally by terraform. This field *cannot* be a variable.
 
@@ -982,8 +966,8 @@ Open up the main.tf file in Visual Studio Code and you'll see the provider block
 You can manually configure which version(s) of a provider you would like to use. If you leave this option out, Terraform will default to the latest available version of the provider.
 
 ```hcl
-provider "AWSrm" {
-  version = "=1.30.1"
+provider "aws" {
+  version = "~> 2.0"
 }
 ```
 
@@ -1000,9 +984,12 @@ Scroll down a little further and find the first resource in the main.tf file on 
 You can toggle comments with the _Edit > Toggle Line Comment_ menu, or by simply highlighting some text and pressing `CTRL-/`.
 
 ```hcl
-resource "AWSrm_resource_group" "hashitraining" {
-  name     = "${var.prefix}-workshop"
-  location = "${var.location}"
+resource "aws_vpc" "workshop" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "dedicated"
+  tags = {
+    Name = "${var.prefix}-workshop"
+  }
 }
 ```
 
@@ -1035,12 +1022,12 @@ Resource actions are indicated with the following symbols:
 
 Terraform will perform the following actions:
 
-  + AWSrm_resource_group.hashitraining
-      id:       <computed>
-      location: "centralus"
-      name:     "yourname-workshop"
-      tags.%:   <computed>
-
+  + aws_vpc.workshop
+      id:                               <computed>
+      arn:                              <computed>
+      assign_generated_ipv6_cidr_block: "false"
+      cidr_block:                       "10.0.0.0/16"
+      ....
 
 Plan: 1 to add, 0 to change, 0 to destroy.
 ------------------------------------------------------------------------
@@ -1070,11 +1057,12 @@ Do you want to perform these actions?
   Only 'yes' will be accepted to approve.
   Enter a value: yes
 
-  AWSrm_resource_group.hashitraining: Creating...
-  location: "" => "centralus"
-  name:     "" => "yourname-workshop"
-  tags.%:   "" => "<computed>"
-AWSrm_resource_group.hashitraining: Creation complete after 1s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
+aws_vpc.workshop: Creating...
+  arn:                              "" => "<computed>"
+  assign_generated_ipv6_cidr_block: "" => "false"
+  cidr_block:                       "" => "10.0.0.0/16"
+  ....
+aws_vpc.workshop: Creation complete after 8s (ID: vpc-0cf22f733192....)
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
@@ -1106,7 +1094,7 @@ Refreshing Terraform state in-memory prior to plan...
 The refreshed state will be used to calculate this plan, but will not be
 persisted to local or remote state storage.
 
-AWSrm_resource_group.hashitraining: Refreshing state... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
+aws_vpc.workshop: Refreshing state... (ID: vpc-0cf22f733192....)
 
 ------------------------------------------------------------------------
 
@@ -1122,9 +1110,9 @@ Terraform is sometimes called idempotent. This means it keeps track of what you 
 
 ---
 name: chapter-3-lab
-.center[.lab-header[👩🏻‍💻 Lab Exercise 3a: Change Your Location]]
+.center[.lab-header[👩🏻‍💻 Lab Exercise 3a: Change Your Region]]
 <br><br><br>
-Change the location variable in your terraform.tfvars file to a different AWS location. Re-run the **`terraform plan`** and **`terraform apply`** commands. What happens?
+Change the location variable in your terraform.tfvars file to a different AWS region. Re-run the **`terraform plan`** and **`terraform apply`** commands. What happens?
 
 ???
 This is a good spot for a mini discussion on how Terraform is idempotent, and declarative. You declare what you want (eg, one resource group in a particular region, with a specific name), and then terraform goes and carries out your command, even if you're changing something that already exists. In this example, we have to tear down the existing resource group and build a new one.
@@ -1186,11 +1174,12 @@ terraform apply -auto-approve
 
 Output:
 ```tex
-AWSrm_resource_group.hashitraining: Creating...
-  location: "" => "centralus"
-  name:     "" => "yourname-workshop"
-  tags.%:   "" => "<computed>"
-AWSrm_resource_group.hashitraining: Creation complete after 1s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
+aws_vpc.workshop: Creating...
+  arn:                              "" => "<computed>"
+  assign_generated_ipv6_cidr_block: "" => "false"
+  cidr_block:                       "" => "10.0.0.0/16"
+  ....
+aws_vpc.workshop: Creation complete after 8s (ID: vpc-0cf22f733192....)
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
@@ -1202,9 +1191,9 @@ The phrase "We can rebuild him. We have the technology." comes from 1970s TV sho
 name: chapter-3b-lab
 .center[.lab-header[👩🏼‍💻 Lab Exercise 3b: Add a Tag]]
 <br><br><br>
-Read the documentation for the `AWSrm_resource_group` resource and learn how to add tags to the resource group:
+Read the documentation for the `aws_vpc` resource and learn how to add tags to the vpc:
 
-https://www.terraform.io/docs/providers/AWSrm/r/resource_group.html
+https://www.terraform.io/docs/providers/aws/r/vpc.html
 
 Edit your main.tf file and add a tag to the resource. Set the name of the tag to 'environment' and the value to 'Production'.
 
@@ -1218,11 +1207,11 @@ name: chapter-3b-lab-answer
 Adding and removing tags is a non-destructive action, therefore Terraform is able to make these changes in-place, without destroying your resource group. Your main.tf file should look like this:
 
 ```terraform
-resource "AWSrm_resource_group" "hashitraining" {
-  name     = "${var.prefix}-vault-workshop"
-  location = "${var.location}"
-
+resource "aws_vpc" "workshop" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "dedicated"
   tags = {
+    Name = "${var.prefix}-workshop"
     environment = "Production"
   }
 }
@@ -1230,10 +1219,10 @@ resource "AWSrm_resource_group" "hashitraining" {
 
 Note how the tag is added by modifying the existing resource:
 ```tex
-AWSrm_resource_group.hashitraining: Modifying... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
-  tags.%:           "0" => "1"
+Aaws_vpc.workshop: Modifying... (ID: vpc-01a5c1289101109b6)
+  tags.%:           "1" => "2"
   tags.environment: "" => "Production"
-AWSrm_resource_group.hashitraining: Modifications complete after 0s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
+aws_vpc.workshop: Modifications complete after 6s (ID: vpc-01a5c1289101109b6)
 ```
 
 ???
@@ -1241,20 +1230,21 @@ Some resources can be non-destructively changed in place. Ask your class what th
 
 ---
 name: add-virtual-network
-Add a Virtual Network
+Add a Subnet
 -------------------------
 <br><br>
-Let's add a virtual network. Scroll down in the main.tf file until you find the AWSrm_virtual_network resource. Uncomment it and save the file.
+Let's add a subnet. Scroll down in the main.tf file until you find the `aws_subnet` resource. Uncomment it and save the file.
 
 ```terraform
-resource "AWSrm_virtual_network" "vnet" {
-  name                = "${var.prefix}-vnet"
-  location            = "${AWSrm_resource_group.hashitraining.location}"
-  address_space       = ["${var.address_space}"]
-  resource_group_name = "${AWSrm_resource_group.hashitraining.name}"
+resource "aws_subnet" "subnet" {
+  vpc_id     = "${aws_vpc.workshop.id}"
+  cidr_block = "10.0.1.0/24"
+  tags = {
+    Name = "${var.prefix}-workshop-subnet"
+  }
 }
 ```
-Note the syntax for ensuring that this virtual network is placed into the resource group we created earlier.
+Note the syntax for ensuring that this subnet is placed into the resource group we created earlier.
 
 ???
 Hop over to your own workstation and regenerate the terraform graph. Point out that we now have a Virtual Network, that depends on the resource group. How did Terraform know these things are connected?
@@ -1264,19 +1254,22 @@ name: dependency-mapping
 Terraform Dependency Mapping
 -------------------------
 <br><br>
-Terraform can automatically keep track of dependencies for you. Let's take a look at the two resources in our main.tf file. Note the highlighted line in the AWSrm_virtual_network resource. This is how we tell one resource to refer to another in terraform.
+Terraform can automatically keep track of dependencies for you. Let's take a look at the two resources in our main.tf file. Note the highlighted line in the aws_subnet resource. This is how we tell one resource to refer to another in terraform.
 
 ```terraform
-resource "AWSrm_resource_group" "hashitraining" {
-  name     = "${var.prefix}-vault-workshop"
-  location = "${var.location}"
+resource "aws_vpc" "workshop" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "dedicated"
+  tags = {
+    Name = "${var.prefix}-workshop"
+  }
 }
-
-resource "AWSrm_virtual_network" "vnet" {
-  name                = "${var.prefix}-vnet"
-  location            = "${AWSrm_resource_group.hashitraining.location}"
-  address_space       = ["${var.address_space}"]
-* resource_group_name = "${AWSrm_resource_group.hashitraining.name}"
+resource "aws_subnet" "subnet" {
+*  vpc_id     = "${aws_vpc.workshop.id}"
+  cidr_block = "10.0.1.0/24"
+  tags = {
+    Name = "${var.prefix}-workshop-subnet"
+  }
 }
 ```
 
@@ -1293,17 +1286,19 @@ terraform apply -auto-approve
 
 Output:
 ```tex
-AWSrm_resource_group.hashitraining: Refreshing state... (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...ourceGroups/yourname-workshop)
-AWSrm_virtual_network.vnet: Creating...
-  address_space.#:     "" => "1"
-  address_space.0:     "" => "10.0.0.0/16"
-  location:            "" => "centralus"
-  name:                "" => "yourname-vnet"
-  resource_group_name: "" => "yourname-workshop"
-  subnet.#:            "" => "<computed>"
-  tags.%:              "" => "<computed>"
-AWSrm_virtual_network.vnet: Still creating... (10s elapsed)
-AWSrm_virtual_network.vnet: Creation complete after 10s (ID: /subscriptions/c0a607b2-6372-4ef3-abdb-...twork/virtualNetworks/yourname-vnet)
+aws_vpc.workshop: Refreshing state... (ID: vpc-01a5c1289101109b6)
+aws_subnet.subnet: Creating...
+  arn:                             "" => "<computed>"
+  assign_ipv6_address_on_creation: "" => "false"
+  availability_zone:               "" => "<computed>"
+  availability_zone_id:            "" => "<computed>"
+  cidr_block:                      "" => "10.0.1.0/24"
+  ipv6_cidr_block:                 "" => "<computed>"
+  ...
+  tags.%:                          "" => "1"
+  tags.Name:                       "" => "bugsbunny-workshop-subnet"
+  vpc_id:                          "" => "vpc-01a5c1289101109b6"
+aws_subnet.subnet: Creation complete after 3s (ID: subnet-0604cc348237cc9be)
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
@@ -1343,23 +1338,20 @@ name: chapter-3c-lab-answer
 If you copied all the code over from **main.tf.completed** into **main.tf**, it should look like this (comments have been removed for brevity):
 
 ```terraform
-resource "AWSrm_resource_group" "hashitraining" {
-  name     = "${var.prefix}-vault-workshop"
-  location = "${var.location}"
+resource "aws_vpc" "workshop" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "dedicated"
+  tags = {
+    Name = "${var.prefix}-workshop"
+  }
 }
+resource "aws_subnet" "subnet" {
+  vpc_id     = "${aws_vpc.workshop.id}"
+  cidr_block = "10.0.1.0/24"
 
-resource "AWSrm_virtual_network" "vnet" {
-  name                = "${var.prefix}-vnet"
-  location            = "${AWSrm_resource_group.hashitraining.location}"
-  address_space       = ["${var.address_space}"]
-  resource_group_name = "${AWSrm_resource_group.hashitraining.name}"
-}
-
-resource "AWSrm_subnet" "subnet" {
-  name                 = "${var.prefix}-subnet"
-  virtual_network_name = "${AWSrm_virtual_network.vnet.name}"
-  resource_group_name  = "${AWSrm_resource_group.hashitraining.name}"
-  address_prefix       = "${var.subnet_prefix}"
+  tags = {
+    Name = "${var.prefix}-workshop-subnet"
+  }
 }
 ...
 ```
@@ -1410,24 +1402,22 @@ The first file is called main.tf. This is where you normally store your terrafor
 
 ```powershell
 # This is the main.tf file.
-resource "AWSrm_resource_group" "hashitraining" {
-  name     = "${var.prefix}-vault-workshop"
-  location = "${var.location}"
+resource "aws_vpc" "workshop" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "dedicated"
+  tags = {
+    Name = "${var.prefix}-workshop"
+  }
 }
+resource "aws_subnet" "subnet" {
+  vpc_id     = "${aws_vpc.workshop.id}"
+  cidr_block = "10.0.1.0/24"
 
-resource "AWSrm_virtual_network" "vnet" {
-  name                = "${var.prefix}-vnet"
-  location            = "${AWSrm_resource_group.hashitraining.location}"
-  address_space       = ["${var.address_space}"]
-  resource_group_name = "${AWSrm_resource_group.hashitraining.name}"
+  tags = {
+    Name = "${var.prefix}-workshop-subnet"
+  }
 }
-
-resource "AWSrm_subnet" "subnet" {
-  name                 = "${var.prefix}-subnet"
-  virtual_network_name = "${AWSrm_virtual_network.vnet.name}"
-  resource_group_name  = "${AWSrm_resource_group.hashitraining.name}"
-  address_prefix       = "${var.subnet_prefix}"
-}
+...
 ```
 
 ???
@@ -1444,8 +1434,8 @@ variable "prefix" {
   description = "This prefix will be included in the name of most resources."
 }
 
-variable "location" {
-  description = "The region where the virtual network is created."
+variable "region" {
+  description = "The region of aws to use"
   default     = "centralus"
 }
 
@@ -1550,10 +1540,10 @@ Instructions =
 # other SSH client. Your password is: Password123!
 ##############################################################################
 
-ssh hashicorp@yourname.centralus.cloudapp.AWS.com
+ssh hashicorp@youname-vault.hashidemos.io
 
 MySQL_Server_FQDN = yourname-mysql-server.mysql.database.AWS.com
-Vault_Server_URL = http://yourname.centralus.cloudapp.AWS.com:8200
+Vault_Server_URL = http://yourname-vault.hashidemos.io:8200
 ```
 
 ---
@@ -1579,10 +1569,10 @@ Instructions =
 # other SSH client. Your password is: Password123!
 ##############################################################################
 
-ssh hashicorp@yourname.centralus.cloudapp.AWS.com
+ssh hashicorp@youname-vault.hashidemos.io
 
 MySQL_Server_FQDN = yourname-mysql-server.mysql.database.AWS.com
-Vault_Server_URL = http://yourname.centralus.cloudapp.AWS.com:8200
+Vault_Server_URL = http://yourname-vault.hashidemos.io:8200
 ```
 
 ---
@@ -1599,7 +1589,7 @@ terraform output Vault_Server_URL
 
 Output:
 ```tex
-http://yourname.centralus.cloudapp.AWS.com:8200
+http://yourname-vault.hashidemos.io:8200
 ```
 
 ???
@@ -1609,7 +1599,7 @@ http://yourname.centralus.cloudapp.AWS.com:8200
 name: chapter-4a-lab
 .center[.lab-header[👩🏿‍💻 Lab Exercise 4a: Break main.tf Down]]
 <br><br><br><br>
-Take the AWSrm_virtual_machine resource out of main.tf and put it into its own file called **vm.tf**. Save both files. Run **`terraform apply`** again. What happens?
+Take the aws_instance resource out of main.tf and put it into its own file called **vm.tf**. Save both files. Run **`terraform apply`** again. What happens?
 
 ???
 **Don't forget to take the config resource out of main.tf when you copy it into vm.tf. Otherwise you'll have two resources of the same type, with the same name, which causes an error.**
@@ -1789,7 +1779,7 @@ name: chapter-5-lab-answer
 The remote-exec provisioner is a [Creation Time](https://www.terraform.io/docs/provisioners/index.html#creation-time-provisioners) Provisioner. It does not run every time you update scripts or code within the remote-exec block. If you need to completely rebuild a virtual machine, you can use the **`terraform taint`** command to mark it for a rebuild. Go ahead and taint your AWS VM and rebuild it before the next chapter.
 
 ```bash
-terraform taint AWSrm_virtual_machine.vault
+terraform taint aws_instance.vault
 terraform apply -auto-approve
 ```
 
