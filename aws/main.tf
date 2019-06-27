@@ -3,9 +3,9 @@
 #
 # This Terraform configuration will create the following:
 #
-# Azure Resource group with a virtual network and subnet
+# AWS VPC with a subnet
 # A Linux server running HashiCorp Vault and a simple application
-# A hosted Azure MySQL database server
+# A hosted RDS MySQL database server
 
 /* This is the provider block. We recommend pinning the provider version to
 a known working version. If you leave this out you'll get the latest
@@ -24,8 +24,7 @@ the variables.tf file, and you can override the defaults in your
 own terraform.tfvars file. */
 
 resource "aws_vpc" "workshop" {
-  cidr_block       = "10.0.0.0/16"
-  instance_tenancy = "dedicated"
+  cidr_block       = "${var.address_space}"
   tags = {
     Name = "${var.prefix}-workshop"
   }
@@ -39,11 +38,31 @@ making a copy of the terraform.tfvars.example file. */
 
 resource "aws_subnet" "subnet" {
   vpc_id     = "${aws_vpc.workshop.id}"
-  cidr_block = "10.0.1.0/24"
+  cidr_block = "${var.subnet_prefix}"
 
   tags = {
     Name = "${var.prefix}-workshop-subnet"
   }
+}
+
+
+/* Other things required, such as internet gateways and routes */
+resource "aws_internet_gateway" "main-gw" {
+    vpc_id = "${aws_vpc.workshop.id}"
+
+}
+
+resource "aws_route_table" "main-public" {
+    vpc_id = "${aws_vpc.workshop.id}"
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = "${aws_internet_gateway.main-gw.id}"
+    }
+}
+
+resource "aws_route_table_association" "main-public-1-a" {
+    subnet_id = "${aws_subnet.subnet.id}"
+    route_table_id = "${aws_route_table.main-public.id}"
 }
 
 /* Now that we have a network, we'll deploy a stand-alone HashiCorp Vault
@@ -54,111 +73,76 @@ a security group, a network interface, a public ip address, a storage
 account and finally the VM itself. Terraform handles all the dependencies
 automatically, and each resource is named with user-defined variables. */
 
-# resource "aws_security_group" "vault-sg" {
-#   name        = "${var.prefix}-sg"
-#   description = "Vault Security Group"
-#   vpc_id      = "${aws_vpc.workshop.id}"
-#
-#   ingress {
-#     from_port   = 8200
-#     to_port     = 8200
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-#
-#   ingress {
-#     from_port   = 5000
-#     to_port     = 5000
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-#
-#   ingress {
-#     from_port   = 22
-#     to_port     = 22
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-#
-#   egress {
-#     from_port       = 0
-#     to_port         = 0
-#     protocol        = "-1"
-#     cidr_blocks     = ["0.0.0.0/0"]
-#   }
-# }
+resource "aws_security_group" "vault-sg" {
+  name        = "${var.prefix}-sg"
+  description = "Vault Security Group"
+  vpc_id      = "${aws_vpc.workshop.id}"
+
+  ingress {
+    from_port   = 8200
+    to_port     = 8200
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+}
 
 /* And now we build our Vault server. This is a standard Ubuntu instance.
 We use the shell provisioner to run a Bash script that configures Vault for
 the demo environment. Terraform supports several different types of
 provisioners including Bash, Powershell and Chef. */
 
+resource "aws_instance" "vault-server" {
+  ami           = "${data.aws_ami.ubuntu.id}"
+  instance_type = "${var.vm_size}"
+  subnet_id     = "${aws_subnet.subnet.id}"
+  vpc_security_group_ids = ["${aws_security_group.vault-sg.id}"]
+  associate_public_ip_address = "true"
+  key_name = "housaws-tf-workshop"
+  tags = {
+    Name = "lab-vault-server"
+    TTL = "72"
+    owner = "Andy James"
+  }
+  connection {
+    type = "ssh"
+    user = "ubuntu"
+    private_key = "${file("~/.ssh/id_rsa")}"
+    host = "${aws_instance.vault-server.public_ip}"
+  }
+  provisioner "file" {
+    source      = "files/"
+    destination = "/home/ubuntu/"
+  }
 
-# data "aws_ami" "ubuntu" {
-#   most_recent = true
-#
-#   filter {
-#     name   = "name"
-#     values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
-#   }
-#
-#   filter {
-#     name   = "virtualization-type"
-#     values = ["hvm"]
-#   }
-
-#   owners = ["099720109477"] # Canonical
-# }
-
-# resource "aws_instance" "web" {
-#   ami           = "${data.aws_ami.ubuntu.id}"
-#   instance_type = "${var.vm_size}"
-#   subnet_id     = "${aws_subnet.subnet.id}"
-#   vpc_security_group_ids = ["${aws_security_group.vault-sg.id}"]
-#   associate_public_ip_address = "true"
-#   tags = {
-#     Name = "${var.prefix}-vault"
-#   }
-# }
-#################
-#################
-#   os_profile {
-#     computer_name  = "${var.prefix}"
-#     admin_username = "${var.admin_username}"
-#     admin_password = "${var.admin_password}"
-#   }
-
-#   os_profile_linux_config {
-#     disable_password_authentication = false
-#   }
-
-#    provisioner "file" {
-#      source      = "files/"
-#      destination = "/home/${var.admin_username}/"
-
-#      connection {
-#        type     = "ssh"
-#        user     = "${var.admin_username}"
-#        password = "${var.admin_password}"
-#        host     = "${azurerm_public_ip.vault-pip.fqdn}"
-#      }
-#    }
-
-#   provisioner "remote-exec" {
-#     inline = [
-#       "chmod -R +x /home/${var.admin_username}/*",
-#       "sleep 30",
-#       "MYSQL_HOST=${var.prefix}-mysql-server /home/${var.admin_username}/setup.sh"
-#     ]
-
-#     connection {
-#       type     = "ssh"
-#       user     = "${var.admin_username}"
-#       password = "${var.admin_password}"
-#       host     = "${azurerm_public_ip.vault-pip.fqdn}"
-#     }
-#   }
-# }
+  provisioner "remote-exec" {
+    inline = [
+    "chmod -R +x /home/ubuntu/",
+    "sleep 30",
+    "MYSQL_HOST=${var.prefix}-mysql-server /home/ubuntu/setup.sh"
+    ]
+  }
+}
 
 /* Azure MySQL Database
 Vault will manage this database with the database secrets engine.

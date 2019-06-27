@@ -600,7 +600,7 @@ Windows Workstation Commands
 ```powershell
 cd ~/Desktop
 git clone https://github.com/hashicorp/se-terraform-vault-workshop
-cd se-terraform-vault-workshop/AWS
+cd se-terraform-vault-workshop/aws
 code -r .
 ```
 
@@ -646,7 +646,7 @@ You should see the following output (version number may vary):
 
 ```powershell
 PS> terraform --version
-Terraform v0.11.13
+Terraform v0.12.1
 ```
 
 ???
@@ -888,7 +888,7 @@ Your **terraform.tfvars** file should now look similar to this:
 # Prefix must be all lowercase letters, no symbols please.
 
 prefix = "yourname"
-region = "us-west-2"
+region = "us-east-2"
 ```
 
 If you wish you can run **`terraform plan`** again to see a different result. Notice how your location setting has overridden the default setting.
@@ -979,14 +979,13 @@ name: resources-building-blocks
 Resources - Terraform Building Blocks
 -------------------------
 <br><br><br>
-Scroll down a little further and find the first resource in the main.tf file on lines 26-29. These lines are already uncommented for you.
+Scroll down a little further and find the first resource in the main.tf file on lines 26-31. These lines are already uncommented for you.
 
 You can toggle comments with the _Edit > Toggle Line Comment_ menu, or by simply highlighting some text and pressing `CTRL-/`.
 
 ```hcl
 resource "aws_vpc" "workshop" {
-  cidr_block       = "10.0.0.0/16"
-  instance_tenancy = "dedicated"
+  cidr_block       = "${var.address_space}"
   tags = {
     Name = "${var.prefix}-workshop"
   }
@@ -1068,16 +1067,6 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
 
 ---
-name: what-did-we-build
-What Did We Build?
--------------------------
-.center[![:scale 60%](images/blast_radius_graph_1.png)]
-This graph represents the infrastructure we just built. You can see the AWSrm provider, your resource group, and two variables, location and prefix.
-
-???
-The grayed out items are variables that we're not using yet, and therefore they have no dependencies. This graph was created with the free Blast Radius tool.
-
----
 name: terraform-plan-again
 Terraform Plan - Repeat
 -------------------------
@@ -1109,34 +1098,6 @@ actions need to be performed.
 Terraform is sometimes called idempotent. This means it keeps track of what you built, and if something is already in the correct state Terraform will leave it alone.
 
 ---
-name: chapter-3-lab
-.center[.lab-header[👩🏻‍💻 Lab Exercise 3a: Change Your Region]]
-<br><br><br>
-Change the location variable in your terraform.tfvars file to a different AWS region. Re-run the **`terraform plan`** and **`terraform apply`** commands. What happens?
-
-???
-This is a good spot for a mini discussion on how Terraform is idempotent, and declarative. You declare what you want (eg, one resource group in a particular region, with a specific name), and then terraform goes and carries out your command, even if you're changing something that already exists. In this example, we have to tear down the existing resource group and build a new one.
-
----
-name: chapter-3-lab-answer
-.center[.lab-header[👩🏻‍💻 Lab Exercise 3a: Solution]]
-<br><br><br>
-When you changed your location variable, Terraform detected a difference between your current settings and what you built before. Terraform can destroy and recreate resources as you make changes to your code. Some resources can be changed in place.
-
-```tex
-Terraform will perform the following actions:
-
--/+ AWSrm_resource_group.hashitraining (new resource required)
-      id:       "/subscriptions/c0a607b2-6372-4ef3-abdb-dbe52a7b56ba/resourceGroups/yourname-workshop" => <computed> (forces new resource)
-      location: "uksouth" => "uscentral" (forces new resource)
-      name:     "yourname-workshop" => "yourname-workshop"
-      tags.%:   "0" => <computed>
-
-
-Plan: 1 to add, 0 to change, 1 to destroy.
-```
-
----
 name: terraform-destroy
 Terraform Destroy
 -------------------------
@@ -1165,7 +1126,7 @@ Destroy complete! Resources: 0 destroyed.
 name: we-can-rebuild-him
 We Can Rebuild Him
 -------------------------
-Reset your location variable to your nearest AWS location. This time you can skip straight to **`terraform apply`**. Use the **`-auto-approve`** flag this time to avoid having to type 'yes'.
+This time you can skip straight to **`terraform apply`**. Use the **`-auto-approve`** flag this time to avoid having to type 'yes'.
 
 Command:
 ```powershell
@@ -1188,7 +1149,7 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 The phrase "We can rebuild him. We have the technology." comes from 1970s TV show, The Six Million Dollar Man. https://www.youtube.com/watch?v=0CPJ-AbCsT8#t=2m00s
 
 ---
-name: chapter-3b-lab
+name: chapter-3-lab
 .center[.lab-header[👩🏼‍💻 Lab Exercise 3b: Add a Tag]]
 <br><br><br>
 Read the documentation for the `aws_vpc` resource and learn how to add tags to the vpc:
@@ -1201,7 +1162,7 @@ Edit your main.tf file and add a tag to the resource. Set the name of the tag to
 Don't just give the answer away here. Let people struggle a little bit and try to actually read the documentation. You can literally copy the example right from the docs into your code. Wait a few minutes until everyone's had a chance to try and do this on their own.
 
 ---
-name: chapter-3b-lab-answer
+name: chapter-3-lab-answer
 .center[.lab-header[👩🏼‍💻 Lab Exercise 3b: Solution]]
 <br><br>
 Adding and removing tags is a non-destructive action, therefore Terraform is able to make these changes in-place, without destroying your resource group. Your main.tf file should look like this:
@@ -1307,16 +1268,6 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 The auto-approve flag is so we don't have to type 'yes' every time we run terraform.
 
 ---
-name: tf-dependency-map
-Expanding the Graph
--------------------------
-.center[![:scale 50%](images/blast_radius_graph_3.png)]
-The terraform resource graph has expanded to include our virtual network.
-
-???
-This is a good spot to talk a bit about how the dependency graph gets formed.
-
----
 name: chapter-3c-lab
 .center[.lab-header[👩🏽‍💻 Lab Exercise 3c: Build the Vault Lab]]
 <br><br><br>
@@ -1355,16 +1306,6 @@ resource "aws_subnet" "subnet" {
 }
 ...
 ```
-
----
-name: tf-full-graph
-Terraform Graph
--------------------------
-.center[![:scale 70%](images/blast_radius_graph_2.png)]
-This graph represents your entire lab environment. Check out the free [Blast Radius](https://github.com/28mm/blast-radius) tool to generate your own terraform graphs.
-
-???
-
 
 ---
 name: chapter-3-review
@@ -1436,7 +1377,7 @@ variable "prefix" {
 
 variable "region" {
   description = "The region of aws to use"
-  default     = "centralus"
+  default     = "us-east-2"
 }
 
 variable "address_space" {
@@ -1458,7 +1399,7 @@ The outputs file is where you configure any messages or data you want to show at
 
 ```terraform
 output "Vault_Server_URL" {
-  value = "http://${AWSrm_public_ip.vault-pip.fqdn}:8200"
+  value = "http://${aws_instance.vault-server.public_ip}:8200"
 }
 
 output "MySQL_Server_FQDN" {
@@ -1472,10 +1413,10 @@ output "Instructions" {
 # Connect to your Linux Virtual Machine
 #
 # Run the command below to SSH into your server. You can also use PuTTY or any
-# other SSH client. Your password is: ${var.admin_password}
+# other SSH client. Your SSH key is already loaded for you.
 ##############################################################################
 
-ssh ${var.admin_username}@${AWSrm_public_ip.vault-pip.fqdn}
+ssh ubuntu@${aws_instance.vault-server.public_ip}
 
 EOF
 }
@@ -1492,7 +1433,7 @@ Open up the outputs.tf file in Visual Studio Code. Uncomment all of the outputs.
 
 ```terraform
 output "Vault_Server_URL" {
-  value = "http://${AWSrm_public_ip.vault-pip.fqdn}:8200"
+  value = "http://${aws_instance.vault-server.public_ip}:8200"
 }
 
 output "MySQL_Server_FQDN" {
@@ -1506,10 +1447,10 @@ output "Instructions" {
 # Connect to your Linux Virtual Machine
 #
 # Run the command below to SSH into your server. You can also use PuTTY or any
-# other SSH client. Your password is: ${var.admin_password}
+# other SSH client. Your SSH key is already loaded for you.
 ##############################################################################
 
-ssh ${var.admin_username}@${AWSrm_public_ip.vault-pip.fqdn}
+ssh ubuntu@${aws_instance.vault-server.public_ip}
 
 EOF
 }
@@ -1537,13 +1478,13 @@ Instructions =
 # Connect to your Linux Virtual Machine
 #
 # Run the command below to SSH into your server. You can also use PuTTY or any
-# other SSH client. Your password is: Password123!
+# other SSH client. Your SSH key is already loaded for you.
 ##############################################################################
 
-ssh hashicorp@youname-vault.hashidemos.io
+ssh ubuntu@IPADDRESS
 
-MySQL_Server_FQDN = yourname-mysql-server.mysql.database.AWS.com
-Vault_Server_URL = http://yourname-vault.hashidemos.io:8200
+MySQL_Server_FQDN = asdkfjsofmasdfjaosdfs.com
+Vault_Server_URL = http://IPADDRESS:8200
 ```
 
 ---
@@ -1566,13 +1507,13 @@ Instructions =
 # Connect to your Linux Virtual Machine
 #
 # Run the command below to SSH into your server. You can also use PuTTY or any
-# other SSH client. Your password is: Password123!
+# other SSH client. Your SSH key is already loaded for you.
 ##############################################################################
 
-ssh hashicorp@youname-vault.hashidemos.io
+ssh ubuntu@IPADDRESS
 
-MySQL_Server_FQDN = yourname-mysql-server.mysql.database.AWS.com
-Vault_Server_URL = http://yourname-vault.hashidemos.io:8200
+MySQL_Server_FQDN = asdkfjsofmasdfjaosdfs.com
+Vault_Server_URL = http://IPADDRESS:8200
 ```
 
 ---
@@ -1589,7 +1530,7 @@ terraform output Vault_Server_URL
 
 Output:
 ```tex
-http://yourname-vault.hashidemos.io:8200
+http://IPADDRESS:8200
 ```
 
 ???
@@ -1676,16 +1617,15 @@ The File Provisioner
 The Terraform file provisioner copies files from your workstation onto the remote machine. This is one of the simplest ways to put config files into the correct locations on the target machine. In our code we're using the file provisioner to upload a shell script.
 
 ```terraform
+connection {
+  type = "ssh"
+  user = "ubuntu"
+  private_key = "${file("~/.ssh/id_rsa")}"
+  host = "${aws_instance.vault-server.public_ip}"
+}
 provisioner "file" {
-  source      = "files/setup.sh"
-  destination = "/home/${var.admin_username}/setup.sh"
-
-  connection {
-    type     = "ssh"
-    user     = "${var.admin_username}"
-    password = "${var.admin_password}"
-    host     = "${AWSrm_public_ip.vault-pip.fqdn}"
-  }
+  source      = "files/"
+  destination = "/home/ubuntu/"
 }
 ```
 
@@ -1701,19 +1641,18 @@ The Remote Exec Provisioner
 The remote exec provisioner allows you to execute scripts or other programs on the target host. If its something you can run unattended (for example, a software installer), then you can run it with remote exec.
 
 ```terraform
+connection {
+  type = "ssh"
+  user = "ubuntu"
+  private_key = "${file("~/.ssh/id_rsa")}"
+  host = "${aws_instance.vault-server.public_ip}"
+}
 provisioner "remote-exec" {
   inline = [
-    "chmod +x /home/${var.admin_username}/*.sh",
-    "sleep 30",
-    "MYSQL_HOST=${var.prefix}-mysql-server /home/${var.admin_username}/setup.sh"
+  "chmod -R +x /home/ubuntu/",
+  "sleep 30",
+  "MYSQL_HOST=${var.prefix}-mysql-server /home/ubuntu/setup.sh"
   ]
-
-  connection {
-    type     = "ssh"
-    user     = "${var.admin_username}"
-    password = "${var.admin_password}"
-    host     = "${AWSrm_public_ip.vault-pip.fqdn}"
-  }
 }
 ```
 
