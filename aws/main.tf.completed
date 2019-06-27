@@ -118,6 +118,10 @@ data "aws_ami" "ubuntu" {
     owners = ["099720109477"] # Canonical
 }
 
+module "ssh-keypair-aws" {
+  source = "github.com/scarolan/ssh-keypair-aws"
+  name   = "${var.prefix}-workshop"
+}
 
 resource "aws_instance" "vault-server" {
   ami           = "${data.aws_ami.ubuntu.id}"
@@ -125,21 +129,30 @@ resource "aws_instance" "vault-server" {
   subnet_id     = "${aws_subnet.subnet.id}"
   vpc_security_group_ids = ["${aws_security_group.vault-sg.id}"]
   associate_public_ip_address = "true"
-  key_name = "housaws-tf-workshop"
+  key_name = "${module.ssh-keypair-aws.name}"
   tags = {
     Name = "${var.prefix}-tf-workshop"
     TTL = "72"
-    owner = "Andy James"
+    owner = "team-se@hashicorp.com"
   }
   connection {
     type = "ssh"
     user = "ubuntu"
-    private_key = "${file("~/.ssh/id_rsa")}"
+    private_key = "${module.ssh-keypair-aws.private_key_pem}"
     host = "${aws_instance.vault-server.public_ip}"
   }
+
   provisioner "file" {
     source      = "files/"
     destination = "/home/ubuntu/"
+  }
+
+  # Put a copy of the ssh key onto the local workstation
+  provisioner "local-exec" {
+    command = <<-EOF
+              New-Item -ItemType Directory -Force -Path $${env:HOMEPATH}\.ssh
+              Write-Output ${module.ssh-keypair-aws.private_key_pem} >> $${env:HOMEPATH}\.ssh\id_rsa;
+              EOF
   }
 
   provisioner "remote-exec" {
@@ -152,7 +165,7 @@ resource "aws_instance" "vault-server" {
 }
 
 resource "aws_db_subnet_group" "default" {
-  name       = "main"
+  name       = "${var.prefix}-subnet-group"
   subnet_ids = ["${aws_subnet.subnet.id}", "${aws_subnet.subnet2.id}"]
 
   tags = {

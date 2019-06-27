@@ -136,6 +136,7 @@ control 'terraform-build-vault-lab' do
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
     Copy-Item -Force "main.tf.completed" -Destination "main.tf"
+    terraform init
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }

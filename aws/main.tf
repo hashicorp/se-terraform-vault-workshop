@@ -132,7 +132,7 @@ resource "aws_vpc" "workshop" {
 # }
 
 # module "ssh-keypair-aws" {
-#   source = "github.com/hashicorp-modules/ssh-keypair-aws"
+#   source = "github.com/scarolan/ssh-keypair-aws"
 #   name   = "${var.prefix}-workshop"
 # }
 
@@ -142,11 +142,11 @@ resource "aws_vpc" "workshop" {
 #   subnet_id     = "${aws_subnet.subnet.id}"
 #   vpc_security_group_ids = ["${aws_security_group.vault-sg.id}"]
 #   associate_public_ip_address = "true"
-#   key_name = "housaws-tf-workshop"
+#   key_name = "${module.ssh-keypair-aws.name}"
 #   tags = {
 #     Name = "${var.prefix}-tf-workshop"
 #     TTL = "72"
-#     owner = "Andy James"
+#     owner = "team-se@hashicorp.com"
 #   }
 #   connection {
 #     type = "ssh"
@@ -178,7 +178,7 @@ resource "aws_vpc" "workshop" {
 # }
 
 # resource "aws_db_subnet_group" "default" {
-#   name       = "main"
+#   name       = "${var.prefix}-subnet-group"
 #   subnet_ids = ["${aws_subnet.subnet.id}", "${aws_subnet.subnet2.id}"]
 
 #   tags = {
