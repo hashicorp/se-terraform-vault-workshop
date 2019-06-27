@@ -113,7 +113,7 @@ resource "aws_instance" "vault-server" {
   associate_public_ip_address = "true"
   key_name = "housaws-tf-workshop"
   tags = {
-    Name = "#{var.prefix}-tf-workshop"
+    Name = "${var.prefix}-tf-workshop"
     TTL = "72"
     owner = "Andy James"
   }
@@ -132,7 +132,7 @@ resource "aws_instance" "vault-server" {
     inline = [
     "chmod -R +x /home/ubuntu/",
     "sleep 30",
-    "MYSQL_HOST=${var.prefix}-mysql-server /home/ubuntu/setup.sh"
+    "MYSQL_ENDPOINT=${aws_db_instance.vault-demo.endpoint} MYSQL_HOST=${aws_db_instance.vault-demo.address} MYSQL_PORT=${aws_db_instance.vault-demo.port} /home/ubuntu/setup.sh"
     ]
   }
 }
