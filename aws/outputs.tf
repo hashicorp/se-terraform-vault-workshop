@@ -12,7 +12,7 @@ output "Vault_Server_URL" {
   value = "http://${aws_instance.vault-server.public_ip}:8200"
 }
 # output "MySQL_Server_FQDN" {
-#   value = "${azurerm_mysql_server.mysql.fqdn}"
+#   value = "${aws_db_instance.vault-demo.address}"
 # }
 # output "Instructions" {
 #   value = <<EOF

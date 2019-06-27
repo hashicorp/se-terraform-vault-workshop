@@ -12,7 +12,7 @@ vault secrets enable -path=lob_a/workshop/database database
 # Configure the database secrets engine to talk to MySQL
 vault write lob_a/workshop/database/config/wsmysqldatabase \
     plugin_name=mysql-database-plugin \
-    connection_url="{{username}}:{{password}}@tcp(${MYSQL_HOST}.mysql.database.azure.com:3306)/" \
+    connection_url="{{username}}:{{password}}@tcp(${MYSQL_ENDPOINT})/" \
     allowed_roles="workshop-app","workshop-app-long" \
     username="hashicorp@${MYSQL_HOST}" \
     password="Password123!"

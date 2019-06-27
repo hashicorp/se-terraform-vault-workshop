@@ -1403,7 +1403,7 @@ output "Vault_Server_URL" {
 }
 
 output "MySQL_Server_FQDN" {
-  value = "${AWSrm_mysql_server.mysql.fqdn}"
+  value = "${aws_db_instance.vault-demo.address}"
 }
 
 output "Instructions" {
@@ -1437,7 +1437,7 @@ output "Vault_Server_URL" {
 }
 
 output "MySQL_Server_FQDN" {
-  value = "${AWSrm_mysql_server.mysql.fqdn}"
+  value = "${aws_db_instance.vault-demo.address}"
 }
 
 output "Instructions" {
@@ -1483,7 +1483,7 @@ Instructions =
 
 ssh ubuntu@IPADDRESS
 
-MySQL_Server_FQDN = asdkfjsofmasdfjaosdfs.com
+MySQL_Server_FQDN = terraform-20190627032621775400000001.coydleaeb0pt.us-east-2.rds.amazonaws.com
 Vault_Server_URL = http://IPADDRESS:8200
 ```
 
@@ -1512,7 +1512,7 @@ Instructions =
 
 ssh ubuntu@IPADDRESS
 
-MySQL_Server_FQDN = asdkfjsofmasdfjaosdfs.com
+MySQL_Server_FQDN = terraform-20190627032621775400000001.coydleaeb0pt.us-east-2.rds.amazonaws.com
 Vault_Server_URL = http://IPADDRESS:8200
 ```
 
@@ -1816,27 +1816,6 @@ Terraform does its best to add, delete, change, or replace existing resources ba
 -/+ replace
 ~   update in-place
 ```
-
----
-name: chapter-6-lab
-.center[.lab-header[👩🏼‍🔬 Lab Exercise 6: State Quiz]]
-
-<br>
-.center[![:scale 100%](images/state_table_empty.png)]
-
-What will happen in each scenario when you run **`terraform apply`**?
-
-???
-Queue up the Jeopardy music! Walk through each row and explain the scenario. See if your students can guess what `terraform apply` will do in each situation.
-
----
-name: chapter-6-lab-answer
-.center[.lab-header[👩🏼‍🔬 Lab Exercise 6: Solution]]
-
-<br>
-.center[![:scale 100%](images/state_table_full.png)]
-
-It's important to understand how Terraform views code, state, and reality. If you're ever unsure about what will happen you can run **`terraform plan`** to find out.
 
 ---
 name: terraform-destroy-2

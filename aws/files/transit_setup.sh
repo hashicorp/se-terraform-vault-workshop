@@ -33,8 +33,8 @@ cat << EOF > ~/transit-app-example/backend/config.ini
 LogLevel = WARN
 
 [DATABASE]
-Address=${MYSQL_HOST}.mysql.database.azure.com
-Port=3306
+Address=${MYSQL_HOST}
+Port=${MYSQL_PORT}
 User=hashicorp@${MYSQL_HOST}
 Password=Password123!
 Database=my_app
