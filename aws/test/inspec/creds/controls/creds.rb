@@ -15,20 +15,17 @@ control 'check-aws-api-credentials' do
   end
 end
 
-# TODO: verify the aws credentials
+# TODO: verify the aws credentials, fix the pseudo code below
+# Probably have to install aws command line in our container...
 
-# Run an `az account login` to make sure the creds are still valid.
-# It is also possible that these credentials are not valid *yet*, there
-# can be a delay between when they are issued, and when you can actually
-# use them. Eventualy consistency ftw.
-# control 'az-account-login' do
+# control 'aws-account-login' do
 #   impact 1.0
-#   desc 'Make sure our AZ credentials are valid.'
+#   desc 'Make sure our AWS credentials are valid.'
 #   describe powershell(
-#     'az login --service-principal -u 91299f64-f951-4462-8e97-9efb1d215501 -p $env:ARM_CLIENT_SECRET --tenant $env:ARM_TENANT_ID'
+#     'aws ec2 do-something-here ${env:AWS_ACCESS_KEY_ID} ${env:AWS_SECRET_ACCESS_KEY'
 #   ) do
 #     its('exit_status') { should eq 0 }
-#     its('stdout') { should match(/Solutions/) }
+#     its('stdout') { should match(/Whatever/) }
 #     its('stderr') { should match(//) }
 #   end
 # end
