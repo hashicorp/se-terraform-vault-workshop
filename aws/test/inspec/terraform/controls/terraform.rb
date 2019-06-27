@@ -200,3 +200,18 @@ control 'terraform-destroy-two' do
     its('stderr') { should match(//) }
   end
 end
+
+# Final destroy to clean up
+# This should be moved to the end of the vault tests when they are built
+control 'terraform-destroy-three' do
+  impact 1.0
+  desc 'Run terraform destroy'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
+    terraform destroy -force -var "prefix=uat-tf-vault-lab"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/Destroy complete! Resources: 15 destroyed./) }
+    its('stderr') { should match(//) }
+  end
+end
