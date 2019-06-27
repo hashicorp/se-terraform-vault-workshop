@@ -85,6 +85,26 @@ resource "aws_security_group" "vault-sg" {
   }
 }
 
+resource "aws_security_group" "mysql-workshop-sg" {
+  name        = "${var.prefix}-mysql-sg"
+  description = "Mysql Security Group"
+  vpc_id      = "${aws_vpc.workshop.id}"
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/8"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_instance" "vault-server" {
   ami           = "${data.aws_ami.ubuntu.id}"
   instance_type = "${var.vm_size}"
@@ -117,9 +137,19 @@ resource "aws_instance" "vault-server" {
   }
 }
 
+resource "aws_db_subnet_group" "default" {
+  name       = "main"
+  subnet_ids = ["${aws_subnet.subnet.id}"]
+
+  tags = {
+    Name = "tf-workshop-subnet"
+  }
+}
+
 resource "aws_db_instance" "vault-demo" {
   allocated_storage    = 20
   identifier           = "${var.prefix}-tf-workshop-rds"
+  db_subnet_group_name = "${aws_db_subnet_group.default.id}"
   storage_type         = "gp2"
   engine               = "mysql"
   engine_version       = "5.7"
@@ -128,15 +158,5 @@ resource "aws_db_instance" "vault-demo" {
   username             = "hashicorp"
   password             = "Password123!"
   parameter_group_name = "default.mysql5.7"
+  vpc_security_group_ids = ["${aws_security_group.mysql-workshop-sg.id}"]
 }
-
-/* Allows the Linux VM to connect to the MySQL database, using the IP address
-from the data source above. */
-
-# resource "azurerm_mysql_firewall_rule" "vault-mysql" {
-#   name                = "vault-mysql"
-#   resource_group_name = "${azurerm_resource_group.hashitraining.name}"
-#   server_name         = "${azurerm_mysql_server.mysql.name}"
-#   start_ip_address    = "${data.azurerm_public_ip.vault-pip.ip_address}"
-#   end_ip_address      = "${data.azurerm_public_ip.vault-pip.ip_address}"
-# }
