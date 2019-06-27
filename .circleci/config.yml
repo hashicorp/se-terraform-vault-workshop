@@ -158,6 +158,21 @@ jobs:
             inspec exec --show-progress --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/vault_dbcreds
       - store_test_results:
           path: test_results
+  clean-up-uat-aws:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Clean up UAT environment
+          no_output_timeout: 15m
+          command: |
+            # Delete the UAT environment
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- aws/test/inspec/cleanup
   clean-up-uat-azure:
     docker:
       - image: microsoft/azure-cli:latest
@@ -208,6 +223,9 @@ workflows:
       - clean-up-uat-azure:
           requires:
             - run-vault-dbcreds-tests-inspec-azure
+      - clean-up-uat-aws:
+          requires:
+            - run-terraform-tests-inspec-aws
   nightly-build:
     triggers:
       - schedule:
@@ -249,3 +267,6 @@ workflows:
       - clean-up-uat-azure:
           requires:
             - run-vault-dbcreds-tests-inspec-azure
+      - clean-up-uat-aws:
+          requires:
+            - run-terraform-tests-inspec-aws

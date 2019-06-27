@@ -1,0 +1,10 @@
+name: se-tf-vault-terraform-cleanup
+title: Verify Terraform Cleanup
+maintainer: HashiCorp
+copyright: HashiCorp
+copyright_email: team-se@hashicorp.com
+license: DWTFYW 1.0
+summary: Cleans up the UAT environment
+version: 1.0.0
+supports:
+  - os-family: windows
