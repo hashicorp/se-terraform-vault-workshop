@@ -85,21 +85,6 @@ control 'terraform-apply' do
   end
 end
 
-# This may not be necessary. Verify later.
-# # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#64
-# control 'terraform-change-variable' do
-#   impact 1.0
-#   desc 'Re-run terraform apply with a different variable.'
-#   describe powershell(
-#     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
-#     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab" -var "location=eastus"'
-#   ) do
-#     its('exit_status') { should eq 0 }
-#     its('stdout') { should match(/1 added, 0 changed, 1 destroyed/) }
-#     its('stderr') { should match(//) }
-#   end
-# end
-
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#65
 control 'terraform-destroy' do
   impact 1.0
@@ -113,21 +98,6 @@ control 'terraform-destroy' do
     its('stderr') { should match(//) }
   end
 end
-
-# This may not be necessary.
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#66
-# control 'terraform-rebuild' do
-#   impact 1.0
-#   desc 'Run terraform apply again'
-#   describe powershell(
-#     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
-#     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
-#   ) do
-#     its('exit_status') { should eq 0 }
-#     its('stdout') { should match(/1 added, 0 changed, 0 destroyed/) }
-#     its('stderr') { should match(//) }
-#   end
-# end
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#72
 control 'terraform-build-vault-lab' do
@@ -155,8 +125,8 @@ control 'terraform-refresh' do
     terraform refresh -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/Vault_Server_URL = http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
-    its('stdout') { should match(/MySQL_Server_FQDN = uat-tf-vault-lab-mysql-server.mysql.database.azure.com/)}
+    its('stdout') { should match(/Vault_Server_URL = http:\/\//) }
+    its('stdout') { should match(/MySQL_Server_FQDN = uat-tf-vault-lab-tf-workshop-rds/)}
     its('stderr') { should match(//) }
   end
 end
@@ -176,20 +146,18 @@ control 'terraform-output' do
   end
 end
 
-# No way to test this in AWS
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#83
-# control 'terraform-output-singlevalue' do
-#   impact 1.0
-#   desc 'Run terraform output to show a single value'
-#   describe powershell(
-#     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
-#     terraform output Vault_Server_URL'
-#   ) do
-#     its('exit_status') { should eq 0 }
-#     its('stdout') { should match(/http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
-#     its('stderr') { should match(//) }
-#   end
-# end
+control 'terraform-output-singlevalue' do
+  impact 1.0
+  desc 'Run terraform output to show a single value'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
+    terraform output Vault_Server_URL'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/http:\/\//) }
+    its('stderr') { should match(//) }
+  end
+end
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#86
 control 'terraform-fmt' do
@@ -204,19 +172,31 @@ control 'terraform-fmt' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#96
-# This step emulates a student adding 'cowsay Moooooo!' to their provisioner.
 control 'terraform-taint-provisioner' do
   impact 1.0
   desc 'Run terraform taint and re-build virtual machine'
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
-    ((Get-Content -path C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws\main.tf -Raw) -replace "MYSQL_HOST=\`${var.prefix}-mysql-server /home/\`${var.admin_username}/setup.sh`"","MYSQL_HOST=`${var.prefix}-mysql-server /home/`${var.admin_username}/setup.sh`",`n      `"cowsay Moooooo!`"") | Set-Content -Path C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws\main.tf;
     terraform taint aws_instance.vault-server;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/Moooooo!/) }
+    its('stdout') { should match(/1 added, 0 changed, 1 destroyed/) }
+    its('stderr') { should match(//) }
+  end
+end
+
+# Final destroy to clean up
+# This should be moved to the end of the vault tests when they are built
+control 'terraform-destroy' do
+  impact 1.0
+  desc 'Run terraform destroy'
+  describe powershell(
+    'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
+    terraform destroy -force -var "prefix=uat-tf-vault-lab"'
+  ) do
+    its('exit_status') { should eq 0 }
+    its('stdout') { should match(/Destroy complete! Resources: 15 destroyed./) }
     its('stderr') { should match(//) }
   end
 end

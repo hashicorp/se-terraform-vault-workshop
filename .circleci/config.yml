@@ -176,26 +176,26 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - validate-code-azure
       - validate-code-aws
-      - run-os-tests-inspec-azure:
-          requires:
-            - validate-code-azure
+      - validate-code-azure
       - run-os-tests-inspec-aws:
           requires:
             - validate-code-aws
-      - run-creds-tests-inspec-azure:
+      - run-os-tests-inspec-azure:
           requires:
-            - run-os-tests-inspec-azure
+            - validate-code-azure
       - run-creds-tests-inspec-aws:
           requires:
             - run-os-tests-inspec-aws
-      - run-terraform-tests-inspec-azure:
+      - run-creds-tests-inspec-azure:
           requires:
-            - run-creds-tests-inspec-azure
+            - run-os-tests-inspec-azure
       - run-terraform-tests-inspec-aws:
           requires:
             - run-creds-tests-inspec-aws
+      - run-terraform-tests-inspec-azure:
+          requires:
+            - run-creds-tests-inspec-azure
       - run-vault-api-tests-inspec-azure:
           requires:
             - run-terraform-tests-inspec-azure
