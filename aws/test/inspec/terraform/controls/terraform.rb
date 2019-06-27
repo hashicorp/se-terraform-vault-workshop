@@ -51,7 +51,7 @@ control 'terraform-init' do
     terraform init'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/1.30.1/) }
+    its('stdout') { should match(/2.16.0/) }
     its('stdout') { should match(/Terraform has been successfully initialized!/) }
     its('stderr') { should match(//) }
   end
@@ -80,24 +80,25 @@ control 'terraform-apply' do
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/uat-tf-vault-lab-workshop/) }
+    its('stdout') { should match(/aws_vpc.workshop: Creation complete after/) }
     its('stderr') { should match(//) }
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#64
-control 'terraform-change-variable' do
-  impact 1.0
-  desc 'Re-run terraform apply with a different variable.'
-  describe powershell(
-    'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
-    terraform apply -auto-approve -var "prefix=uat-tf-vault-lab" -var "location=eastus"'
-  ) do
-    its('exit_status') { should eq 0 }
-    its('stdout') { should match(/1 added, 0 changed, 1 destroyed/) }
-    its('stderr') { should match(//) }
-  end
-end
+# This may not be necessary
+# # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#64
+# control 'terraform-change-variable' do
+#   impact 1.0
+#   desc 'Re-run terraform apply with a different variable.'
+#   describe powershell(
+#     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
+#     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab" -var "location=eastus"'
+#   ) do
+#     its('exit_status') { should eq 0 }
+#     its('stdout') { should match(/1 added, 0 changed, 1 destroyed/) }
+#     its('stderr') { should match(//) }
+#   end
+# end
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#65
 control 'terraform-destroy' do
