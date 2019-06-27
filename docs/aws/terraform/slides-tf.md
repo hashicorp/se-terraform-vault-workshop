@@ -507,9 +507,7 @@ Log Onto Your Workstation
 
 Your instructor will provide you with a workstation URL that looks like this:
 
-.center[.h1[myworkstation01.centralus.cloudapp.AWS.com]]
-
-.center[![:scale 50%](images/rdp_login.png)]
+.center[.h1[houaws###.hashidemos.io]]
 
 Use Remote Desktop (RDP) to access your workstation. Your instructor will provide the username and password.
 
