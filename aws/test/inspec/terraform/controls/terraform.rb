@@ -1,5 +1,5 @@
 #################################################
-# Terraform Workshop Tests
+# Terraform Workshop Tests - AWS version
 #################################################
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#31
