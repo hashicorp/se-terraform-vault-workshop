@@ -217,25 +217,35 @@ workflows:
               only:
                 - master
     jobs:
-      - validate-code
-      - run-os-tests-inspec:
+      - validate-code-aws
+      - validate-code-azure
+      - run-os-tests-inspec-aws:
           requires:
-            - validate-code
-      - run-creds-tests-inspec:
+            - validate-code-aws
+      - run-os-tests-inspec-azure:
           requires:
-            - run-os-tests-inspec
-      - run-terraform-tests-inspec:
+            - validate-code-azure
+      - run-creds-tests-inspec-aws:
           requires:
-            - run-creds-tests-inspec
-      - run-vault-api-tests-inspec:
+            - run-os-tests-inspec-aws
+      - run-creds-tests-inspec-azure:
           requires:
-            - run-terraform-tests-inspec
-      - run-vault-cli-tests-inspec:
+            - run-os-tests-inspec-azure
+      - run-terraform-tests-inspec-aws:
           requires:
-            - run-vault-api-tests-inspec
-      - run-vault-dbcreds-tests-inspec:
+            - run-creds-tests-inspec-aws
+      - run-terraform-tests-inspec-azure:
           requires:
-            - run-vault-cli-tests-inspec
-      - clean-up-uat:
+            - run-creds-tests-inspec-azure
+      - run-vault-api-tests-inspec-azure:
           requires:
-            - run-vault-dbcreds-tests-inspec
+            - run-terraform-tests-inspec-azure
+      - run-vault-cli-tests-inspec-azure:
+          requires:
+            - run-vault-api-tests-inspec-azure
+      - run-vault-dbcreds-tests-inspec-azure:
+          requires:
+            - run-vault-cli-tests-inspec-azure
+      - clean-up-uat-azure:
+          requires:
+            - run-vault-dbcreds-tests-inspec-azure
