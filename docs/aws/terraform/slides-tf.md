@@ -886,7 +886,7 @@ Your **terraform.tfvars** file should now look similar to this:
 # Prefix must be all lowercase letters, no symbols please.
 
 prefix = "yourname"
-region = "us-east-2"
+region = "us-east-1"
 ```
 
 If you wish you can run **`terraform plan`** again to see a different result. Notice how your location setting has overridden the default setting.
@@ -977,7 +977,7 @@ name: resources-building-blocks
 Resources - Terraform Building Blocks
 -------------------------
 <br><br><br>
-Scroll down a little further and find the first resource in the main.tf file on lines 26-31. These lines are already uncommented for you.
+Scroll down a little further and find the first resource in the main.tf file on lines 19-24. These lines are already uncommented for you.
 
 You can toggle comments with the _Edit > Toggle Line Comment_ menu, or by simply highlighting some text and pressing `CTRL-/`.
 
@@ -1342,15 +1342,14 @@ The first file is called main.tf. This is where you normally store your terrafor
 ```powershell
 # This is the main.tf file.
 resource "aws_vpc" "workshop" {
-  cidr_block       = "10.0.0.0/16"
-  instance_tenancy = "dedicated"
+  cidr_block       = "${var.address_space}"
   tags = {
     Name = "${var.prefix}-workshop"
   }
 }
 resource "aws_subnet" "subnet" {
   vpc_id     = "${aws_vpc.workshop.id}"
-  cidr_block = "10.0.1.0/24"
+  cidr_block = "${var.subnet_prefix}"
 
   tags = {
     Name = "${var.prefix}-workshop-subnet"
@@ -1375,7 +1374,7 @@ variable "prefix" {
 
 variable "region" {
   description = "The region of aws to use"
-  default     = "us-east-2"
+  default     = "us-east-1"
 }
 
 variable "address_space" {
@@ -1481,7 +1480,7 @@ Instructions =
 
 ssh ubuntu@IPADDRESS
 
-MySQL_Server_FQDN = terraform-20190627032621775400000001.coydleaeb0pt.us-east-2.rds.amazonaws.com
+MySQL_Server_FQDN = terraform-20190627032621775400000001.coydleaeb0pt.us-east-1.rds.amazonaws.com
 Vault_Server_URL = http://IPADDRESS:8200
 ```
 
@@ -1510,7 +1509,7 @@ Instructions =
 
 ssh ubuntu@IPADDRESS
 
-MySQL_Server_FQDN = terraform-20190627032621775400000001.coydleaeb0pt.us-east-2.rds.amazonaws.com
+MySQL_Server_FQDN = terraform-20190627032621775400000001.coydleaeb0pt.us-east-1.rds.amazonaws.com
 Vault_Server_URL = http://IPADDRESS:8200
 ```
 

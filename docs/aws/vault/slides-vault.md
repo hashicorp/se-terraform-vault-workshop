@@ -346,7 +346,7 @@ terraform output Vault_Server_URL
 
 Output:
 ```tex
-http://bugsbunny01.hashidemos.io:8200
+http://IPADDRESS:8200
 ```
 
 ---
@@ -402,9 +402,9 @@ Output:
 # Connect to your Linux Virtual Machine
 #
 # Run the command below to SSH into your server. You can also use PuTTY or any
-# other SSH client. Your password is: Password123!
+# other SSH client.
 
-ssh hashicorp@bugsbunny-vault.hashidemos.io
+ssh ubuntu@IPADDRESS
 ```
 
 ---
@@ -413,11 +413,11 @@ The Vault Command Line Interface
 -------------------------
 In Visual Studio Code, open a new Terminal window and paste the ssh command from your terraform output into the terminal. The command below is an example. Yours will contain your own username where YOURNAME is.
 
-Your password is: **Password123!**
+SSH Key is already configured.
 
 Commands:
 ```powershell
-ssh hashicorp@YOURNAME-vault.hashidemos.io
+ssh ubuntu@IPADDRESS
 ```
 
 ---
@@ -1005,9 +1005,9 @@ vault secrets enable -path=lob_a/workshop/database database
 
 vault write lob_a/workshop/database/config/wsmysqldatabase \
     plugin_name=mysql-database-plugin \
-    connection_url="{{username}}:{{password}}@tcp(${MYSQL_HOST}.mysql.database.azure.com:3306)/" \
+    connection_url="{{username}}:{{password}}@tcp(${MYSQL_ENDPOINT})/" \
     allowed_roles="workshop-app","workshop-app-long" \
-    username="hashicorp@${MYSQL_HOST}" \
+    username="hashicorp" \
     password="Password123!"
 
 vault write lob_a/workshop/database/roles/workshop-app-long \
@@ -1172,7 +1172,7 @@ Vault Transit - Open the App
 Open a browser tab and navigate to the address of your Vault server on port 5000.
 
 .center[![:scale 80%](images/transit_app.png)<br>
-http://PREFIX-vault.hashidemos.io:5000]
+http://IPADDRESS:5000]
 
 ???
 Replace the 'PREFIX' part with your own settings.
