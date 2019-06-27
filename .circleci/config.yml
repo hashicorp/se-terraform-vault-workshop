@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  validate-code:
+  validate-code-azure:
     docker:
       - image: hashicorp/terraform:0.11.14
     steps:
@@ -8,7 +8,15 @@ jobs:
       - run:
           name: Validate Terraform
           command: terraform validate -check-variables=false ./azure/
-  run-os-tests-inspec:
+  validate-code-aws:
+    docker:
+      - image: hashicorp/terraform:0.11.14
+    steps:
+      - checkout
+      - run:
+          name: Validate Terraform
+          command: terraform validate -check-variables=false ./aws/
+  run-os-tests-inspec-azure:
     docker:
       - image: scarolan/inspec:latest
     steps:
@@ -24,7 +32,21 @@ jobs:
             inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/os
       - store_test_results:
           path: test_results
-  run-creds-tests-inspec:
+  run-os-tests-inspec-aws:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Run Inspec Tests for OS settings (AWS)
+          no_output_timeout: 45m
+          command: |
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- aws/test/inspec/os
+  run-creds-tests-inspec-azure:
     docker:
       - image: scarolan/inspec:latest
     steps:
@@ -40,7 +62,23 @@ jobs:
             inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/creds
       - store_test_results:
           path: test_results
-  run-terraform-tests-inspec:
+  run-creds-tests-inspec-aws:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Run Inspec Tests for AWS Credentials
+          no_output_timeout: 45m
+          command: |
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- aws/test/inspec/creds
+      - store_test_results:
+          path: test_results
+  run-terraform-tests-inspec-azure:
     docker:
       - image: scarolan/inspec:latest
     steps:
@@ -56,7 +94,23 @@ jobs:
             inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/terraform
       - store_test_results:
           path: test_results
-  run-vault-api-tests-inspec:
+  run-terraform-tests-inspec-aws:
+    docker:
+      - image: scarolan/inspec:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Run Inspec Tests for Terraform Labs
+          no_output_timeout: 45m
+          command: |
+            # Run inspec tests on the remote workstation
+            mkdir -p test_results/inspec
+            inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- aws/test/inspec/terraform
+      - store_test_results:
+          path: test_results
+  run-vault-api-tests-inspec-azure:
     docker:
       - image: scarolan/inspec:latest
     steps:
@@ -72,7 +126,7 @@ jobs:
             inspec exec --show-progress --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/vault_api
       - store_test_results:
           path: test_results
-  run-vault-cli-tests-inspec:
+  run-vault-cli-tests-inspec-azure:
     docker:
       - image: scarolan/inspec:latest
     steps:
@@ -88,7 +142,7 @@ jobs:
             inspec exec -b winrm --show-progress --host uat-tf-vault.centralus.cloudapp.azure.com --user hashicorp --password $WORKSTATION_PASSWORD --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/vault_cli
       - store_test_results:
           path: test_results
-  run-vault-dbcreds-tests-inspec:
+  run-vault-dbcreds-tests-inspec-azure:
     docker:
       - image: scarolan/inspec:latest
     steps:
@@ -104,7 +158,7 @@ jobs:
             inspec exec --show-progress --reporter cli junit:test_results/inspec/results.xml -- azure/test/inspec/vault_dbcreds
       - store_test_results:
           path: test_results
-  clean-up-uat:
+  clean-up-uat-azure:
     docker:
       - image: microsoft/azure-cli:latest
     steps:
@@ -122,28 +176,38 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - validate-code
-      - run-os-tests-inspec:
+      - validate-code-azure
+      - validate-code-aws
+      - run-os-tests-inspec-azure:
           requires:
-            - validate-code
-      - run-creds-tests-inspec:
+            - validate-code-azure
+      - run-os-tests-inspec-aws:
           requires:
-            - run-os-tests-inspec
-      - run-terraform-tests-inspec:
+            - validate-code-aws
+      - run-creds-tests-inspec-azure:
           requires:
-            - run-creds-tests-inspec
-      - run-vault-api-tests-inspec:
+            - run-os-tests-inspec-azure
+      - run-creds-tests-inspec-aws:
           requires:
-            - run-terraform-tests-inspec
-      - run-vault-cli-tests-inspec:
+            - run-os-tests-inspec-aws
+      - run-terraform-tests-inspec-azure:
           requires:
-            - run-vault-api-tests-inspec
-      - run-vault-dbcreds-tests-inspec:
+            - run-creds-tests-inspec-azure
+      - run-terraform-tests-inspec-aws:
           requires:
-            - run-vault-cli-tests-inspec
-      - clean-up-uat:
+            - run-creds-tests-inspec-aws
+      - run-vault-api-tests-inspec-azure:
           requires:
-            - run-vault-dbcreds-tests-inspec
+            - run-terraform-tests-inspec-azure
+      - run-vault-cli-tests-inspec-azure:
+          requires:
+            - run-vault-api-tests-inspec-azure
+      - run-vault-dbcreds-tests-inspec-azure:
+          requires:
+            - run-vault-cli-tests-inspec-azure
+      - clean-up-uat-azure:
+          requires:
+            - run-vault-dbcreds-tests-inspec-azure
   nightly-build:
     triggers:
       - schedule:
