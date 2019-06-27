@@ -35,7 +35,7 @@ LogLevel = WARN
 [DATABASE]
 Address=${MYSQL_HOST}
 Port=${MYSQL_PORT}
-User=hashicorp@${MYSQL_HOST}
+User=hashicorp
 Password=Password123!
 Database=my_app
 

@@ -25,6 +25,7 @@ resource "aws_vpc" "workshop" {
 
 # resource "aws_subnet" "subnet" {
 #   vpc_id     = "${aws_vpc.workshop.id}"
+#   availability_zone = "us-east-1a"
 #   cidr_block = "${var.subnet_prefix}"
 #
 #   tags = {
@@ -32,6 +33,15 @@ resource "aws_vpc" "workshop" {
 #   }
 # }
 
+# resource "aws_subnet" "subnet2" {
+#   vpc_id     = "${aws_vpc.workshop.id}"
+#   availability_zone = "us-east-1b"
+#   cidr_block = "10.0.11.0/24"
+#
+#   tags = {
+#     Name = "${var.prefix}-workshop-subnet"
+#   }
+# }
 
 # resource "aws_internet_gateway" "main-gw" {
 #     vpc_id = "${aws_vpc.workshop.id}"
@@ -141,6 +151,31 @@ resource "aws_vpc" "workshop" {
 #   name       = "main"
 #   subnet_ids = ["${aws_subnet.subnet.id}"]
 
+#   tags = {
+#     Name = "tf-workshop-subnet"
+#   }
+# }
+
+# data "aws_ami" "ubuntu" {
+#     most_recent = true
+#
+#     filter {
+#         name   = "name"
+#         values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+#     }
+#
+#     filter {
+#         name   = "virtualization-type"
+#         values = ["hvm"]
+#     }
+#
+#     owners = ["099720109477"] # Canonical
+# }
+
+# resource "aws_db_subnet_group" "default" {
+#   name       = "main"
+#   subnet_ids = ["${aws_subnet.subnet.id}", "${aws_subnet.subnet2.id}"]
+#
 #   tags = {
 #     Name = "tf-workshop-subnet"
 #   }

@@ -1,4 +1,4 @@
-name: Azure-Terraform-Vault-Workshop
+name: AWS-Terraform-Vault-Workshop
 class: center,middle,title-slide
 count: false
 ![:scale 80%](images/vault_logo.png)
