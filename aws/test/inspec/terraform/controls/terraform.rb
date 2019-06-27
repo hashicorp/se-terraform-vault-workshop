@@ -71,7 +71,7 @@ control 'terraform-plan' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#61
+# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#60
 control 'terraform-apply' do
   impact 1.0
   desc 'Run terraform apply.'
@@ -85,7 +85,7 @@ control 'terraform-apply' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#65
+# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#62
 control 'terraform-destroy' do
   impact 1.0
   desc 'Run terraform destroy'
@@ -99,7 +99,7 @@ control 'terraform-destroy' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#72
+# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#69
 control 'terraform-build-vault-lab' do
   impact 1.0
   desc 'Build the rest of the Vault lab'
@@ -115,7 +115,7 @@ control 'terraform-build-vault-lab' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#81
+# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#78
 control 'terraform-refresh' do
   impact 1.0
   desc 'Run terraform refresh to show outputs'
@@ -131,7 +131,7 @@ control 'terraform-refresh' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#82
+# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#79
 control 'terraform-output' do
   impact 1.0
   desc 'Run terraform output to show outputs'
@@ -159,7 +159,7 @@ control 'terraform-output-singlevalue' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#86
+# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#83
 control 'terraform-fmt' do
   impact 1.0
   desc 'Run terraform fmt to format code'

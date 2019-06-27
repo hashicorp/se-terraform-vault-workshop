@@ -505,11 +505,11 @@ name: workstation-setup-1
 Log Onto Your Workstation
 -------------------------
 
-Your instructor will provide you with a workstation URL that looks like this:
+Your instructor will provide you with a workstation URL.
 
-.center[.h1[houaws###.hashidemos.io]]
+Use Remote Desktop (RDP) to access your workstation.
 
-Use Remote Desktop (RDP) to access your workstation. Your instructor will provide the username and password.
+Your instructor will provide the username and password.
 
 ???
 Note to the instructor - outbound access on TCP port 3389 is required for this to work. Always have someone at the client check that they can access a test workstation *before* you go on site. You don't want to show up for training and find out that RDP access is blocked from the network you're using.
