@@ -86,6 +86,7 @@ control 'terraform-apply' do
 end
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#62
+# Why isn't this test working right?
 control 'terraform-destroy' do
   impact 1.0
   desc 'Run terraform destroy'
