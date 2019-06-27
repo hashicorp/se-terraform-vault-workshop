@@ -4,6 +4,6 @@
 
 This repository contains training curriculum for Vault and Terraform on various cloud platforms.
 
-Complete:  Azure training
+Complete:  Azure, AWS intro workshops
 
-To Do: AWS and GCP versions
+To Do: GCP version
