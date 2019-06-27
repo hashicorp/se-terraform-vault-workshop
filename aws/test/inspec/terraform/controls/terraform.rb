@@ -85,7 +85,7 @@ control 'terraform-apply' do
   end
 end
 
-# This may not be necessary
+# This may not be necessary. Verify later.
 # # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#64
 # control 'terraform-change-variable' do
 #   impact 1.0
