@@ -1,3 +1,16 @@
+##############################################################################
+# HashiCorp Terraform and Vault Workshop
+#
+# This Terraform configuration will create the following:
+#
+# AWS VPC with a subnet
+# A Linux server running HashiCorp Vault and a simple application
+# A hosted RDS MySQL database server
+
+/* This is the provider block. We recommend pinning the provider version to
+a known working version. If you leave this out you'll get the latest
+version. */
+
 provider "aws" {
   version = "~> 2.0"
   region  = "${var.region}"
@@ -149,9 +162,13 @@ resource "aws_instance" "vault-server" {
 
   # Put a copy of the ssh key onto the local workstation
   provisioner "local-exec" {
+    interpreter = ["PowerShell", "-Command"]
     command = <<-EOF
               New-Item -ItemType Directory -Force -Path $${env:HOMEPATH}\.ssh
-              Write-Output ${module.ssh-keypair-aws.private_key_pem} >> $${env:HOMEPATH}\.ssh\id_rsa;
+              Write-Output @"
+              ${module.ssh-keypair-aws.private_key_pem}
+              "@ | Out-File $${env:HOMEPATH}\.ssh\id_rsa
+              ((Get-Content $${env:HOMEPATH}\.ssh\id_rsa) -join "`n") + "`n" | Set-Content -NoNewline $${env:HOMEPATH}\.ssh\id_rsa
               EOF
   }
 

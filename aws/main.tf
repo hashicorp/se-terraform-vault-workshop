@@ -162,9 +162,13 @@ resource "aws_vpc" "workshop" {
 
 #   # Put a copy of the ssh key onto the local workstation
 #   provisioner "local-exec" {
+#     interpreter = ["PowerShell", "-Command"]
 #     command = <<-EOF
 #               New-Item -ItemType Directory -Force -Path $${env:HOMEPATH}\.ssh
-#               Write-Output ${module.ssh-keypair-aws.private_key_pem} >> $${env:HOMEPATH}\.ssh\id_rsa;
+#               Write-Output @"
+#               ${module.ssh-keypair-aws.private_key_pem}
+#               "@ | Out-File $${env:HOMEPATH}\.ssh\id_rsa
+#               ((Get-Content $${env:HOMEPATH}\.ssh\id_rsa) -join "`n") + "`n" | Set-Content -NoNewline $${env:HOMEPATH}\.ssh\id_rsa
 #               EOF
 #   }
 
