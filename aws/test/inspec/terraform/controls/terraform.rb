@@ -86,8 +86,7 @@ control 'terraform-apply' do
 end
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#62
-# Why isn't this test working right?
-control 'terraform-destroy' do
+control 'terraform-destroy-one' do
   impact 1.0
   desc 'Run terraform destroy'
   describe powershell(
@@ -189,7 +188,7 @@ end
 
 # Final destroy to clean up
 # This should be moved to the end of the vault tests when they are built
-control 'terraform-destroy' do
+control 'terraform-destroy-two' do
   impact 1.0
   desc 'Run terraform destroy'
   describe powershell(
