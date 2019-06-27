@@ -114,19 +114,20 @@ control 'terraform-destroy' do
   end
 end
 
+# This may not be necessary.
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#66
-control 'terraform-rebuild' do
-  impact 1.0
-  desc 'Run terraform apply again'
-  describe powershell(
-    'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
-    terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
-  ) do
-    its('exit_status') { should eq 0 }
-    its('stdout') { should match(/1 added, 0 changed, 0 destroyed/) }
-    its('stderr') { should match(//) }
-  end
-end
+# control 'terraform-rebuild' do
+#   impact 1.0
+#   desc 'Run terraform apply again'
+#   describe powershell(
+#     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
+#     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
+#   ) do
+#     its('exit_status') { should eq 0 }
+#     its('stdout') { should match(/1 added, 0 changed, 0 destroyed/) }
+#     its('stderr') { should match(//) }
+#   end
+# end
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#72
 control 'terraform-build-vault-lab' do
@@ -168,25 +169,26 @@ control 'terraform-output' do
     terraform output'
   ) do
     its('exit_status') { should eq 0 }
-    its('stdout') { should match(/Vault_Server_URL = http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
-    its('stdout') { should match(/MySQL_Server_FQDN = uat-tf-vault-lab-mysql-server.mysql.database.azure.com/)}
+    its('stdout') { should match(/Vault_Server_URL/) }
+    its('stdout') { should match(/MySQL_Server_FQDN/)}
     its('stderr') { should match(//) }
   end
 end
 
+# No way to test this in AWS
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#83
-control 'terraform-output-singlevalue' do
-  impact 1.0
-  desc 'Run terraform output to show a single value'
-  describe powershell(
-    'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
-    terraform output Vault_Server_URL'
-  ) do
-    its('exit_status') { should eq 0 }
-    its('stdout') { should match(/http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
-    its('stderr') { should match(//) }
-  end
-end
+# control 'terraform-output-singlevalue' do
+#   impact 1.0
+#   desc 'Run terraform output to show a single value'
+#   describe powershell(
+#     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
+#     terraform output Vault_Server_URL'
+#   ) do
+#     its('exit_status') { should eq 0 }
+#     its('stdout') { should match(/http:\/\/uat-tf-vault-lab.centralus.cloudapp.azure.com/) }
+#     its('stderr') { should match(//) }
+#   end
+# end
 
 # https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#86
 control 'terraform-fmt' do
@@ -209,7 +211,7 @@ control 'terraform-taint-provisioner' do
   describe powershell(
     'cd C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws;
     ((Get-Content -path C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws\main.tf -Raw) -replace "MYSQL_HOST=\`${var.prefix}-mysql-server /home/\`${var.admin_username}/setup.sh`"","MYSQL_HOST=`${var.prefix}-mysql-server /home/`${var.admin_username}/setup.sh`",`n      `"cowsay Moooooo!`"") | Set-Content -Path C:\Users\hashicorp\Desktop\aws-tf-vault-workshop\aws\main.tf;
-    terraform taint azurerm_virtual_machine.vault;
+    terraform taint aws_instance.vault-server;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
