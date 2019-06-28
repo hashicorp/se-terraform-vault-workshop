@@ -12,7 +12,7 @@ a known working version. If you leave this out you'll get the latest
 version. */
 
 provider "aws" {
-  version = "~> 2.0"
+  version = "= 2.17.0"
   region  = "${var.region}"
 }
 
