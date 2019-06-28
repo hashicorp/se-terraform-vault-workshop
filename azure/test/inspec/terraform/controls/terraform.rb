@@ -20,10 +20,11 @@ control 'git-clone' do
   impact 1.0
   desc 'Clone the training repository'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop;
-    Remove-Item -force -recurse -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop
-    git clone https://github.com/hashicorp/se-terraform-vault-workshop.git;
-    Get-ChildItem C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure'
+    "cd C:\\Users\\hashicorp\\Desktop;
+    Remove-Item -force -recurse -path C:\\Users\\hashicorp\\Desktop\\se-terraform-vault-workshop
+    git clone --single-branch --branch #{ENV['CIRCLE_BRANCH']} https://github.com/hashicorp/se-terraform-vault-workshop.git
+    # git clone https://github.com/hashicorp/se-terraform-vault-workshop.git
+    Get-ChildItem C:\\Users\\hashicorp\\Desktop\\se-terraform-vault-workshop\\azure"
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/main.tf/) }
