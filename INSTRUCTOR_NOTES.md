@@ -1,5 +1,7 @@
 # Instructor Notes - Classroom Lab Setup
 
+*IMPORTANT*: Don't assume your classroom environment works. Sometimes things outside of our control can break things. Always log onto one of your workstations the night before (or morning of) your training and make sure you can fetch credentials, and run terraform commands from one of the workstations.
+
 ## What is this thing?
 se-training-lab is a virtual classroom environment where you can quickly create Windows 10 workstations with HashiCorp tools pre-installed and ready to use. Windows was chosen as the OS because it commands [75% of the market share](https://www.statista.com/statistics/218089/global-market-share-of-windows-7/) for desktop operating systems. Windows 10 will be familiar and easy to use for the greatest number of users. These cloud desktop workstations are easy to use and provide a consistent environment for the benefit of instructors and students. The workstation image is currently published in two regions, **centralus** and **uksouth**. These workstations can be used with pre-built training curriculum such as https://github.com/hashicorp/se-terraform-vault-workshop or any other lab exercise that requires Terraform or Vault command line tools.
 
