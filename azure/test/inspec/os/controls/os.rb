@@ -55,7 +55,7 @@ control 'vsc-version' do
   impact 1.0
   desc 'Checks to see that Visual Studio Code is installed and working.'
   describe powershell('code --version') do
-    its('stdout') { should match(/1.35.1/) }
+    its('stdout') { should match(/1.36.1/) }
   end
 end
 
