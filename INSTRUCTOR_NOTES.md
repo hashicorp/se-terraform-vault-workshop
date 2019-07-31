@@ -8,7 +8,7 @@ se-training-lab is a virtual classroom environment where you can quickly create 
 ![HashiCorp Windows 10 Cloud Workstation](https://github.com/hashicorp/se-terraform-vault-workshop/blob/master/windows_workstation.png)
 
 ## Setting up the lab
-If you have access to the HashiCorp Azure Demo environment, you can simply browse to the Azure Dev/Test labs section and click on *se-training-lab* or *emea-training-lab*. If you're a partner or external user please contact your partner team representative for help setting this up in your own account. Once you've got your custom Windows 10 image the process is pretty simple:
+If you have access to the HashiCorp Azure Demo environment, you can simply browse to the Azure Dev/Test labs section and click on *se-training-lab*, *emea-training-lab*, or *apac-training-lab*. If you're a partner or external user please contact your partner team representative for help setting this up in your own account. Once you've got your custom Windows 10 image the process is pretty simple:
 
 1. Enter your Azure Dev/Test lab page on the Azure portal.
 1. Click on the blue plus sign at the top of the page: `+Add`
