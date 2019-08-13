@@ -1629,10 +1629,10 @@ name: chapter-9b-tfe-lab
 One of your team members needs a larger virtual machine size for load testing. This is another partner exercise.
 
 **Partner 1**:
-In Partner 2's workspace, create a new variable called **vm_size** and set it to **Standard_A1_v2**. Click on the **Queue Plan** button to trigger a new terraform plan. What happens? Are you able to override the Sentinel failure and continue?
+In Partner 2's workspace, create a new variable called **instance_type** and set it to **t2.medium**. Click on the **Queue Plan** button to trigger a new terraform plan. What happens? Are you able to override the Sentinel failure and continue?
 
 **Partner 2**:
-Log onto your workspace and navigate to the current run. Have a discussion with Partner 1 about why they need a larger VM. Agree upon a solution and redeploy the application.
+Log onto your workspace and navigate to the current run. Have a discussion with Partner 1 about why they need a larger instance. Agree upon a solution and redeploy the application.
 
 Exchange roles and repeat the lab exercise.
 
@@ -1640,10 +1640,10 @@ Exchange roles and repeat the lab exercise.
 name: chapter-9b-tfe-lab-solution
 .center[.lab-header[🔒 Lab Exercise 9b: Solution]]
 <br><br>
-.center[![:scale 100%](images/standard_a1_v2.png)]
-The Sentinel policy you created earlier checks any Azure Virtual Machines that appear in the plan, and looks at the configured vm_size. This is compared to the list of approved types which includes only **Standard_A0** and **Standard_A1**. Anything outside of these two approved sizes of VM will be flagged by Sentinel.
+.center[![:scale 100%](images/t2micro_instance_type.png)]
+The Sentinel policy you created earlier checks any AWS Instances that appear in the plan, and looks at the configured `instance_type`. This is compared to the list of approved types which includes only **t2.micro** and **t2.medium**. Anything outside of these two approved instance types will be flagged by Sentinel.
 
-There's no single correct answer to this lab. You may decide that partner 1 doesn't need such a large VM for their development work. Or partner 2 might grant an exception and use their admin powers to override the Sentinel failure. Or perhaps the new VM size could be added to the Sentinel rule to allow it as a new option.
+There's no single correct answer to this lab. You may decide that partner 1 doesn't need such a large instance for their development work. Or partner 2 might grant an exception and use their admin powers to override the Sentinel failure. Or perhaps the new instance type could be added to the Sentinel rule to allow it as a new option.
 
 ---
 name: reset-environment
@@ -1654,25 +1654,28 @@ Before the next chapter we need to make some simple modifications to our **main.
 In **main.tf** comment out everything below the first resource in the file:
 
 ```hcl
-resource "azurerm_resource_group" "myresourcegroup" {
-  name     = "${var.prefix}-workshop"
-  location = "${var.location}"
+provider "aws" {
+  region = "${var.region}"
 }
 
 # EVERYTHING BELOW HERE GETS COMMENTED OUT
-# resource "azurerm_virtual_network" "vnet" {
-#   name                = "${var.prefix}-vnet"
+
+# resource "tls_private_key" "hashicat" {
+  # algorithm = "RSA"
+# }
+
+...
+
 ```
 
 Comment out your entire **outputs.tf** file too:
 
 ```hcl
-# Outputs file
 # output "catapp_url" {
-#   value = "http://${azurerm_public_ip.catapp-pip.fqdn}"
+  # value = "http://${aws_eip.hashicat.public_ip}"
 # }
 ```
-Save both files, commit them to git, and push to your remote repository. This will reset your environment to an empty resource group.
+Save both files, commit them to git, and push to your remote repository. This will reset your environment by removing all resources we have created.
 
 ???
 Instructor note: The next run will get stopped by your policy. Yes, it feels a bit weird and counterintuitive. That is just the way Sentinel works right now.
