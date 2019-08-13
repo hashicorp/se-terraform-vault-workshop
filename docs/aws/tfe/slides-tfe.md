@@ -754,18 +754,15 @@ Terraform requires credentials in order to communicate with your cloud provider'
 Try this command on your workstation to see your API credentials:
 
 Command:
-```powershell
-gci env:ARM*
+```bash
+echo "AWS_ACCESS_KEY_ID" $AWS_ACCESS_KEY_ID
+echo "AWS_SECRET_ACCESS_KEY" $AWS_SECRET_ACCESS_KEY
 ```
 
 Output:
 ```tex
-Name                           Value
-----                           -----
-ARM_CLIENT_SECRET              3an0t438-63d8-ed89-225b-d0fv41ld70ab
-ARM_SUBSCRIPTION_ID            14692f20-9428-451b-8298-102f4ke39c2a
-ARM_TENANT_ID                  0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec
-ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
+AWS_ACCESS_KEY_ID AKIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
 ???
@@ -775,7 +772,7 @@ ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
 name: a-better-way-creds
 A Better Way to Store Sensitive Data
 -------------------------
-.center[![:scale 100%](images/encrypted_vars.png)]
+.center[![:scale 100%](images/aws_encrypted_vars.png)]
 
 Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text.
 
@@ -821,7 +818,7 @@ HINT: You'll need to find the **Environment Variables** section of your workspac
 name: chapter-5a-tfe-lab-solution
 .center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Solution]]
 <br><br>
-.center[![:scale 100%](images/encrypted_vars.png)]
+.center[![:scale 100%](images/aws_encrypted_vars.png)]
 When you're done your **Environment Variables** section should look like this. Make sure you are not entering these as ordinary Terraform variables.
 
 ---
@@ -910,9 +907,9 @@ name: tfe-chapter-5-review
 <br>
 .contents[
 In this chapter we:
-* Viewed our Azure Credentials
+* Viewed our AWS Credentials
 * Enabled Remote Execution
-* Moved our Azure Creds to TF Cloud
+* Moved our AWS Creds to TF Cloud
 * Created a prefix variable
 * Ran Terraform Apply from the GUI
 ]
