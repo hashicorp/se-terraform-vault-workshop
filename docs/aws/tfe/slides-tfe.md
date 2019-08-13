@@ -1706,7 +1706,7 @@ Private Module Registry
 name: private-module-registry
 TFE Private Module Registry
 -------------------------
-.center[![:scale 80%](images/pmr.png)]
+.center[![:scale 80%](images/aws_pmr.png)]
 
 Terraform modules are reusable packages of Terraform code that you can use to build your infrastructure. Terraform Enterprise includes a Private Module Registry where you can store, version, and distribute modules to your organizations and teams.
 
