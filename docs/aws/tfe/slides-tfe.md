@@ -1063,8 +1063,6 @@ Solution:
 ```
 Now try loading the app from your workstation. Try it from a different workstation.
 
-# TODO: include the curl command
-
 ---
 name: tfe-chapter-6-review
 📝 Chapter 6 Review
