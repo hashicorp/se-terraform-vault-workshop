@@ -258,10 +258,7 @@ Choose Your Editor
 # TODO
 
 ???
-**Let's take a moment to move in and get comfortable. You can click on this little gear icon in the lower left corner to access your settings. Pick a color theme and font size that are easy on the eyes. You can also adjust your icons. I like the vscode-icons set, which has an icon for almost every type of file you can imagine.**
-
-I like to demo this part for the students. My personal favorites are Dracula and vscode-icons. Be sure and reload if you add any new extensions or themes. Remember that some of these folks have never used Visual Studio Code before. Know where the font, color, and icon settings are and show them how to change these.
-
+Mention the HCL syntax highlighter exists for both `vim` and `nano` by default.
 
 ---
 name: tfe-workstation-setup-5
