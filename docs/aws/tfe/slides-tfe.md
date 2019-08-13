@@ -751,7 +751,7 @@ Where Are Your API Keys?
 -------------------------
 Terraform requires credentials in order to communicate with your cloud provider's API. These API keys should never, ever be stored directly in your terraform code. Config files and environment variables are a better option, but the credentials still live on your workstation, usually stored in plaintext.
 
-Try this command on your workstation to see your API credentials:
+Try these commands on your workstation to see your API credentials:
 
 Command:
 ```bash
@@ -794,25 +794,22 @@ Before we migrate our sensitive API credentials into the application we need to 
 ---
 name: chapter-5-tfe-lab
 .center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Sensitive Variables]]
-<br><br>
-Create Terraform Cloud **environment variables** for your Azure credentials. Make sure the `ARM_CLIENT_SECRET` is marked as **sensitive**. Here's the command to see your credentials:
+<br><br><br><br>
+Create Terraform Cloud **environment variables** for your Azure credentials. Make sure the `AWS_SECRET_ACCESS_KEY` is marked as **sensitive**. Here are the commands to see your credentials:
 
-Command:
-```powershell
-gci env:ARM*
+**Command:**
+```bash
+echo "AWS_ACCESS_KEY_ID" $AWS_ACCESS_KEY_ID
+echo "AWS_SECRET_ACCESS_KEY" $AWS_SECRET_ACCESS_KEY
 ```
 
-Output:
+**Output:**
 ```tex
-Name                           Value
-----                           -----
-ARM_CLIENT_SECRET              3an0t438-63d8-ed89-225b-d0fv41ld70ab
-ARM_SUBSCRIPTION_ID            14692f20-9428-451b-8298-102f4ke39c2a
-ARM_TENANT_ID                  0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec
-ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
+AWS_ACCESS_KEY_ID AKIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
-HINT: You'll need to find the **Environment Variables** section of your workspace settings.
+_**HINT**: You'll need to find the **Environment Variables** section of your workspace settings._
 
 ---
 name: chapter-5a-tfe-lab-solution
@@ -1039,7 +1036,7 @@ We have implemented a policy that disallows **`0.0.0.0`** or **`*`** as the **`s
 
 Fix the code on your local workstation so that it passes the Sentinel check. Run Terraform apply to limit dev environment access to your workstation's source IP address.
 
-**HINT:** Your public IP address is in the URL you received from your instructor.
+_**HINT:** Your public IP address is in the URL you received from your instructor._
 
 ???
 **I'm going to keep the organization view up here on the projector screen. Let's see how fast everyone can get their code compliant and have a clean terraform apply.**
@@ -1146,9 +1143,9 @@ Under your **Organization** settings select **Policies** and then **Create a New
 name: create-a-new-policy-1
 Create a New Sentinel Policy
 -------------------------
-.center[![:scale 45%](images/policy_name_and_mode.png)]
+.center[![:scale 45%](images/aws_policy_name_and_mode.png)]
 
-Name it **restrict_allowed_vm_types**. You can put whatever you like in the description.
+Name it **restrict_allowed_instance_types**. You can put whatever you like in the description.
 
 The Sentinel code for your policy is on the next slide. Copy and paste it into the **Policy Code** field.
 
@@ -1159,30 +1156,30 @@ Sentinel Policy Code - Copy & Paste
 ```hcl
 import "tfplan"
 
-get_vms = func() {
-    vms = []
+get_instances = func() {
+    instances = []
     for tfplan.module_paths as path {
-        vms += values(tfplan.module(path).resources.azurerm_virtual_machine) else []
+        instances += values(tfplan.module(path).resources.aws_instance) else []
     }
-    return vms
+    return instances
 }
 
-allowed_vm_sizes = [
-  "Standard_A0",
-  "Standard_A1",
+allowed_instance_types = [
+  "t2.micro",
+  "t2.small",
 ]
 
-vms = get_vms()
-vm_size_allowed = rule {
-    all vms as _, instances {
+instances = get_instances()
+instance_type_allowed = rule {
+    all instances as _, instances {
       all instances as index, r {
-  	   r.applied.vm_size in allowed_vm_sizes
+  	   r.applied.instance_type in allowed_instance_types
       }
     }
 }
 
 main = rule {
-  (vm_size_allowed) else true
+  (instance_type_allowed) else true
 }
 ```
 
@@ -1211,9 +1208,11 @@ Under **Policy Sets** select **Create a New Policy Set**.
 name: create-policy-set-1
 Create a Policy Set
 -------------------------
-.center[![:scale 50%](images/policy_set_settings.png)]
-<br>
-Name your policy set **global_restrict_vm_size**.
+<br><br>
+.center[![:scale 50%](images/aws_policy_set_settings.png)]
+<br><br><br>
+
+Name your policy set **global_restrict_instance_type**.
 
 Make sure **Policies enforced on all workspaces** is selected.
 
@@ -1221,9 +1220,9 @@ Make sure **Policies enforced on all workspaces** is selected.
 name: create-policy-set-2
 Create a Policy Set
 -------------------------
-.center[![:scale 60%](images/add_policy_to_policy_set.png)]
+.center[![:scale 60%](images/aws_add_policy_to_policy_set.png)]
 <br>
-Add the **restrict_allowed_vm_types** policy you created in the previous step to your policy set.
+Add the **restrict_allowed_instance_types** policy you created in the previous step to your policy set.
 
 Click **Create Policy Set** at the bottom to save and activate your new policy.
 
@@ -1308,42 +1307,6 @@ Releasing state lock. This may take a few moments...
 We're actually moving your state file from one organization to another. Cool!
 
 ---
-name: switch-to-git-bash
-Switch to Git Bash
--------------------------
-<br>
-For the next lab we're going to change our local shell to Git Bash.
-
-Hold down the **CTRL** and **SHIFT** keys and press **P**.
-
-**CTRL-SHIFT-P** is the Visual Studio Code shortcut for the **Command Palette**.
-
-.center[![:scale 100%](images/command_shift_p.png)]
-
-When the Command Palette opens up type in "terminal default shell". This will bring you to the options page for your Terminal shell.
-
----
-name: switch-to-git-bash
-Switch to Git Bash
--------------------------
-.center[![:scale 100%](images/select_git_bash_2.png)]
-
-Change your default shell to Git Bash and launch a new Terminal window. The rest of the training commands will be run inside this shell. Note that your file paths look different under Git Bash:
-
-Command:
-```bash
-pwd
-```
-
-Output:
-```bash
-/c/Users/hashicorp/Desktop/hashicat
-```
-
-???
-Terraform is a multi-platform tool and can be run on Mac or Windows, Bash or Powershell.
-
----
 name: install-terraform-helper-0
 Install the Terraform Helper Tool
 -------------------------
@@ -1395,20 +1358,16 @@ You'll need to recreate the environment variables and terraform variables in you
 Command:
 ```bash
 tfh pushvars -overwrite-all -dry-run false \
--senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" \
--env-var "ARM_TENANT_ID=$ARM_TENANT_ID" \
--env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" \
--env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID" \
--var "prefix=yourprefix"
+  -senv-var "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
+  -env-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
+  -var "prefix=yourprefix"
 ```
 
 Output:
 ```tex
-Updating prefix type:terraform hcl:false sensitive:false value:hashicat
-Updating ARM_TENANT_ID type:env hcl:false sensitive:false value:0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec
-Updating ARM_SUBSCRIPTION_ID type:env hcl:false sensitive:false value:14692f20-9428-451b-8298-102ed4e39c2a
-Updating ARM_CLIENT_ID type:env hcl:false sensitive:false value:91299f64-f951-4462-8e97-9efb1d215501
-Updating ARM_CLIENT_SECRET type:env hcl:false sensitive:true value:REDACTED
+Updating prefix type:terraform hcl:false sensitive:false value:yourprefix
+Updating AWS_ACCESS_KEY_ID type:env hcl:false sensitive:false value:AKIAIOSFODNN7EXAMPLE
+Updating AWS_SECRET_ACCESS_KEY type:env hcl:false sensitive:true value:REDACTED
 ```
 
 ???
@@ -1418,7 +1377,7 @@ Instructors: You must have the jq tool installed on your workstation to use the 
 name: chapter-7b-tfe-lab-solution
 .center[.lab-header[⚗️ Lab Exercise 7b: Solution]]
 <br><br>
-.center[![:scale 100%](images/encrypted_vars.png)]
+.center[![:scale 100%](images/aws_encrypted_vars.png)]
 You should now see all your variables stored safely in the Terraform Enterprise console.
 
 ---
@@ -1440,12 +1399,10 @@ Simply add more **`-var`** flags at the end of the command to update your variab
 Command:
 ```bash
 tfh pushvars -overwrite-all -dry-run false \
--senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" \
--env-var "ARM_TENANT_ID=$ARM_TENANT_ID" \
--env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" \
--env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID" \
--var "prefix=yourprefix" -var "height=600" -var "width=800" \
--var "placeholder=fillmurray.com"
+  -senv-var "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
+  -env-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
+  -var "prefix=yourprefix" -var "height=600" -var "width=800" \
+  -var "placeholder=fillmurray.com"
 ```
 
 NOTE: The **`\`** characters indicate that the command should continue on the next line. This entire block of text should be copied and pasted into the terminal all at once.
@@ -1512,38 +1469,28 @@ Your boss has asked you to update the content on the website. Edit the **files/d
   <!-- END -->
 ```
 
-When you are done editing the file save it and push the change to your remote repo. You can do this on the command line or via the VCS Branch button in Visual Studio Code.
+When you are done editing the file save it and push the change to your remote repo via the `git` CLI.
 
 Trigger a new Terraform run from the UI. This must be done manually (or via the API) once. Future commits to the git repo will trigger builds automatically.
 
 ---
 name: chapter-7d-tfe-lab-solution-1
 .center[.lab-header[💾 Lab Exercise 7d: Solution Part 1]]
-<br>
-You can click the source code button on the left side of VSC, enter a comment, commit your changes, then push them to the remote repo. You will be prompted on whether you wish to **stage** your changes first. This is part of the git workflow.
+<br><br><br><br>
 
-.center[![:scale 60%](images/git_commit_push.png)]
-
-Or via the command line:
+Commit your changes and push them to the remote repo via the `git` CLI.
 
 ```bash
 git add .
 git commit -m "Updated website."
 git push origin master
 ```
+<br><br>
+.center[![:scale 80%](images/git_triggered_run.png)]
+You can see which git commit triggered the run in the Terraform Enterprise UI.
 
 ???
 Instructors:  Depending upon your students' familiarity with git, you may need to review some basic git commands here like `git add`, `git commit`, and `git push`.
-
----
-name: chapter-7d-tfe-lab-solution-2
-.center[.lab-header[💾 Lab Exercise 7d: Solution Part 2]]
-<br>
-.center[![:scale 80%](images/git_commit_gui.png)]
- Most git commands can be run from the VSC menu. Click the branch icon and then click on the triple dot menu.
-
-.center[![:scale 80%](images/git_triggered_run.png)]
-You can see which git commit triggered the run in the Terraform Enterprise UI.
 
 ---
 name: tfe-chapter-7-review
@@ -1977,11 +1924,9 @@ name: chapter-11-tfe-lab-3
 ```bash
 export TFH_name=webapp-uat
 tfh pushvars -overwrite-all -dry-run false \
--senv-var "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" \
--env-var "ARM_TENANT_ID=$ARM_TENANT_ID" \
--env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" \
--env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID" \
--var "prefix=yourprefix"
+  -senv-var "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
+  -env-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
+  -var "prefix=yourprefix"
 ```
 3. In Visual Studio Code clone a copy of your **partner's** repository:
 ```bash
@@ -2037,7 +1982,7 @@ Workshop Feedback Survey
 Your feedback is important to us!
 
 The survey is short, we promise:
-
+s
 http://bit.ly/hashiworkshopfeedback
 -------------------------
 ]
