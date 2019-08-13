@@ -1039,12 +1039,7 @@ We have implemented a policy that disallows **`0.0.0.0`** or **`*`** as the **`s
 
 Fix the code on your local workstation so that it passes the Sentinel check. Run Terraform apply to limit dev environment access to your workstation's source IP address.
 
-**HINT:** You can use this Powershell command to get your workstation's public IP address:
-```powershell
-(Invoke-WebRequest -UseBasicParsing http://icanhazip.com).content
-```
-
-You may also simply type "What is my IP address?" into your browser search bar.
+**HINT:** Your public IP address is in the URL you received from your instructor.
 
 ???
 **I'm going to keep the organization view up here on the projector screen. Let's see how fast everyone can get their code compliant and have a clean terraform apply.**
@@ -1055,23 +1050,20 @@ Instructors: Have fun with this exercise. Pull up your organization's homepage o
 name: chapter-6-tfe-lab-solution
 .center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Solution]]
 <br><br>
-Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace 127.0.0.1 below with your own source IP, then run **`terraform apply`**.
+Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace 0.0.0.0 below with your own source IP, then run **`terraform apply`**.
 
 Solution:
 ```hcl
-  security_rule {
-    name                       = "HTTP"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-*   source_address_prefix      = "127.0.0.1"
-    destination_address_prefix = "*"
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 ```
 Now try loading the app from your workstation. Try it from a different workstation.
+
+# TODO: include the curl command
 
 ---
 name: tfe-chapter-6-review
