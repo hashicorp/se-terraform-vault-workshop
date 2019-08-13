@@ -1721,9 +1721,9 @@ name: chapter-10a-tfe-lab
 <br><br><br>
 This is an individual lab.
 
-1. Visit the Terraform public module registry and navigate to the [Web App Container Module](https://registry.terraform.io/modules/innovationnorway/web-app-container/azurerm).
+1. Visit the Terraform public module registry and navigate to the [AWS ECS Fargate Module](https://registry.terraform.io/modules/jnonino/ecs-fargate/aws/2.0.4).
 2. Find the GitHub source code link on the page and click on it.
-3. Fork the module repo into your own GitHub account.
+3. Fork the module repo into your own GitHub account
 4. Back in your TFE organization, navigate to the **modules** section and add the Azure Compute module to your private registry.
 
 ???
@@ -1733,35 +1733,68 @@ Updated to deploy an arcade game in a container.
 name: chapter-10a-tfe-lab-solution
 .center[.lab-header[📚 Lab Exercise 10a: Solution]]
 <br><br>
-.center[![:scale 100%](images/add_a_module.png)]
+.center[![:scale 100%](images/aws_add_a_module.png)]
 If you have a valid VCS connection, the private module registry can find any git repositories that you have access to. These module repos can be imported into Terraform Enterprise, where your users can easily access them.
 
 ---
-name: use-a-module
-Use the Compute Module
+name: use-a-public-module
+Use a Public Module
 -------------------------
-Add the following code to your main.tf file, right below the resource group. Be sure to replace **`YOURORGNAME`** with your own organization name.
+<br><br><br>
+Add the following code to your main.tf file, right below the provider.
 
 ```terraform
-module "web_app_container" {
-* source              = "app.terraform.io/YOURORGNAME/web-app-container/azurerm"
-  name                = "${var.prefix}"
-  port                = "80"
-  https_only          = "false"
-  resource_group_name = "${azurerm_resource_group.myresourcegroup.name}"
-  container_type      = "docker"
-  container_image     = "scarolan/palacearcade"
-}
-
-output "container_app_url" {
-  value = "http://${module.web_app_container.hostname}"
+module "networking" {
+  source                                      = "jnonino/networking/aws"
+  version                                     = "2.0.3"
+  name_preffix                                = "base"
+  profile                                     = "aws_profile"
+  region                                      = "us-west-2"
+  vpc_cidr_block                              = "192.168.0.0/16"
+  availability_zones                          = ["us-west-2a", "us-west-2b", "us-west-2c", "us-west-2d"]
+  public_subnets_cidrs_per_availability_zone  = ["192.168.0.0/19", "192.168.32.0/19", "192.168.64.0/19", "192.168.96.0/19"]
+  private_subnets_cidrs_per_availability_zone = ["192.168.128.0/19", "192.168.160.0/19", "192.168.192.0/19", "192.168.224.0/19"]
 }
 ```
 
-Commit your code and push your changes to the remote repo. This will trigger a terraform run. You should have a new application URL in the output:
+---
+name: use-a-private-module
+Use a Private (Your) Module
+-------------------------
+Add the following code to your main.tf file, right below the `networking` module. Be sure to replace **`YOURORGNAME`** with your own organization name.
+
+```terraform
+module "ecs-fargate" {
+  source                       = "app.terraform.io/YOURORGNAME/ecs-fargate/aws"
+  version                      = "2.0.4"
+  name_preffix                 = "${var.prefix}"
+  profile                      = "aws_profile"
+  region                       = "${var.region}"
+  vpc_id                       = "${module.networking.vpc_id}"
+  availability_zones           = "${module.networking.availability_zones}"
+  public_subnets_ids           = "${module.networking.public_subnets_ids}"
+  private_subnets_ids          = "${module.networking.private_subnets_ids}"
+  container_name               = "${var.prefix}"
+  container_image              = "scarolan/palacearcade:latest"
+  essential                    = true
+  container_port               = 80
+  environment                  = []
+}
+
+output "lb_dns_name" {
+    value = "${module.ecs-fargate.lb_dns_name}"
+}
+```
+
+---
+name: view-your-module-composite
+Run and View Your App Composed of Modules
+-------------------------
+<br><br><br><br>
+Commit your code and push your changes to the remote repo. This will trigger a Terraform run. You should have a new application URL in the output:
 
 ```hcl
-container_app_url = http://yourprefix.azurewebsites.net
+lb_dns_name = neil-test-lb-934610893.us-west-2.elb.amazonaws.com
 ```
 ???
 Instructor note: You might see a git error message when you try to push. This is because your partner pushed changes to your repo, and you need to **`git pull`** his or her changes before you proceed.
