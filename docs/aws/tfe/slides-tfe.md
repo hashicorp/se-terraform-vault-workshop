@@ -934,13 +934,13 @@ aws_region_valid = rule {
   }
 }
 # Restricting machine types in GCP
-allowed_machine_types = [
+gcp_allowed_machine_types = [
   "n1-standard-1",
   "n1-standard-2",
   "n1-standard-4",
 ]
 # Restricting publisher in Azure
-allowed_publishers = [
+azure_allowed_publishers = [
   "MicrosoftWindowsServer",
   "RedHat",
 ]
@@ -961,7 +961,7 @@ Appetite for Destruction
 -------------------------
 For the next lab we'll need to destroy and recreate your lab environment. Terraform Cloud requires a special environment variable to enable destruction of infrastructure.
 
-.center[![:scale 100%](images/confirm_destroy.png)]
+.center[![:scale 100%](images/aws_confirm_destroy.png)]
 
 Create a new Environment Variable named **`CONFIRM_DESTROY`** and set the value to **`1`**.
 
