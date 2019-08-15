@@ -1008,12 +1008,12 @@ to false. This false was not due to an undefined value or runtime error.
 
 1 policies evaluated.
 
-## Policy 1: aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel.sentinel (hard-mandatory)
+## Policy 1: aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel (hard-mandatory)
 ...
 
-FALSE - aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel.sentinel:22:1 - Rule "vpc_hostnames_true"
+FALSE - aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel:22:1 - Rule "vpc_hostnames_true"
 
-TRUE - aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel.sentinel:14:1 - Rule "vpc_must_have_tags"
+TRUE - aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel:14:1 - Rule "vpc_must_have_tags"
 
 Error: Organization policy check hard failed.
 ```
@@ -1290,7 +1290,8 @@ https://github.com/hashicorp-community/tf-helper
 **Step 1**: Run the **`install_tfh.sh`** script. You may simply copy and paste the commands below:
 
 ```bash
-cd ~/Desktop/hashicat/files
+cd ~/hashicat/files
+sudo chmod 755 install_tfh.sh
 ./install_tfh.sh
 source ~/.bash_profile
 ```
@@ -1302,7 +1303,7 @@ export TFH_org=ORGNAME
 export TFH_name=WORKSPACENAME
 ```
 
-_Instructions continue on the next slide..._
+.center[_Setup instructions continue on the next slide..._]
 
 ---
 name: install-terraform-helper-1
@@ -1411,7 +1412,7 @@ Enable Auto Apply
 .center[![:scale 100%](images/enable_auto_apply.png)]
 In some environments you may wish to enable auto apply.
 
-This means that TFE will automatically apply changes when a plan is successful. Any push to the default branch of the source code repo will trigger a **plan** and **apply**.
+This means that TFE will automatically apply changes when a plan is successful. Any push to the default branch of the source code repo will trigger a **`plan`** and **`apply`**.
 
 Enable auto apply on your workspace now.
 
@@ -1432,7 +1433,7 @@ git config --global user.name "Ada Lovelace"
 name: chapter-7d-tfe-lab
 .center[.lab-header[💾 Lab Exercise 7d: Push Change to VCS]]
 <br><br>
-Your boss has asked you to update the content on the website. Edit the **files/deploy_app.sh** script and add your own content between the BEGIN and END tags.
+Your boss has asked you to update the content on the website. Edit the **`files/deploy_app.sh`** script and add your own content between the BEGIN and END tags.
 
 ```html
   <!-- BEGIN -->
@@ -1602,7 +1603,7 @@ name: chapter-9b-tfe-lab
 One of your team members needs a larger virtual machine size for load testing. This is another partner exercise.
 
 **Partner 1**:
-In Partner 2's workspace, create a new variable called **instance_type** and set it to **t2.medium**. Click on the **Queue Plan** button to trigger a new terraform plan. What happens? Are you able to override the Sentinel failure and continue?
+In Partner 2's workspace, create a new variable called **`instance_type`** and set it to **`t2.medium`**. Click on the **Queue Plan** button to trigger a new terraform plan. What happens? Are you able to override the Sentinel failure and continue?
 
 **Partner 2**:
 Log onto your workspace and navigate to the current run. Have a discussion with Partner 1 about why they need a larger instance. Agree upon a solution and redeploy the application.
@@ -1614,7 +1615,7 @@ name: chapter-9b-tfe-lab-solution
 .center[.lab-header[🔒 Lab Exercise 9b: Solution]]
 <br><br>
 .center[![:scale 100%](images/t2micro_instance_type.png)]
-The Sentinel policy you created earlier checks any AWS Instances that appear in the plan, and looks at the configured `instance_type`. This is compared to the list of approved types which includes only **t2.micro** and **t2.medium**. Anything outside of these two approved instance types will be flagged by Sentinel.
+The Sentinel policy you created earlier checks any AWS Instances that appear in the plan, and looks at the configured `instance_type`. This is compared to the list of approved types which includes only **t2.nano** and **t2.micro**. Anything outside of these two approved instance types will be flagged by Sentinel.
 
 There's no single correct answer to this lab. You may decide that partner 1 doesn't need such a large instance for their development work. Or partner 2 might grant an exception and use their admin powers to override the Sentinel failure. Or perhaps the new instance type could be added to the Sentinel rule to allow it as a new option.
 
@@ -1733,6 +1734,8 @@ module "networking" {
 }
 ```
 
+.center[_Setup instructions continue on the next slide..._]
+
 ---
 name: use-a-private-module
 Use a Private (Your) Module
@@ -1830,7 +1833,7 @@ Do you really want to destroy all resources?
 
   Enter a value: yes
 
-Destroy complete! Resources: 15 destroyed.
+Destroy complete! Resources: 12 destroyed.
 ```
 
 ---
@@ -1896,7 +1899,7 @@ name: chapter-11-tfe-lab-1
 <br>
 **Setup Part 2: Add a Sentinel Policy**
 1. Create a new Sentinel policy called **enforce_https**
-2. Copy the code in the **`files/enforce_https.sentinel`** file into the policy code field.
+2. Copy the code in the **`files/aws-vpc-must-have-tags-and-enable-dns-hostnames.sentinel`** file into the policy code field.
 3. Set the policy enforcement level to soft-mandatory.
 4. Create a policy set to apply the policy globally across all workspaces.
 5. If you need a refresher on policies and policy sets head back to [Chapter 7](#create-a-new-policy-0)
@@ -1979,7 +1982,7 @@ Do you really want to destroy all resources?
 
   Enter a value: yes
 
-Destroy complete! Resources: 15 destroyed.
+Destroy complete! Resources: 12 destroyed.
 ```
 
 ---
