@@ -161,7 +161,7 @@ Terraform Enterprise is a SaaS or on-premise application that provides the follo
 **Terraform enterprise can store and encrypt your cloud credentials, passwords or any other sensitive data. These credentials are stored safely inside of a Vault instance that runs inside of TFE.**
 
 ---
-name: TFE-Link-to-Slide-Deck
+name: tfe-link-to-slide-deck
 The Slide Deck
 -------------------------
 <br><br><br>
@@ -176,7 +176,7 @@ https://bit.ly/hashiaws
 TODO:  Update this link once the TFE intro deck has it's own home. Currently it is stored as Appendix B
 
 ---
-name: TFE-Chapter-2
+name: tfe-chapter-2
 class: center,middle
 .section[
 Chapter 2
@@ -190,13 +190,15 @@ This chapter is meant to give a quick review of some Terraform basics.
 name: tfe-workstation-setup-0
 Terraform Workstation Requirements
 -------------------------
-<br><br>In order to proceed you'll need a Terraform workstation and valid AWS account credentials. You will also need a free [github.com](https://github.com) account, and have both `git` and `terraform` installed on your workstation.
+<br><br>
 
-**Option 1:** Use a cloud-based workstation. Your instructor will provide you with SSH credentials for the machine. If you're running Windows, you'll need to install [PuTTY](https://www.putty.org).
+In order to proceed you'll need a Terraform workstation and valid AWS account credentials. You will also need a free [github.com](https://github.com) account. The workstation should also have `git`, `terraform`, and `vault` (client) installed.
 
-**Option 2:** Bring your own AWS account and use the [AWS CLI](https://aws.amazon.com/cli/) or the [AWS Shell](https://github.com/awslabs/aws-shell).
+You have two options:
 
-# TODO: Install Terraform and Vault on the machine you intend to use.
+**Option 1:** Use a cloud-based workstation provided by your instructor. Your instructor will provide you with SSH credentials for the machine with all of the pre-requisites installed. This is the recommended option.
+
+**Option 2:** If you want to bring your own machine, you'll want the [AWS CLI](https://aws.amazon.com/cli/) or the [AWS Shell](https://github.com/awslabs/aws-shell) installed. Make sure you have [`terraform`](https://learn.hashicorp.com/terraform/getting-started/install.html) and [`vault`](https://www.vaultproject.io/docs/install/) installed as well. If you're running Windows, you'll also need [PuTTY](https://www.putty.org).
 
 ???
 **Today we'll be using cloud-based workstations that have all the software you need pre-installed. There are no firewalls, no ticketing systems and no blockers in the lab environment. It is your own personal Terraform playground. All the skills you learn here today can be applied to your own Terraform Cloud or Enterprise account as well. All the exercises will be done in our Azure training account. Please be kind to our training account, no bittorrent or crypto mining please.**
@@ -238,34 +240,23 @@ SSH is installed by default on all *nix systems. If your students are on a Windo
 name: tfe-workstation-setup-3
 Run the Setup Script
 -------------------------
-<br><br><br><br>
+**If you are using an instructor provided machine,** Run the setup script on your workstation to set your AWS credentials.
 
 ```bash
-./post_launch_setup_aws.sh
+source post_launch_setup_aws.sh
 ```
-**WARNING:** Do not skip this step. It is required to set up your connection to AWS.
-
-???
-**This handy script does some setup and fetches dynamic Azure credentials from our training Vault server. Right click on the setup_azure.ps1 file and select the "Run with Powershell" option. It may take a minute or two to finish.**
-
-If anyone is curious what this powershell script does, it's disabling windows line endings for git clone. It also fetches dynamic Azure credentials that are good for 8 hours.
+.red[_**WARNING: Do not skip this step. It is required to set up your connection to AWS. If you are bringing your own machine, set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.**_]
+<br>
+<br>
+## Choose an Editor
+The workstation provided by your instructor will have both `vim` and `nano` installed by default, with each one having an HCL syntax highlighter for usage with Terraform. For accessibility's sake, we'll use `nano` as the example editor for the rest of this workshop.
 
 ---
 name: tfe-workstation-setup-4
-Choose Your Editor
--------------------------
-
-# TODO
-
-???
-Mention the HCL syntax highlighter exists for both `vim` and `nano` by default.
-
----
-name: tfe-workstation-setup-5
 Clone Your Training Repo
 -------------------------
 <br><br>
-Run the following commands to clone the training repository from GitHub. Replace **GITUSER** with your own git username.
+Run the following commands to clone the training repository from GitHub. Replace **`GITUSER`** with your own GitHub username.
 
 ```bash
 cd ~/
@@ -284,9 +275,9 @@ name: tfe-set-prefix
 Set the Prefix Variable
 -------------------------
 <br><br>
-Rename the **terraform.tfvars.example** file to **terraform.tfvars**.
+Rename the **`terraform.tfvars.example`** file to **`terraform.tfvars`**.
 
-Change where it says "yourname" to your own name. No spaces or special characters please. **Keep it all lowercase.** Save the file.
+Change where it says `"yourname"` to your own name. No spaces or special characters please. **Keep it all lowercase.** Save the file.
 
 ```tex
 # Rename or copy this file to terraform.tfvars
@@ -295,7 +286,7 @@ Change where it says "yourname" to your own name. No spaces or special character
 *prefix = "yourname"
 ```
 
-The **terraform.tfvars** file is your own personal settings file. You can use it to set or override any of the default variables in the variables.tf file.
+The **`terraform.tfvars`** file is your own personal settings file. You can use it to set or override any of the default variables in the `variables.tf` file.
 
 **Everyone must choose a unique prefix. 5-12 characters. All lowercase and/or numbers.**
 
@@ -311,21 +302,24 @@ Run Terraform Init
 Run the **`terraform init`** command in your Terminal:
 
 Command:
-```powershell
+```bash
 terraform init
 ```
 
 Output:
 ```tex
 Initializing provider plugins...
-- Checking for available provider plugins on https://releases.hashicorp.com...
-- Downloading plugin for provider "azurerm" (1.28.0)...
-- Downloading plugin for provider "null" (2.1.2)...
+- Checking for available provider plugins...
+- Downloading plugin for provider "null" (terraform-providers/null) 2.1.2...
+- Downloading plugin for provider "tls" (terraform-providers/tls) 2.0.1...
+- Downloading plugin for provider "aws" (terraform-providers/aws) 2.23.0...
+
+...
 
 Terraform has been successfully initialized!
 ```
 
-Terraform fetches any required providers and modules and stores them in the **.terraform** directory. You can take a peek inside that directory where you'll see the plugins folder.
+Terraform fetches any required providers and modules and stores them in the **`.terraform/`** directory. You can take a peek inside that directory where you'll see the plugins folder.
 
 ???
 **Terraform has an extendible architecture. You download the core program, terraform, then it fetches plugins and modules that are required for your code.**
@@ -380,7 +374,7 @@ name: chapter-2-tfe-lab
 <br><br><br>
 The application has three variables that you can set to change the look and feel of your site.
 
-They are **height**, **width**, and **placeholder**.
+They are **`height`**, **`width`**, and **`placeholder`**.
 
 Redeploy your app with a different height and width and reload the page.
 
@@ -395,8 +389,8 @@ name: chapter-2-tfe-lab-solution
 Here's an example where we simply override variables on the command line:
 
 Commands:
-```powershell
-terraform apply -var placeholder=fillmurray.com -var height=500 -var width=500
+```bash
+terraform apply -var placeholder=placebear.com -var height=500 -var width=500
 ```
 
 Try some different placeholder image sites. Here are some examples: [placedog.net](http://placedog.net), [placebear.com](http://placebear.com), [fillmurray.com](http://fillmurray.com), [placecage.com](http://placecage.com), [placebeard.it](http://placebeard.it), [loremflickr.com](http://loremflickr.com), [baconmockup.com](http://baconmockup.com), and [placeimg.com](http://placeimg.com).
@@ -415,7 +409,7 @@ name: tfe-chapter-2-review
 In this chapter we:
 * Forked the application repo
 * Cloned the new git repo
-* Deployed the Cat App into Azure Cloud
+* Deployed the Cat App into AWS
 * Customized the application with variables
 ]
 
@@ -565,7 +559,7 @@ Why Remote State?
 ```
 
 
-Terraform stores information about the resources it has built in a **state file**. This important file contains all of the data that terraform needs to change, update, and delete infrastructure. The local state file has some disadvantages:
+Terraform stores information about the resources it has built in a **state file**. This important file contains all of the data that Terraform needs to change, update, and delete infrastructure. The local state file has some disadvantages:
 
 * Sometimes contains secrets or sensitive data
 * Can't collaborate because the file is on someone's laptop
@@ -581,9 +575,9 @@ Terraform Cloud Remote State
 Terraform Cloud Remote State is free and available to all users. The requirements to get it set up and working are:
 
 * Free or paid Terraform Cloud account
-* A **.terraformrc** (Unix/Linux) or **terraform.rc** (Windows) config file
+* A **`.terraformrc`** (Unix/Linux) or **`terraform.rc`** (Windows) config file
 * User access token stored in your config file
-* Remote backend config file, name it **remote_backend.tf** for convenience.
+* Remote backend config file, name it **`remote_backend.tf`** for convenience.
 
 ```hcl
 credentials "app.terraform.io" {
@@ -633,13 +627,13 @@ name: chapter-4-tfe-lab
 <br><br>
 .center[![:scale 90%](images/get-started-tfe.png)]
 
-Click on the **Get Started** button in the Terraform Cloud UI. Follow the instructions on the popup message to migrate your application into a new workspace. Name your token **workshop-token**. Call your remote backend config file **remote_backend.tf**
+Click on the **Get Started** button in the Terraform Cloud UI. Follow the instructions on the popup message to migrate your application into a new workspace. Name your token **`workshop-token`**. Call your remote backend config file **`remote_backend.tf`**
 
 ---
 name: chapter-4-tfe-lab-solution-1
 .center[.lab-header[👩🏽‍🔬 Lab Exercise 4: Solution Part 1]]
 * Create a **user token**: https://app.terraform.io/app/settings/tokens
-* Edit your **`%APPDATA%\terraform.rc`** config file, replacing where it says REPLACE_ME with your token.
+* Edit your **`~/.terraformrc`** config file, replacing where it says `REPLACE_ME` with your token.
 
 ```bash
 nano ~/.terraformrc
@@ -651,7 +645,7 @@ credentials "app.terraform.io" {
 }
 ```
 
-* Rename the **remote_backend.tf.disabled** file to **remote_backend.tf**. It should contain the following code. Replace ORGNAME and YOURWORKSPACE with your own settings.
+* Rename the **`remote_backend.tf.disabled`** file to **`remote_backend.tf`**. It should contain the following code. Replace `ORGNAME` and `YOURWORKSPACE` with your own settings.
 
 ```hcl
 terraform {
@@ -672,7 +666,7 @@ name: chapter-4-tfe-lab-solution-2
 Run a **`terraform init`** command to migrate to remote state.  You should see output similar to what's below. Answer **`yes`** to the confirmation prompt:
 
 Command:
-```powershell
+```bash
 terraform init
 ```
 
@@ -710,7 +704,7 @@ Delete Your State File
 <br><br><br>
 **WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Cloud.
 
-Once you've confirmed that remote state is working, go ahead and delete the **terraform.tfstate** file from your local workspace directory.
+Once you've confirmed that remote state is working, go ahead and delete the **`terraform.tfstate`** file from your local workspace directory.
 
 Command:
 ```bash
@@ -822,7 +816,7 @@ Run Terraform Plan
 Run a **`terraform plan`** command and see what happens:
 
 Command:
-```powershell
+```bash
 terraform plan
 ```
 
@@ -847,7 +841,7 @@ name: set-prefix-variable
 Set Your Prefix Variable
 -------------------------
 .center[![:scale 100%](images/set_prefix_gui.png)]
-Go back to the **Variables** settings again, this time create a regular Terraform variable called **prefix**. Replace YOURNAME with the prefix you stored in your terraform.tfvars file earlier.
+Go back to the **Variables** settings again, this time create a regular Terraform variable called **`prefix`**. Replace YOURNAME with the prefix you stored in your `terraform.tfvars` file earlier.
 
 ???
 **Note that this is a regular Terraform variable, not an environment variable. You can change any of the defaults found in variables.tf with these fields.**
@@ -859,7 +853,7 @@ Run Terraform Apply
 Run **`terraform apply`**:
 
 Command:
-```powershell
+```bash
 terraform apply -auto-approve
 ```
 
@@ -969,14 +963,14 @@ Destroy Your Application
 Either from the command line, or the GUI, destroy your web application.
 
 Command Line:
-```powershell
+```bash
 terraform destroy -force
 ```
 
 GUI:
 .center[![:scale 100%](images/destroy_gui.png)]
 
-Do not click the red Destroy from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
+Do not click the red Delete from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
 
 ---
 name: instructor-enable-sentinel
@@ -987,19 +981,19 @@ name: instructor-enable-sentinel
 
 Your instructor will enable a Sentinel policy across the entire organization.
 
-A robot now stands guard between your Terraform code and the Azure APIs.
+A robot now stands guard between your Terraform code and the AWS APIs.
 
 Take a break or discuss Sentinel testing while **`terraform destroy`** is running.
 
 ???
-Instructor notes: take a break here. Deleting a single VM in Azure can sometimes take upwards of ten minutes. Or do a side panel discussion on how Sentinel works. Either way you need to buy some time. While your students are on break, go into your organization settings and flip the block_allow_all_http enforcement mode to hard-mandatory.
+Instructor notes: take a break here. Or do a side panel discussion on how Sentinel works. Either way you need to buy some time. While your students are on break, go into your organization settings and flip the all-instances-must-have-tags on and set the enforcement mode to hard-mandatory.
 
 ---
 name: create-your-application
 Re-deploy Your Application
 -------------------------
 Command Line:
-```powershell
+```bash
 terraform apply -auto-approve
 ```
 
@@ -1014,26 +1008,26 @@ to false. This false was not due to an undefined value or runtime error.
 
 1 policies evaluated.
 
-## Policy 1: block_allow_all_http.sentinel (hard-mandatory)
+## Policy 1: aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel.sentinel (hard-mandatory)
+...
 
-Result: false
+FALSE - aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel.sentinel:22:1 - Rule "vpc_hostnames_true"
 
-  FALSE - block_allow_all_http.sentinel:23:70 - sr.access == "Deny"
-*Error: Organization policy check hard failed.
+TRUE - aws-vpcs-must-have-tags-and-enable-dns-hostnames.sentinel.sentinel:14:1 - Rule "vpc_must_have_tags"
+
+Error: Organization policy check hard failed.
 ```
 Oh no! Our **`terraform apply`** failed. How can we fix our code?
 
 ---
 name: chapter-6-tfe-lab
-.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Secure the App]]
-<br><br>
-The security team has a new requirement: Development applications should not be exposed to the public Internet.
+.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Enable DNS Hostnames]]
+<br><br><br><br><br>
+The Networking Team has a new requirement: All VPCs must have tags and must have `enable_dns_hostnames` set to `true`.
 
-We have implemented a policy that disallows **`0.0.0.0`** or **`*`** as the **`source_address_prefix`** in Azure network security group rules that apply to port 80.
+We have implemented a policy that disallows an AWS instance to be launched without a tags or with `enable_dns_hostnames` set to false.
 
-Fix the code on your local workstation so that it passes the Sentinel check. Run Terraform apply to limit dev environment access to your workstation's source IP address.
-
-_**HINT:** Your public IP address is in the URL you received from your instructor._
+Fix the code on your local workstation so that it passes the Sentinel check and run `terraform apply`.
 
 ???
 **I'm going to keep the organization view up here on the projector screen. Let's see how fast everyone can get their code compliant and have a clean terraform apply.**
@@ -1043,19 +1037,16 @@ Instructors: Have fun with this exercise. Pull up your organization's homepage o
 ---
 name: chapter-6-tfe-lab-solution
 .center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Solution]]
-<br><br>
-Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace 0.0.0.0 below with your own source IP, then run **`terraform apply`**.
+<br><br><br><br><br>
+Our new Sentinel policy looks through the Terraform plan output and searches for VPCs that have the `enable_dns_hostnames` property set to `false`. In order to pass the Sentinel test you must change your code to have your VPC's `enable_dns_hostnames` property be set to `true`, then run **`terraform apply`**. Your apply should now complete successfully.
 
 Solution:
 ```hcl
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_vpc" "se_training_workstation" {
+  cidr_block           = "${var.vpc_cidr_block}"
+  enable_dns_hostnames = true
+}
 ```
-Now try loading the app from your workstation. Try it from a different workstation.
 
 ---
 name: tfe-chapter-6-review
@@ -1150,33 +1141,18 @@ The Sentinel code for your policy is on the next slide. Copy and paste it into t
 name: create-a-new-policy-2
 Sentinel Policy Code - Copy & Paste
 -------------------------
+<br><br><br><br>
 ```hcl
 import "tfplan"
 
-get_instances = func() {
-    instances = []
-    for tfplan.module_paths as path {
-        instances += values(tfplan.module(path).resources.aws_instance) else []
-    }
-    return instances
-}
-
-allowed_instance_types = [
-  "t2.micro",
-  "t2.small",
-]
-
-instances = get_instances()
-instance_type_allowed = rule {
-    all instances as _, instances {
-      all instances as index, r {
-  	   r.applied.instance_type in allowed_instance_types
-      }
-    }
-}
+allowed_instance_types = [ "t2.nano", "t2.micro" ]
 
 main = rule {
-  (instance_type_allowed) else true
+  all tfplan.resources.aws_instance as _, instances {
+    all instances as _, r {
+      r.applied.instance_type in allowed_instance_types
+    }
+  }
 }
 ```
 
@@ -1255,7 +1231,7 @@ name: update-remote-backend
 Update the Remote Backend
 -------------------------
 <br><br>
-Update your **remote_backend.tf** file so that the organization matches your sandbox org:
+Update your **`remote_backend.tf`** file so that the organization matches your sandbox org:
 
 ```hcl
 terraform {
@@ -1269,14 +1245,14 @@ terraform {
 }
 ```
 
-Save the **remote_backend.tf** file.
+Save the **`remote_backend.tf`** file.
 
 ---
 name: migrate-remote-backend
 Migrate the State
 -------------------------
 Command:
-```powershell
+```bash
 terraform init
 ```
 
@@ -1842,7 +1818,7 @@ Before You Go...
 Please run **`terraform destroy`** command to delete your lab environment(s) before you go. This helps us keep our cloud costs under control.
 
 Command:
-```powershell
+```bash
 terraform destroy
 ```
 
@@ -1991,7 +1967,7 @@ Before You Go...
 Please run **`terraform destroy`** command to delete your lab environment(s) before you go. This helps us keep our cloud costs under control.
 
 Command:
-```powershell
+```bash
 terraform destroy
 ```
 
