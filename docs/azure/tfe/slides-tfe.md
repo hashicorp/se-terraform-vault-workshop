@@ -43,7 +43,7 @@ Terraform Enterprise
 -------------------------
 .center[![:scale 60%](images/TFE_GUI.png)]
 
-Terraform Enterprise is a SaaS or on-premise application that provides the following features:
+Terraform Enterprise is a cloud-based or on-premise application that provides the following features:
 
 ???
 **Until now we've been using only open source features. Sooner or later you'll reach a point where you want more tools for governance and collaboration. Terraform open source is great for small environments and developers, but when you need multiple people or teams to collaborate on the same infrastructure, Terraform Enterprise features can help.**
@@ -54,7 +54,7 @@ Terraform Enterprise
 -------------------------
 .center[![:scale 60%](images/TFE_GUI.png)]
 
-Terraform Enterprise is a SaaS or on-premise application that provides the following features:
+Terraform Enterprise is a cloud-based or on-premise application that provides the following features:
 
 * Easy Mode - UI integration with Version Control System
 
@@ -67,7 +67,7 @@ Terraform Enterprise
 -------------------------
 .center[![:scale 60%](images/TFE_GUI.png)]
 
-Terraform Enterprise is a SaaS or on-premise application that provides the following features:
+Terraform Enterprise is a cloud-based or on-premise application that provides the following features:
 
 * Easy Mode - UI integration with Version Control System
 * Advanced Users - API driven workflow with CI/CD pipeline
@@ -81,7 +81,7 @@ Terraform Enterprise
 -------------------------
 .center[![:scale 60%](images/TFE_GUI.png)]
 
-Terraform Enterprise is a SaaS or on-premise application that provides the following features:
+Terraform Enterprise is a cloud-based or on-premise application that provides the following features:
 
 * Easy Mode - UI integration with Version Control System
 * Advanced Users - API driven workflow with CI/CD pipeline
@@ -96,7 +96,7 @@ Terraform Enterprise
 -------------------------
 .center[![:scale 60%](images/TFE_GUI.png)]
 
-Terraform Enterprise is a SaaS or on-premise application that provides the following features:
+Terraform Enterprise is a cloud-based or on-premise application that provides the following features:
 
 * Easy Mode - UI integration with Version Control System
 * Advanced Users - API driven workflow with CI/CD pipeline
@@ -112,7 +112,7 @@ Terraform Enterprise
 -------------------------
 .center[![:scale 60%](images/TFE_GUI.png)]
 
-Terraform Enterprise is a SaaS or on-premise application that provides the following features:
+Terraform Enterprise is a cloud-based or on-premise application that provides the following features:
 
 * Easy Mode - UI integration with Version Control System
 * Advanced Users - API driven workflow with CI/CD pipeline
@@ -129,7 +129,7 @@ Terraform Enterprise
 -------------------------
 .center[![:scale 60%](images/TFE_GUI.png)]
 
-Terraform Enterprise is a SaaS or on-premise application that provides the following features:
+Terraform Enterprise is a cloud-based or on-premise application that provides the following features:
 
 * Easy Mode - UI integration with Version Control System
 * Advanced Users - API driven workflow with CI/CD pipeline
@@ -147,7 +147,7 @@ Terraform Enterprise
 -------------------------
 .center[![:scale 60%](images/TFE_GUI.png)]
 
-Terraform Enterprise is a SaaS or on-premise application that provides the following features:
+Terraform Enterprise is a cloud-based or on-premise application that provides the following features:
 
 * Easy Mode - UI integration with Version Control System
 * Advanced Users - API driven workflow with CI/CD pipeline
@@ -171,6 +171,9 @@ Follow along on your own computer at this link:
 https://bit.ly/hashiazure
 =========================
 ]
+
+<br><br>
+.center[We'll be using the Terraform Enterprise deck for training today.]
 
 ???
 TODO:  Update this link once the TFE intro deck has it's own home. Currently it is stored as Appendix B
@@ -205,20 +208,6 @@ The expectation here is that everybody starts the workshop with a workstation th
 
 ---
 name: tfe-workstation-setup-1
-Fork the Application Repo
--------------------------
-.center[![:scale 100%](images/fork.png)]
-Log onto your github account and navigate to this URL:
-
-.center[https://github.com/scarolan/hashicat]
-
-Click on the **Fork** button in the upper right corner. This will create an exact copy of the repo in your own account. Keep the new repo open in your web browser.
-
-???
-**You'll need your own copy of this repo for some of the labs we'll be doing today.**
-
----
-name: tfe-workstation-setup-2
 Log Onto Your Workstation
 -------------------------
 
@@ -236,7 +225,7 @@ Note to the instructor - outbound access on TCP port 3389 is required for this t
 RDP is installed by default on almost all Windows corporate PCs and laptops. If your students are on Mac they can download the official Microsoft RDP client from the app store.
 
 ---
-name: tfe-workstation-setup-3
+name: tfe-workstation-setup-2
 Run the setup_azure.ps1 script
 -------------------------
 <br><br>
@@ -252,21 +241,27 @@ Right click on the file called 'setup' on your desktop and select 'Run with Powe
 If anyone is curious what this powershell script does, it's disabling windows line endings for git clone. It also fetches dynamic Azure credentials that are good for 8 hours.
 
 ---
-name: tfe-workstation-setup-4
+name: tfe-workstation-setup-3
 Run the setup_azure.ps1 script
 -------------------------
-<br><br>
+Answer Yes or Yes to All to the question about Execution Policy.
+```tex
+Execution Policy Change
+The execution policy helps protect you from scripts that you do not trust. Changing the execution policy might expose you to the security risks described in the about_Execution_Policies help topic at https:/go.microsoft.com/fwlink/?LinkID=135170. Do you want to change the execution policy?
+[Y] Yes  [A] Yes to All  [N] No  [L] No to All  [S] Suspend  [?] Help (default is "N"):
+```
+
 .center[![:scale 100%](images/ready_to_terraform.png)]
 
-You should see this banner if the script ran successfully.
+You should see this banner if the script ran successfully. 
 
 ---
-name: tfe-workstation-setup-5
+name: tfe-workstation-setup-4
 Open Visual Studio Code
 -------------------------
 .center[![:scale 70%](images/set_colors_and_icons.png)]
 
-Click the little gear icon in the lower left corner. You can adjust your Color Theme, File Icon Theme, and other settings such as Font Size. Choose a color theme and font size that are comfortable for you.
+A web browser window will pop open with the latest Visual Studio Code release notes. You may close the web browser. Click the little gear icon in the lower left corner. Adjust your font size and color scheme to something comfortable.
 
 ???
 **Let's take a moment to move in and get comfortable. You can click on this little gear icon in the lower left corner to access your settings. Pick a color theme and font size that are easy on the eyes. You can also adjust your icons. I like the vscode-icons set, which has an icon for almost every type of file you can imagine.**
@@ -274,7 +269,7 @@ Click the little gear icon in the lower left corner. You can adjust your Color T
 I like to demo this part for the students. My personal favorites are Dracula and vscode-icons. Be sure and reload if you add any new extensions or themes. Remember that some of these folks have never used Visual Studio Code before. Know where the font, color, and icon settings are and show them how to change these.
 
 ---
-name: tfe-workstation-setup-6
+name: tfe-workstation-setup-5
 Warning Message
 -------------------------
 <br><br>
@@ -286,7 +281,7 @@ If you see this warning message just select 'Yes'. Visual Studio Code works bett
 The reason for this is VSC wants to use your graphics card on your local laptop if its available. This doesn't work so well in the cloud.
 
 ---
-name: tfe-workstation-setup-7
+name: tfe-workstation-setup-6
 Install the Terraform Extension
 -------------------------
 .center[![:scale 70%](images/install_terraform_extension.png)]
@@ -297,7 +292,7 @@ Click the box shaped icon on the left side menu. This brings you to the Extensio
 **The terraform extension gives you syntax highlighting, code completion, and the ability to run terraform commands right from the command palette.**
 
 ---
-name: tfe-workstation-setup-8
+name: tfe-workstation-setup-7
 Open the Integrated Terminal
 -------------------------
 .center[![:scale 70%](images/open_terminal.png)]
@@ -306,6 +301,20 @@ Open the integrated VSC terminal using the menu or keyboard shortcut. You'll be 
 
 ???
 We've seen this popup sometimes take two tries to save properly. It might be a bug. In any case it shouldn't matter because the default is Powershell which is what we want. You can also try git bash although it hasn't been tested with *all* the exercises in the lab. YMMV.
+
+---
+name: tfe-workstation-setup-8
+Fork the Application Repo
+-------------------------
+.center[![:scale 100%](images/fork.png)]
+Log onto your github account and navigate to this URL:
+
+.center[https://github.com/scarolan/hashicat]
+
+Click on the **Fork** button in the upper right corner. This will create an exact copy of the repo in your own account. Keep the new repo open in your web browser.
+
+???
+**You'll need your own copy of this repo for some of the labs we'll be doing today.**
 
 ---
 name: tfe-workstation-setup-9
@@ -333,10 +342,11 @@ code -r .
 name: tfe-workstation-setup-10
 Optional - Install posh-git
 -------------------------
-If you'd like a fancy git-enabled shell prompt try the posh-git extension. This is an optional step.
+If you'd like a fancy git-enabled shell prompt try the posh-git extension. This is an optional step. You may answer Yes to any prompts or security warnings.
 
 Commands:
 ```powershell
+Set-ExecutionPolicy Unrestricted
 install-module posh-git
 import-module posh-git
 ```
@@ -393,9 +403,9 @@ terraform init
 Output:
 ```tex
 Initializing provider plugins...
-- Checking for available provider plugins on https://releases.hashicorp.com...
-- Downloading plugin for provider "azurerm" (1.28.0)...
-- Downloading plugin for provider "null" (2.1.2)...
+- Checking for available provider plugins...
+- Downloading plugin for provider "null" (terraform-providers/null) 2.1.2...
+- Downloading plugin for provider "azurerm" (terraform-providers/azurerm) 1.32.1...
 
 Terraform has been successfully initialized!
 ```
@@ -468,10 +478,10 @@ Here's an example where we simply override variables on the command line:
 
 Commands:
 ```powershell
-terraform apply -var placeholder=fillmurray.com -var height=500 -var width=500
+terraform apply -var placeholder=www.fillmurray.com -var height=500 -var width=500
 ```
 
-Try some different placeholder image sites. Here are some examples: [placedog.net](http://placedog.net), [placebear.com](http://placebear.com), [fillmurray.com](http://fillmurray.com), [placecage.com](http://placecage.com), [placebeard.it](http://placebeard.it), [loremflickr.com](http://loremflickr.com), [baconmockup.com](http://baconmockup.com), and [placeimg.com](http://placeimg.com).
+Try some different placeholder image sites. Here are some examples: [placedog.net](http://placedog.net), [placebear.com](http://placebear.com), [www.fillmurray.com](http://www.fillmurray.com), [placecage.com](http://placecage.com), [placebeard.it](http://placebeard.it), [loremflickr.com](http://loremflickr.com), [baconmockup.com](http://baconmockup.com), and [placeimg.com](http://placeimg.com).
 
 ???
 Point out that we're doing some things here that you shouldn't do in production (like using null_resource for our provisioner.) You can also review the different ways to set variables:
@@ -647,43 +657,23 @@ Terraform stores information about the resources it has built in a **state file*
 Let's migrate our local state file into Terraform Cloud where it will be encrypted and protected from unauthorized access.
 
 ---
-name: tfcloud-remote-state
-Terraform Cloud Remote State
--------------------------
-Terraform Cloud Remote State is free and available to all users. The requirements to get it set up and working are:
-
-* Free or paid Terraform Cloud account
-* A **.terraformrc** (Unix/Linux) or **terraform.rc** (Windows) config file
-* User access token stored in your config file
-* Remote backend config file, name it **remote_backend.tf** for convenience.
-
-```hcl
-credentials "app.terraform.io" {
-  token = "REPLACE_ME"
-}
-```
-```hcl
-terraform {
-  backend "remote" {
-    hostname = "app.terraform.io"
-    organization = "ORGNAME"
-    workspaces {
-      name = "YOURWORKSPACE"
-    }
-  }
-}
-```
-
-???
-**You need two config files to get remote state working. First is your .terraformrc (or terraform.rc on Windows), and the second is a remote_backend.tf with the terraform block of code in it. The credentials file holds your token, while the config file tells terraform where to store your state file.  We'll be creating these two files in a moment.**
-
----
 name: create-a-workspace-gui
 Create a New Workspace
 -------------------------
-.center[![:scale 80%](images/create_workspace_gui.png)]
+.center[![:scale 80%](images/create_workspace_gui_new.png)]
 
-With paid and trial accounts, you must create a workspace before migrating to remote state. Make sure you are in the workshop organization (not your sandbox), then create a new workspace.
+You must create a workspace before migrating to remote state. Make sure you are in the workshop organization (not your sandbox), then create a new workspace. You can skip the VCS step, because we aren't using our VCS system yet.
+
+???
+**Make sure you are in the shared workshop organization, not your personal sandbox org.**
+
+---
+name: create-a-workspace-gui-2
+Create a New Workspace
+-------------------------
+.center[![:scale 80%](images/create_workspace_gui_new2.png)]
+
+Give your workspace a name and hit the **Create Workspace** button.
 
 ???
 **Make sure you are in the shared workshop organization, not your personal sandbox org.**
@@ -700,12 +690,63 @@ Go into the **General** settings for your workspace and change the execution mod
 **This is important. All we want to do is store our state file remotely for now. Later on we'll learn about remote execution.**
 
 ---
+name: tfcloud-remote-state
+Terraform Remote State
+-------------------------
+Terraform Remote State requirements:
+
+* Terraform Enterprise (or Cloud) account
+* User access token stored in your config file
+* A **.terraformrc** (Unix) or **terraform.rc** (Windows) file. Example:
+
+```hcl
+credentials "app.terraform.io" {
+  token = "REPLACE_ME"
+}
+```
+* Remote backend config file named **remote_backend.tf**. Example:
+
+```hcl
+terraform {
+  backend "remote" {
+    hostname = "app.terraform.io"
+    organization = "ORGNAME"
+    workspaces {
+      name = "YOURWORKSPACE"
+    }
+  }
+}
+```
+
+.center[We'll create these two files during the lab exercise.]
+
+???
+**You need two config files to get remote state working. First is your .terraformrc (or terraform.rc on Windows), and the second is a remote_backend.tf with the terraform block of code in it. The credentials file holds your token, while the config file tells terraform where to store your state file.  We'll be creating these two files in a moment.**
+
+---
 name: chapter-4-tfe-lab
 .center[.lab-header[👩🏽‍🔬 Lab Exercise 4: Enable Remote State]]
 <br><br>
-.center[![:scale 90%](images/get-started-tfe.png)]
+In this lab exercise you will enable Terraform remote state on your workstation. There are three ingredients you'll need to make it work:
 
-Click on the **Get Started** button in the Terraform Cloud UI. Follow the instructions on the popup message to migrate your application into a new workspace. Name your token **workshop-token**. Call your remote backend config file **remote_backend.tf**
+* A User Access Token for your config file
+* A **terraform.rc** file located at `%APPDATA%\terraform.rc`
+* A **remote_state.tf** file in the hashicat folder
+
+Explore the Terraform Enterprise UI and find your user settings. From there, figure out how to generate a token.
+
+Once you have a token, create your terraform.rc file. Here's an easy way to do that from your Powershell terminal:
+```powershell
+cd $env:APPDATA
+code terraform.rc
+```
+
+Create a **remote_backend.tf** in the hashicat folder.
+
+Use the examples on the previous slide for reference.
+
+???
+%APPDATA% is a shortcut on Windows to your application data directory. You can also go directly to `C:\Users\hashicorp\AppData\Roaming`.
 
 ---
 name: chapter-4-tfe-lab-solution-1
@@ -768,11 +809,14 @@ Instructor note: You might want to walk through this with some or all of your st
 name: chapter-4-tfe-lab-solution-3
 .center[.lab-header[👩🏽‍🔬 Lab Exercise 4: Solution Part 3]]
 <br><br>
-Now when you run **`terraform apply`**, your state is automatically stored in your Terraform Cloud account. This feature is available to all free and paid tier users.
+Now when you run **`terraform apply`**, your state is automatically stored in your Terraform Enterprise/Cloud account.
 
 .center[![:scale 100%](images/remote_state_free.png)]
 
 Enterprise users gain extra features like remote execution, secure variable storage, code reviews, and collaboration tools.
+
+???
+You might point out that we now offer free remote state to all users.
 
 ---
 name: delete-state-file
@@ -787,6 +831,9 @@ Command:
 ```powershell
 Remove-Item terraform.tfstate
 ```
+
+You don't need to remove the backup copy of your state file.
+
 
 ???
 **Now our state file is safely stored and encrypted in Terraform Enterprise. There's actually a small Vault instance running under the hood that handles all our encryption needs.**
@@ -840,15 +887,16 @@ ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
 **Note how our API keys are just sitting there in plain text. This isn't the most secure way to build cloud resources.**
 
 ---
-name: a-better-way-creds
-A Better Way to Store Sensitive Data
+name: why-storing-creds-bad
+Why Is This a Bad Thing™?
 -------------------------
-.center[![:scale 100%](images/encrypted_vars.png)]
+Sensitive credentials like Azure Service Principal API keys should always be protected. Storing admin-level credentials on employee laptops is a risky proposition. These credentials could accidentally be leaked or stolen. 
 
-Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text. 
+Instead of storing credentials locally you can encrypt them and store them safely in your Terraform Enterprise workspace. This feature is enabled when we turn on Remote Execution.
 
-???
-**Before we store our sensitive variables in Terraform Enterprise, we must enable Remote Execution.**
+With Remote Execution enabled all terraform runs now happen on the TFE server inside of a secure container. Sensitive variables are provided to the container at runtime and never exposed in plain text.
+
+Let's enable Remote Execution now.
 
 ---
 name: enable-remote-execution
@@ -861,6 +909,17 @@ Before we migrate our sensitive API credentials into the application we need to 
 
 ???
 **When remote execution is enabled, all of your variables are stored in Terraform Enterprise, and the `terraform plan` and `terraform apply` commands now happen on the server instead of on your workstation. State is still stored remotely as before. Your command line simply becomes a tool for driving the remote execution.**
+
+---
+name: a-better-way-creds
+A Better Way to Store Sensitive Data
+-------------------------
+.center[![:scale 100%](images/encrypted_vars.png)]
+
+Terraform Cloud can safely store your credentials and encrypt them for you. In the next lab we'll store your Azure credentials as sensitive TFE variables.
+
+???
+**Before we store our sensitive variables in Terraform Enterprise, we must enable Remote Execution.**
 
 ---
 name: chapter-5-tfe-lab
@@ -1526,7 +1585,7 @@ tfh pushvars -overwrite-all -dry-run false \
 -env-var "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" \
 -env-var "ARM_CLIENT_ID=$ARM_CLIENT_ID" \
 -var "prefix=yourprefix" -var "height=600" -var "width=800" \
--var "placeholder=fillmurray.com"
+-var "placeholder=www.fillmurray.com"
 ```
 
 NOTE: The **`\`** characters indicate that the command should continue on the next line. This entire block of text should be copied and pasted into the terminal all at once.
