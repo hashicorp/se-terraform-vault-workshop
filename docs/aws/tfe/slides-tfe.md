@@ -223,7 +223,7 @@ Click on the **Fork** button in the upper right corner. This will create an exac
 name: tfe-workstation-setup-2
 Log Onto Your Workstation
 -------------------------
-<br><br><br><br><br>
+<br><br><br><br>
 
 Your instructor will provide you with SSH credentials for an Ubuntu server in AWS.
 
@@ -261,7 +261,7 @@ Run the following commands to clone the training repository from GitHub. Replace
 ```bash
 cd ~/
 git clone https://github.com/GITUSER/hashicat
-cd hashicat
+cd hashicat/aws/
 ```
 
 Now open up the `main.tf` file with `nano`.
@@ -393,7 +393,7 @@ Commands:
 terraform apply -var placeholder=placebear.com -var height=500 -var width=500
 ```
 
-Try some different placeholder image sites. Here are some examples: [placedog.net](http://placedog.net), [placebear.com](http://placebear.com), [fillmurray.com](http://fillmurray.com), [placecage.com](http://placecage.com), [placebeard.it](http://placebeard.it), [loremflickr.com](http://loremflickr.com), [baconmockup.com](http://baconmockup.com), and [placeimg.com](http://placeimg.com).
+Try some different placeholder image sites. Here are some examples: [placedog.net](http://placedog.net), [placebear.com](http://placebear.com), [fillmurray.com](http://www.fillmurray.com), [placecage.com](http://placecage.com), [placebeard.it](http://placebeard.it), [loremflickr.com](http://loremflickr.com), [baconmockup.com](http://baconmockup.com), and [placeimg.com](http://placeimg.com).
 
 ???
 Point out that we're doing some things here that you shouldn't do in production (like using null_resource for our provisioner.) You can also review the different ways to set variables:
@@ -572,29 +572,15 @@ Let's migrate our local state file into Terraform Cloud where it will be encrypt
 name: tfcloud-remote-state
 Terraform Cloud Remote State
 -------------------------
-Terraform Cloud Remote State is free and available to all users. The requirements to get it set up and working are:
+<br><br><br><br>
+Terraform Cloud Remote State is free and available to all users. The requirements to get it set up and working are below.
 
 * Free or paid Terraform Cloud account
 * A **`.terraformrc`** (Unix/Linux) or **`terraform.rc`** (Windows) config file
 * User access token stored in your config file
 * Remote backend config file, name it **`remote_backend.tf`** for convenience.
 
-```hcl
-credentials "app.terraform.io" {
-  token = "REPLACE_ME"
-}
-```
-```hcl
-terraform {
-  backend "remote" {
-    hostname = "app.terraform.io"
-    organization = "ORGNAME"
-    workspaces {
-      name = "YOURWORKSPACE"
-    }
-  }
-}
-```
+.red[_Don't worry about creating any of these now, we'll do that in the next few slides._]
 
 ???
 **You need two config files to get remote state working. First is your .terraformrc (or terraform.rc on Windows), and the second is a remote_backend.tf with the terraform block of code in it. The credentials file holds your token, while the config file tells terraform where to store your state file.  We'll be creating these two files in a moment.**
@@ -702,13 +688,13 @@ name: delete-state-file
 Delete Your State File
 -------------------------
 <br><br><br>
-**WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Cloud.
+.red[**WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Cloud.]
 
-Once you've confirmed that remote state is working, go ahead and delete the **`terraform.tfstate`** file from your local workspace directory.
+Once you've confirmed that remote state is working, go ahead and delete the **`terraform.tfstate`**  and the **`terraform.tfstate.backup`** files from your local workspace directory.
 
 Command:
 ```bash
-rm terraform.tfstate
+rm terraform.tfstate*
 ```
 
 ???
@@ -744,15 +730,15 @@ Terraform requires credentials in order to communicate with your cloud provider'
 
 Try these commands on your workstation to see your API credentials:
 
-Command:
+Access Key ID:
 ```bash
 echo "AWS_ACCESS_KEY_ID" $AWS_ACCESS_KEY_ID
-echo "AWS_SECRET_ACCESS_KEY" $AWS_SECRET_ACCESS_KEY
+AWS_ACCESS_KEY_ID AKIAIOSFODNN7EXAMPLE
 ```
 
-Output:
-```tex
-AWS_ACCESS_KEY_ID AKIAIOSFODNN7EXAMPLE
+Secret Access Key:
+```bash
+echo "AWS_SECRET_ACCESS_KEY" $AWS_SECRET_ACCESS_KEY
 AWS_SECRET_ACCESS_KEY wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
@@ -786,17 +772,17 @@ Before we migrate our sensitive API credentials into the application we need to 
 name: chapter-5-tfe-lab
 .center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Sensitive Variables]]
 <br><br><br><br>
-Create Terraform Cloud **environment variables** for your Azure credentials. Make sure the `AWS_SECRET_ACCESS_KEY` is marked as **sensitive**. Here are the commands to see your credentials:
+Create Terraform Cloud **environment variables** for your AWS credentials. Make sure the `AWS_SECRET_ACCESS_KEY` is marked as **sensitive**. Here are the commands to see your credentials:
 
-**Command:**
+Access Key ID:
 ```bash
 echo "AWS_ACCESS_KEY_ID" $AWS_ACCESS_KEY_ID
-echo "AWS_SECRET_ACCESS_KEY" $AWS_SECRET_ACCESS_KEY
+AWS_ACCESS_KEY_ID AKIAIOSFODNN7EXAMPLE
 ```
 
-**Output:**
-```tex
-AWS_ACCESS_KEY_ID AKIAIOSFODNN7EXAMPLE
+Secret Access Key:
+```bash
+echo "AWS_SECRET_ACCESS_KEY" $AWS_SECRET_ACCESS_KEY
 AWS_SECRET_ACCESS_KEY wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ```
 
@@ -831,7 +817,7 @@ Waiting for the plan to start...
 *Error: Required variable not set: prefix
 ```
 
-Looks like we need to set that prefix variable again. With remote execution *all* your variables and settings need to be stored in the app.
+Looks like we need to set that `prefix` variable again. With remote execution *all* your variables and settings need to be stored in the app.
 
 ???
 **You need to run at least one terraform apply on the command line to activate remote execution.  Don't jump to the GUI controls just yet...**
@@ -841,7 +827,7 @@ name: set-prefix-variable
 Set Your Prefix Variable
 -------------------------
 .center[![:scale 100%](images/set_prefix_gui.png)]
-Go back to the **Variables** settings again, this time create a regular Terraform variable called **`prefix`**. Replace YOURNAME with the prefix you stored in your `terraform.tfvars` file earlier.
+Go back to the **Variables** settings again, this time create a regular Terraform variable called **`prefix`**. Replace `YOURNAME` with the prefix you stored in your `terraform.tfvars` file earlier.
 
 ???
 **Note that this is a regular Terraform variable, not an environment variable. You can change any of the defaults found in variables.tf with these fields.**
@@ -876,10 +862,12 @@ Remote execution is now enabled. The results of your apply will still stream bac
 ---
 name: chapter-5b-tfe-lab
 .center[.lab-header[🖱️ Lab Exercise 5b: Terraform UI Runs]]
-<br><br><br>
-Configure three more variables in your workspace. These are the same **height**, **width**, and **placeholder** variables that we used before.
+<br><br><br><br><br>
+Configure three more variables in your workspace. These are the same **`height`**, **`width`**, and **`placeholder`** variables that we used before.
 
 Now kick off a run in the using the **Queue Plan** button. Watch the results of your run in the UI.
+
+Once the plan has completed, click **Confirm and Apply** to apply the changes you made.
 
 ---
 name: chapter-5b-tfe-lab-solution
@@ -960,17 +948,18 @@ Create a new Environment Variable named **`CONFIRM_DESTROY`** and set the value 
 name: destroy-your-application
 Destroy Your Application
 -------------------------
+<br><br>
 Either from the command line, or the GUI, destroy your web application.
 
-Command Line:
+**CLI**
 ```bash
 terraform destroy -force
 ```
 
-GUI:
+**GUI**
 .center[![:scale 100%](images/destroy_gui.png)]
 
-Do not click the red Delete from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
+.red[_**Do not click the red Delete from Terraform Enterprise button.** This will delete your entire workspace. Remember to confirm the destroy action from within the UI._]
 
 ---
 name: instructor-enable-sentinel
@@ -1290,7 +1279,7 @@ https://github.com/hashicorp-community/tf-helper
 **Step 1**: Run the **`install_tfh.sh`** script. You may simply copy and paste the commands below:
 
 ```bash
-cd ~/hashicat/files
+cd ~/hashicat/aws/files
 sudo chmod 755 install_tfh.sh
 ./install_tfh.sh
 source ~/.bash_profile
@@ -1309,6 +1298,7 @@ export TFH_name=WORKSPACENAME
 name: install-terraform-helper-1
 Install the Terraform Helper Tool
 -------------------------
+<br><br><br>
 **Step 3**: Auto-generate your curlrc file with the curl-config helper subcommand:
 
 Command:
@@ -1318,7 +1308,7 @@ tfh curl-config -tfrc
 
 Output:
 ```bash
-/c/Users/hashicorp/.tfh/curlrc generated from /c/Users/hashicorp/.terraformrc
+/home/ubuntu/.tfh/curlrc generated from /home/ubuntu/.terraformrc
 ```
 
 Now you are ready to use the **`tfh`** command line tool. Proceed to the next slide.

@@ -1,4 +1,4 @@
-NOTE: This only works with Firefox since we have to load a file using CORS.
+NOTE: This only works with Chrome or Firefox since we have to load a file using CORS.
 
 Run the following in this directory.
 ```
