@@ -192,18 +192,18 @@ Terraform Workstation Requirements
 -------------------------
 <br><br>
 
-In order to proceed you'll need a Terraform workstation and valid AWS account credentials. You will also need a free [github.com](https://github.com) account. The workstation should also have `git`, `terraform`, and `vault` (client) installed.
+In order to proceed you'll need a Terraform workstation and valid AWS account credentials. You will also need a free [github.com](https://github.com) account. The workstation should also have **`git`**, **`terraform`**, and **`vault`** (client) installed.
 
 You have two options:
 
 **Option 1:** Use a cloud-based workstation provided by your instructor. Your instructor will provide you with SSH credentials for the machine with all of the pre-requisites installed. This is the recommended option.
 
-**Option 2:** If you want to bring your own machine, you'll want the [AWS CLI](https://aws.amazon.com/cli/) or the [AWS Shell](https://github.com/awslabs/aws-shell) installed. Make sure you have [`terraform`](https://learn.hashicorp.com/terraform/getting-started/install.html) and [`vault`](https://www.vaultproject.io/docs/install/) installed as well. If you're running Windows, you'll also need [PuTTY](https://www.putty.org).
+**Option 2:** If you want to bring your own machine, you'll want the [AWS CLI](https://aws.amazon.com/cli/) or the [AWS Shell](https://github.com/awslabs/aws-shell) installed. Make sure you have [`terraform`](https://learn.hashicorp.com/terraform/getting-started/install.html) and [`vault`**](https://www.vaultproject.io/docs/install/) installed as well. If you're running Windows, you'll also need [PuTTY](https://www.putty.org).
 
 ???
 **Today we'll be using cloud-based workstations that have all the software you need pre-installed. There are no firewalls, no ticketing systems and no blockers in the lab environment. It is your own personal Terraform playground. All the skills you learn here today can be applied to your own Terraform Cloud or Enterprise account as well. All the exercises will be done in our Azure training account. Please be kind to our training account, no bittorrent or crypto mining please.**
 
-The expectation here is that everybody starts the workshop with a workstation that can run `terraform apply` and build things in an AWS account. You should always default to Option 1.  If advanced students want to try option #2 tell them they are on their own for troubleshooting.
+The expectation here is that everybody starts the workshop with a workstation that can run **`terraform apply`** and build things in an AWS account. You should always default to Option 1.  If advanced students want to try option #2 tell them they are on their own for troubleshooting.
 
 ---
 name: tfe-workstation-setup-1
@@ -245,11 +245,11 @@ Run the Setup Script
 ```bash
 source post_launch_setup_aws.sh
 ```
-.red[_**WARNING: Do not skip this step. It is required to set up your connection to AWS. If you are bringing your own machine, set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.**_]
+.red[_**WARNING**: Do not skip this step. It is required to set up your connection to AWS. If you are bringing your own machine, set the **`AWS_ACCESS_KEY_ID`** and **`AWS_SECRET_ACCESS_KEY`** environment variables._]
 <br>
 <br>
 ## Choose an Editor
-The workstation provided by your instructor will have both `vim` and `nano` installed by default, with each one having an HCL syntax highlighter for usage with Terraform. For accessibility's sake, we'll use `nano` as the example editor for the rest of this workshop.
+The workstation provided by your instructor will have both **`vim`** and **`nano`** installed by default, with each one having an HCL syntax highlighter for usage with Terraform. For accessibility's sake, we'll use **`nano`** as the example editor for the rest of this workshop.
 
 ---
 name: tfe-workstation-setup-4
@@ -301,12 +301,12 @@ Run Terraform Init
 -------------------------
 Run the **`terraform init`** command in your Terminal:
 
-Command:
+**CLI:**
 ```bash
 terraform init
 ```
 
-Output:
+**Output:**
 ```tex
 Initializing provider plugins...
 - Checking for available provider plugins...
@@ -330,12 +330,12 @@ Run Terraform Apply
 -------------------------
 Run **`terraform apply -auto-approve`** in your terminal:
 
-Command:
+**CLI:**
 ```bash
 terraform apply -auto-approve
 ```
 
-Output:
+**Output:**
 ```tex
 aws_vpc.hashicat: Creating...
   arn:                              "" => "<computed>"
@@ -757,13 +757,12 @@ Terraform Cloud can safely store your credentials and encrypt them for you. You 
 **Before we store our sensitive variables in Terraform Enterprise, we must enable Remote Execution.**
 
 ---
-name: enable-remote-execution
-Enable Remote Execution
--------------------------
-<br><br>
-.center[![:scale 100%](images/remote_execution.png)]
-
+name: chapter-5-tfe-lab-enable-remote-execution
+.center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Sensitive Variables]]
+<br><br><br>
 Before we migrate our sensitive API credentials into the application we need to enable remote execution. Under the **General** settings for your workspace, change the Execution Mode to **Remote**. Click the **Save Settings** button at the bottom of the page.
+
+.center[![:scale 100%](images/remote_execution.png)]
 
 ???
 **When remote execution is enabled, all of your variables are stored in Terraform Enterprise, and the `terraform plan` and `terraform apply` commands now happen on the server instead of on your workstation. State is still stored remotely as before. Your command line simply becomes a tool for driving the remote execution.**
@@ -771,7 +770,7 @@ Before we migrate our sensitive API credentials into the application we need to 
 ---
 name: chapter-5-tfe-lab
 .center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Sensitive Variables]]
-<br><br><br><br>
+<br><br><br>
 Create Terraform Cloud **environment variables** for your AWS credentials. Make sure the `AWS_SECRET_ACCESS_KEY` is marked as **sensitive**. Here are the commands to see your credentials:
 
 Access Key ID:
@@ -801,12 +800,12 @@ Run Terraform Plan
 -------------------------
 Run a **`terraform plan`** command and see what happens:
 
-Command:
+**CLI:**
 ```bash
 terraform plan
 ```
 
-Output:
+**Output:**
 ```tex
 Running plan in the remote backend. Output will stream here. Pressing Ctrl-C
 will stop streaming the logs, but will not stop the plan running remotely.
@@ -838,12 +837,12 @@ Run Terraform Apply
 -------------------------
 Run **`terraform apply`**:
 
-Command:
+**CLI:**
 ```bash
 terraform apply -auto-approve
 ```
 
-Output:
+**Output:**
 ```tex
 Running apply in the remote backend. Output will stream here. Pressing Ctrl-C
 will stop streaming the logs, but will not stop the plan running remotely.
@@ -951,12 +950,12 @@ Destroy Your Application
 <br><br>
 Either from the command line, or the GUI, destroy your web application.
 
-**CLI**
+**CLI:**
 ```bash
 terraform destroy -force
 ```
 
-**GUI**
+**GUI:**
 .center[![:scale 100%](images/destroy_gui.png)]
 
 .red[_**Do not click the red Delete from Terraform Enterprise button.** This will delete your entire workspace. Remember to confirm the destroy action from within the UI._]
@@ -981,12 +980,12 @@ Instructor notes: take a break here. Or do a side panel discussion on how Sentin
 name: create-your-application
 Re-deploy Your Application
 -------------------------
-Command Line:
+**CLI:**
 ```bash
 terraform apply -auto-approve
 ```
 
-Output:
+**Output:**
 ```tex
 Organization policy check:
 
@@ -1071,7 +1070,7 @@ name: tfe-infra-as-code-workflow
 Infrastructure as Code
 -------------------------
 <br><br>
-Terraform Enterprise can directly integrate with source code repos in GitHub Enteprise, Gitlab, and Bitbucket. This allows you to build simple devops workflows with code reviews, testing and approvals.
+Terraform Enterprise can directly integrate with source code repos in GitHub Enteprise, Gitlab, and Bitbucket. This allows you to build simple DevOps workflows with code reviews, testing and approvals.
 
 Until now all our code changes have been done on our workstation. Let's upgrade our workspace to use the repository fork we created earlier.
 
