@@ -16,7 +16,7 @@ Table of Contents
 .contents[
 1. Terraform Enterprise/Cloud Overview
 2. Review the Basics
-3. Terraform Cloud
+3. Terraform Enterprise
 4. Remote State
 5. Protecting Sensitive Variables
 6. Sentinel Policy Enforcement
@@ -27,7 +27,7 @@ Table of Contents
 ]
 
 ???
-**This workshop is meant to give a basic introduction to all the major features of Terraform Cloud and Enterprise.**
+**This workshop is meant to give a basic introduction to all the major features of Terraform Enterprise and Enterprise.**
 
 ---
 name: TFE-Chapter-1
@@ -202,7 +202,7 @@ Terraform Workstation Requirements
 **Option 3:** [Generate a Service Principal](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/terraform-install-configure#configure-terraform-environment-variables) - for advanced users.
 
 ???
-**Today we'll be using cloud-based workstations that have all the software you need pre-installed. There are no firewalls, no ticketing systems and no blockers in the lab environment. It is your own personal Terraform playground. All the skills you learn here today can be applied to your own Terraform Cloud or Enterprise account as well. All the exercises will be done in our Azure training account. Please be kind to our training account, no bittorrent or crypto mining please.**
+**Today we'll be using cloud-based workstations that have all the software you need pre-installed. There are no firewalls, no ticketing systems and no blockers in the lab environment. It is your own personal Terraform playground. All the skills you learn here today can be applied to your own Terraform Enterprise or Enterprise account as well. All the exercises will be done in our Azure training account. Please be kind to our training account, no bittorrent or crypto mining please.**
 
 The expectation here is that everybody starts the workshop with a workstation that can run `terraform apply` and build things in an Azure account. You should always default to Option 1.  If advanced students want to try options #2 and #3 tell them they are on their own for troubleshooting.
 
@@ -506,8 +506,8 @@ name: TFE-Chapter-3
 class: center,middle
 .section[
 Chapter 3  
-Terraform Cloud and
-Terraform Enterprise
+Terraform Enterprise and
+Terraform Cloud
 ]
 
 ???
@@ -553,41 +553,7 @@ Before you go further, provide your username to your instructor. This is so you 
 
 Instructor - you should have an organization ready for training. Invite all your students to your organization. You can put them all on a team called "students" and give them "Manage Workspaces" permissions. You should also create a global sentinel policy called `block_allow_all_http` and populate it with the following Sentinel code. The policy enforcement mode should be set to advisory at the beginning of the training.
 
-TODO: Copy this into the instructor guide.
-
-```
-import "tfplan"
-
-get_sgs = func() {
-    sgs = []
-    for tfplan.module_paths as path {
-        sgs += values(tfplan.module(path).resources.azurerm_network_security_group) else []
-    }
-    return sgs
-}
-
-network_sgs = get_sgs()
-
-disallowed_cidr_blocks = [
-  "0.0.0.0/0",
-  "0.0.0.0",
-  "*",
-]
-
-block_allow_all = rule {
-  all network_sgs as _, instances {
-    all instances as _, sg {
-    	all sg.applied.security_rule as _, sr {
-        not (sr.destination_port_range == "80" and sr.source_address_prefix in disallowed_cidr_blocks) or (sr.access == "Deny")
-    	}
-    }
-  }
-}
-
-main = rule {
-  (block_allow_all) else true
-}
-```
+There is a copy of this Sentinel policy in the `policy` subdirectory of the tfe code directory.
 
 ---
 name: tfe-create-an-org
@@ -619,8 +585,8 @@ name: tfe-chapter-3-review
 <br>
 .contents[
 In this chapter we:
-* Looked at Terraform Cloud and Enterprise
-* Signed up for a Terraform Cloud account
+* Looked at Terraform Enterprise and Enterprise
+* Signed up for a Terraform Enterprise account
 * Created a sandbox organization
 * Joined the workshop organization
 ]
@@ -654,7 +620,7 @@ Terraform stores information about the resources it has built in a **state file*
 * Risk of losing or deleting the state file
 * No centralized record keeping
 
-Let's migrate our local state file into Terraform Cloud where it will be encrypted and protected from unauthorized access.
+Let's migrate our local state file into Terraform Enterprise where it will be encrypted and protected from unauthorized access.
 
 ---
 name: create-a-workspace-gui
@@ -731,7 +697,7 @@ In this lab exercise you will enable Terraform remote state on your workstation.
 
 * A User Access Token for your config file
 * A **terraform.rc** file located at `%APPDATA%\terraform.rc`
-* A **remote_state.tf** file in the hashicat folder
+* A **remote_backend.tf** file in the hashicat folder
 
 Explore the Terraform Enterprise UI and find your user settings. From there, figure out how to generate a token.
 
@@ -823,7 +789,7 @@ name: delete-state-file
 Delete Your State File
 -------------------------
 <br><br><br>
-**WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Cloud.
+**WARNING**: Make sure you have enabled remote state and confirmed that your state file is being stored in Terraform Enterprise.
 
 Once you've confirmed that remote state is working, go ahead and delete the **terraform.tfstate** file from your local workspace directory.
 
@@ -846,7 +812,7 @@ name: tfe-chapter-4-review
 .contents[
 In this chapter we:
 * Learned about Remote State
-* Generated a Terraform Cloud Token
+* Generated a Terraform Enterprise Token
 * Configured our terraform.rc file
 * Enabled the remote state backend
 * Migrated our state to TF Cloud
@@ -859,6 +825,24 @@ class: center,middle
 Chapter 5  
 Protecting Sensitive Variables
 ]
+
+---
+name: why-storing-creds-bad
+Plain Text API Keys Are Dangerous!
+-------------------------
+.center[![:scale 60%](images/sophos_headline.png)]
+
+Sensitive credentials like Azure Service Principal API keys should always be protected. Storing admin-level credentials on employee laptops is a risky proposition. These credentials could accidentally be leaked or stolen. 
+
+Instead of storing credentials locally you can encrypt them and store them safely in your Terraform Enterprise workspace. This feature is enabled when we turn on Remote Execution.
+
+Remote execution runs in a secure container on the Terraform Enterprise server cluster. Let's enable Remote Execution now.
+
+.tinytext[https://nakedsecurity.sophos.com/2019/03/25/thousands-of-coders-are-leaving-their-crown-jewels-exposed-on-github/]
+
+???
+**With Remote Execution enabled all terraform runs now happen on the TFE server inside of a secure container. Sensitive variables are provided to the container at runtime and never exposed in plain text.**
+
 
 ---
 name: where-are-your-creds
@@ -887,18 +871,6 @@ ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
 **Note how our API keys are just sitting there in plain text. This isn't the most secure way to build cloud resources.**
 
 ---
-name: why-storing-creds-bad
-Why Is This a Bad Thing™?
--------------------------
-Sensitive credentials like Azure Service Principal API keys should always be protected. Storing admin-level credentials on employee laptops is a risky proposition. These credentials could accidentally be leaked or stolen. 
-
-Instead of storing credentials locally you can encrypt them and store them safely in your Terraform Enterprise workspace. This feature is enabled when we turn on Remote Execution.
-
-With Remote Execution enabled all terraform runs now happen on the TFE server inside of a secure container. Sensitive variables are provided to the container at runtime and never exposed in plain text.
-
-Let's enable Remote Execution now.
-
----
 name: enable-remote-execution
 Enable Remote Execution
 -------------------------
@@ -916,7 +888,7 @@ A Better Way to Store Sensitive Data
 -------------------------
 .center[![:scale 100%](images/encrypted_vars.png)]
 
-Terraform Cloud can safely store your credentials and encrypt them for you. In the next lab we'll store your Azure credentials as sensitive TFE variables.
+Terraform Enterprise can safely store your credentials and encrypt them for you. In the next lab we'll store your Azure credentials as sensitive TFE variables.
 
 ???
 **Before we store our sensitive variables in Terraform Enterprise, we must enable Remote Execution.**
@@ -925,7 +897,7 @@ Terraform Cloud can safely store your credentials and encrypt them for you. In t
 name: chapter-5-tfe-lab
 .center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Sensitive Variables]]
 <br><br>
-Create Terraform Cloud **environment variables** for your Azure credentials. Make sure the `ARM_CLIENT_SECRET` is marked as **sensitive**. Here's the command to see your credentials:
+Create Terraform Enterprise **environment variables** for your Azure credentials. Make sure the `ARM_CLIENT_SECRET` is marked as **sensitive**. Here's the command to see your credentials:
 
 Command:
 ```powershell
@@ -1078,7 +1050,7 @@ allowed_publishers = [
 
 Sentinel is HashiCorp's policy enforcement language. Sentinel policies are checked after **`terraform plan`** is run. Sentinel will intercept bad configurations *before* they go to production, not after. 
 
-Sentinel rules help enforce compliance and security requirements in the cloud.
+Sentinel rules help enforce compliance and security requirements in the cloud. Sentinel is a feature of Terraform Enterprise.
 
 ???
 **Think of all the dos and do-nots that you want to enforce in your cloud environments. Maybe you want to limit the sizes of virtual machines, or to force web applications to always use SSL. Sentinel rules can be customized for most common security and compliance requirements.**
@@ -1086,10 +1058,36 @@ Sentinel rules help enforce compliance and security requirements in the cloud.
 Talk about Sentinel and some other things you can do with it.
 
 ---
+name: policy-as-code
+HashiCorp Sentinel - Policy As Code
+-------------------------
+```hcl
+allowed_machine_types = [
+  "n1-standard-1",
+  "n1-standard-2",
+  "n1-standard-4",
+]
+```
+
+With programmatic policy as code, custom governance can be enforced at the same rate as infrastructure is provisioned.  
+* Codifying policies automates guardrails around provisioning 
+* Policy checks built into the provisioning workflow
+* Use policy to enforce best-practices, security measures, or compliance  
+
+#### Enforcement Levels
+* Advisory: Warns when a policy breaks
+* Soft Mandatory: Provision needs to override policy to break it
+* Hard Mandatory: Provisioning not allowed to break policy
+
+
+Here are some example policies you can use for discussion:
+https://www.terraform.io/docs/cloud/sentinel/examples.html
+
+---
 name: enable-workspace-destroy
 Appetite for Destruction
 -------------------------
-For the next lab we'll need to destroy and recreate your lab environment. Terraform Cloud requires a special environment variable to enable destruction of infrastructure.
+For the next lab we'll need to destroy and recreate your lab environment. Terraform Enterprise requires a special environment variable to enable destruction of infrastructure.
 
 .center[![:scale 100%](images/confirm_destroy.png)]
 
@@ -1121,14 +1119,13 @@ name: instructor-enable-sentinel
 <br><br>
 .center[![:scale 100%](images/kitt_scanner.gif)]
 
-Your instructor will enable a Sentinel policy across the entire organization. 
+Your instructor will enable a Sentinel policy across the entire organization.  
 
-A robot now stands guard between your Terraform code and the Azure APIs.
+A robot now stands guard between your Terraform code and the Azure APIs.  
 
-Take a break or discuss Sentinel testing while **`terraform destroy`** is running.
+Take a break or discuss Sentinel testing while **`terraform destroy`** is running.  
 
-???
-Instructor notes: take a break here. Deleting a single VM in Azure can sometimes take upwards of ten minutes. Or do a side panel discussion on how Sentinel works. Either way you need to buy some time. While your students are on break, go into your organization settings and flip the block_allow_all_http enforcement mode to hard-mandatory.
+Don't forget to confirm the destroy if you don't have Auto-Apply enabled.  
 
 ---
 name: create-your-application
@@ -1204,53 +1201,32 @@ Solution:
 Now try loading the app from your workstation. Try it from a different workstation.
 
 ---
-name: tfe-chapter-6-review
-📝 Chapter 6 Review
--------------------------
-<br>
-.contents[
-In this chapter we:
-* Destroyed our Application
-* Enabled a Sentinel Policy
-* Watched our Terraform Code Fail
-* Fixed the Code to Pass Sentinel Tests
-* Verified the New Policy
-]
-
----
-name: TFE-Chapter-7
-class: center,middle
-.section[
-Chapter 7  
-Version Control Systems and Terraform
-]
-
----
-name: whats-a-vcs
-What is a Version Control System (VCS)?
--------------------------
-.center[![:scale 80%](images/tfe-vcs.webp)]
-Version control systems are applications that allow users to store, track, test, and collaborate on changes to their infrastructure and applications. Terraform Enterprise integrates with most common Version Control Systems.
-
----
-name: tfe-infra-as-code-workflow
-Infrastructure as Code
+name: migrate-to-sandbox-org
+🏖️ Migrate to Your Sandbox
 -------------------------
 <br><br>
-Terraform Enterprise can directly integrate with source code repos in Github Enteprise, Gitlab, and Bitbucket. This allows you to build simple devops workflows with code reviews, testing and approvals.
+Until now we've experienced TFE from the point of view of a user or developer.
 
-Until now all our code changes have been done on our workstation. Let's upgrade our workspace to use the repository fork we created earlier. 
+Next we're going to move our workspace out of the instructor's training organization and into our own sandbox organization. 
+
+In the next few chapters you'll learn more about the admin controls of Terraform Enterprise.  
+
+You'll also learn about Version Control Systems and how to collaborate on Infrastructure as Code.
 
 ???
-TODO: Add an image to this slide.
+NOTE TO INSTRUCTOR: You may have to turn off your sentinel policy at this point. We encountered an error with destroy that hasn't been fixed yet:
+
+```
+An error occurred: block_allow_all_http.sentinel:18:13: unsupported type for looping: undefined
+```
 
 ---
-name: delete-the-app
-Delete the App
+name: delete-your-app
+Delete Your Application
 -------------------------
-.center[![:scale 100%](images/queue_destroy_plan.png)]
+In order to ensure a smooth migration we're going to destroy our application and recreate it.
 
-First we need to move our workspace out of the training organization and into our sandbox organization.
+.center[![:scale 100%](images/queue_destroy_plan.png)]
 
 1. Go into the **Destruction and Deletion** settings for your workspace.
 2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
@@ -1271,14 +1247,45 @@ Change to Your Sandbox Org
 <br>
 .center[![:scale 70%](images/choose_org.png)]
 
-Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Cloud.
+Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Enterprise.
+
+---
+name: enable-sentinel-for-org
+🤖 Enable Sentinel in Your Org
+-------------------------
+<br><br>
+Let's implement a simple Sentinel policy for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
+
+We'll tackle this in two steps:
+
+1. Create a policy set for the entire organization.
+2. Create a Sentinel policy and add it to our policy set.
+
+---
+name: create-policy-set-0
+Create a Policy Set
+-------------------------
+.center[![:scale 80%](images/create_a_new_policy_set_gui.png)]
+<br>
+**Policy Sets** determine where your policies are applied. Policies can be applied to groups of workspaces, or to your entire organization.
+
+Under **Policy Sets** select **Create a New Policy Set**.
+
+---
+name: create-policy-set-1
+Create a Policy Set
+-------------------------
+.center[![:scale 60%](images/policy_set_settings.png)]
+Name your policy set **global_restrict_vm_size**.
+
+Make sure **Policies enforced on all workspaces** is selected.
 
 ---
 name: create-a-new-policy-0
 Create a New Sentinel Policy
 -------------------------
-.center[![:scale 70%](images/create_a_new_policy.png)]
-Before we re-create your workspace, let's implement a simple Sentinel policy for our organization. 
+.center[![:scale 90%](images/create_a_new_policy.png)]
+Let's implement a simple Sentinel policy for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
 
 Under your **Organization** settings select **Policies** and then **Create a New Policy**. 
 
@@ -1286,7 +1293,7 @@ Under your **Organization** settings select **Policies** and then **Create a New
 name: create-a-new-policy-1
 Create a New Sentinel Policy
 -------------------------
-.center[![:scale 45%](images/policy_name_and_mode.png)]
+.center[![:scale 60%](images/policy_name_and_mode.png)]
 
 Name it **restrict_allowed_vm_types**. You can put whatever you like in the description.
 
@@ -1330,51 +1337,71 @@ main = rule {
 name: create-a-new-policy-3
 Create a New Sentinel Policy
 -------------------------
-.center[![:scale 60%](images/create_policy_button.png)]
+.center[![:scale 60%](images/add_policy_to_policy_set.png)]
 <br><br>
-Leave the Policy Sets box alone for now. We will create a policy set on the next slide.
+You can select the policy set you created in the previous step from the drop-down menu. Make sure this is set to **global_restrict_vm_size**.  
+
+**Don't forget to click the Add Policy Set button!**
 
 Click **Create Policy** to proceed.
 
+---
+name: create-a-new-policy-4
+Confirm Your Work
+-------------------------
+.center[![:scale 90%](images/policy_sets_confirm.png)]
+<br><br>
+Click on the **Policy Sets** menu option to view your configuration. It should look like the screenshot above.
+
 
 ---
-name: create-policy-set-0
-Create a Policy Set
+name: tfe-chapter-6-review
+📝 Chapter 6 Review
 -------------------------
-.center[![:scale 60%](images/create_a_new_policy_set_gui.png)]
 <br>
-**Policy Sets** determine where your policies are applied. Policies can be applied to groups of workspaces, or to your entire organization.
-
-Under **Policy Sets** select **Create a New Policy Set**.
+.contents[
+In this chapter we:
+* Destroyed our Application
+* Enabled a Sentinel Policy
+* Watched our Terraform Code Fail
+* Fixed the Code to Pass Sentinel Tests
+* Verified the New Policy
+* Created a Sentinel Policy in our Org
+]
 
 ---
-name: create-policy-set-1
-Create a Policy Set
--------------------------
-.center[![:scale 50%](images/policy_set_settings.png)]
-<br>
-Name your policy set **global_restrict_vm_size**.
-
-Make sure **Policies enforced on all workspaces** is selected.
+name: TFE-Chapter-7
+class: center,middle
+.section[
+Chapter 7  
+Version Control Systems and Terraform
+]
 
 ---
-name: create-policy-set-2
-Create a Policy Set
+name: whats-a-vcs
+What is a Version Control System (VCS)?
 -------------------------
-.center[![:scale 60%](images/add_policy_to_policy_set.png)]
-<br>
-Add the **restrict_allowed_vm_types** policy you created in the previous step to your policy set. 
+.center[![:scale 80%](images/tfe-vcs.webp)]
+Version control systems are applications that allow users to store, track, test, and collaborate on changes to their infrastructure and applications. Terraform Enterprise integrates with most common Version Control Systems.
 
-Click **Create Policy Set** at the bottom to save and activate your new policy.
+---
+name: tfe-infra-as-code-workflow
+Infrastructure as Code
+-------------------------
+<br><br>
+Terraform Enterprise can directly integrate with source code repos in Github Enteprise, Gitlab, and Bitbucket. This allows you to build simple devops workflows with code reviews, testing and approvals.
 
-Now your policy will be enforced for all workspaces across your sandbox organization.
+Until now all our code changes have been done on our workstation. Let's upgrade our workspace to use the repository fork we created earlier. 
+
+???
+TODO: Add an image to this slide.
 
 ---
 name: chapter-7a-tfe-lab
 .center[.lab-header[👩🏼‍🔧 Lab Exercise 7a: Integrate with Github]]
 <br><br>
 .center[![:scale 70%](images/integrate_github.png)]
-During this lab you'll follow the instructions on the Terraform docs site for connecting to Github. Visit the link below and carefully follow the instructions to integrate your Terraform Cloud organization with your Github account.
+During this lab you'll follow the instructions on the Terraform docs site for connecting to Github. Visit the link below and carefully follow the instructions to integrate your Terraform Enterprise organization with your Github account.
 
 .center[https://www.terraform.io/docs/enterprise/vcs/github.html]
 
@@ -1383,16 +1410,32 @@ name: chapter-7a-tfe-lab-solution
 .center[.lab-header[👩🏼‍🔧 Lab Exercise 7a: Solution]]
 <br><br>
 .center[![:scale 100%](images/vcs_success.png)]
-If you successfully connected your Terraform Cloud organization to Github, you'll see the above text in the VCS Providers section of your organization settings. 
+If you successfully connected your Terraform Enterprise organization to Github, you'll see the above text in the VCS Providers section of your organization settings. 
 
 Congratulations, you can now create repo-backed Terraform workspaces.
+
+You do *not* need to configure a private SSH key for the rest of the labs.
 
 ---
 name: create-new-workspace
 Create a New Workspace
 -------------------------
-.center[![:scale 50%](images/create_repo_workspace.png)]
-Create a new workspace. This time you'll see an option to choose a git repository to connect to. Find your forked copy of the **`hashicat`** repo and click on **Create Workspace**.
+.center[![:scale 90%](images/create_repo_workspace.png)]
+Create a new workspace. Select the GitHub button to connect to your VCS.
+
+---
+name: create-new-workspace-2
+Create a New Workspace
+-------------------------
+.center[![:scale 90%](images/create_repo_workspace_2.png)]
+Select the hashicat repo that you forked earlier. You can filter the available repos with the text box in the upper right corner.
+
+---
+name: create-new-workspace-3
+Create a New Workspace
+-------------------------
+.center[![:scale 90%](images/create_repo_workspace_3.png)]
+When you reach the Configure Settings tab you can simply click the **Create Workspace** button. You do not need to change any of the advanced options.
 
 ---
 name: update-remote-backend
@@ -1429,20 +1472,13 @@ Output:
 Terraform has detected that the configuration specified for the backend
 has changed. Terraform will now check for existing state in the backends.
 
-Acquiring state lock. This may take a few moments...
-Do you want to copy existing state to the new backend?
-  Pre-existing state was found while migrating the previous "remote" backend to the
-  newly configured "remote" backend. No existing state was found in the newly
-  configured "remote" backend. Do you want to copy this state to the new "remote"
-  backend? Enter "yes" to copy and "no" to start with an empty state.
-
-  Enter a value: yes
-
-Releasing state lock. This may take a few moments...
+...
 
 *Successfully configured the backend "remote"! Terraform will automatically
 *use this backend unless the backend configuration changes.
 ```
+
+You can use `terraform init` to move workspace state between organizations.
 
 ???
 We're actually moving your state file from one organization to another. Cool!
@@ -1457,6 +1493,8 @@ For the next lab we're going to change our local shell to Git Bash.
 Hold down the **CTRL** and **SHIFT** keys and press **P**.
 
 **CTRL-SHIFT-P** is the Visual Studio Code shortcut for the **Command Palette**.
+
+You can also click **View** >> **Command Palette...**
 
 .center[![:scale 100%](images/command_shift_p.png)]
 
@@ -1491,7 +1529,7 @@ Terraform Helper is a command line tool that makes it easier to manage Terraform
 
 https://github.com/hashicorp-community/tf-helper
 
-**Step 1**: Run the **`install_tfh.sh`** script. You may simply copy and paste the commands below:
+**Step 1**: Run the **`install_tfh.sh`** script inside of the **hashicat/files** directory. You may simply copy and paste the commands below:
 
 ```bash
 cd ~/Desktop/hashicat/files
@@ -1596,6 +1634,7 @@ Run Terraform Apply
 -------------------------
 Command:
 ```bash
+cd ~/Desktop/hashicat
 terraform apply -auto-approve
 ```
 
@@ -1699,7 +1738,6 @@ In this chapter we:
 * Uploaded Environment Variables
 * Tested the Sentinel Policy
 * Re-Deployed our Application from VCS
-* Deleted Insecure Local Credentials
 ]
 
 ---
