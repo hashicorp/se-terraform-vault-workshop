@@ -5,7 +5,11 @@ count: false
 ![:scale 80%](images/tfelogo.png)
 </div>
 .titletext[
-Intro to Terraform Enterprise]
+Intro to Terraform Enterprise  
+On Microsoft Azure]
+
+???
+TODO: Pretty this slide up a bit.
 
 ---
 name: Table-of-Contents
@@ -27,7 +31,7 @@ Table of Contents
 ]
 
 ???
-**This workshop is meant to give a basic introduction to all the major features of Terraform Enterprise and Enterprise.**
+**This workshop is meant to give you a basic introduction to all the major features of Terraform Enterprise. We'll start with an overview and brief demo, and then a review of basic Terraform usage. Then we'll cover topics like remote state, sensitive variables, policy enforcement, version control, collaboration and access controls, and the private module registry. I hope you're prepared for an action-packed day, because we've got a lot to cover.**
 
 ---
 name: TFE-Chapter-1
@@ -202,7 +206,7 @@ Terraform Workstation Requirements
 **Option 3:** [Generate a Service Principal](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/terraform-install-configure#configure-terraform-environment-variables) - for advanced users.
 
 ???
-**Today we'll be using cloud-based workstations that have all the software you need pre-installed. There are no firewalls, no ticketing systems and no blockers in the lab environment. It is your own personal Terraform playground. All the skills you learn here today can be applied to your own Terraform Enterprise or Enterprise account as well. All the exercises will be done in our Azure training account. Please be kind to our training account, no bittorrent or crypto mining please.**
+**Today we'll be using cloud-based workstations that have all the software you need pre-installed. There are no firewalls, no ticketing systems and no blockers in the lab environment. It is your own personal Terraform playground. All the skills you learn here today can be applied to your own Terraform Enterprise server as well. All the exercises will be done in our Azure training account. Please be kind to our training account, no bittorrent or crypto mining please.**
 
 The expectation here is that everybody starts the workshop with a workstation that can run `terraform apply` and build things in an Azure account. You should always default to Option 1.  If advanced students want to try options #2 and #3 tell them they are on their own for troubleshooting.
 
@@ -255,6 +259,9 @@ The execution policy helps protect you from scripts that you do not trust. Chang
 
 You should see this banner if the script ran successfully. 
 
+???
+**Close the powershell window where you ran the setup script.**
+
 ---
 name: tfe-workstation-setup-4
 Open Visual Studio Code
@@ -266,7 +273,7 @@ A web browser window will pop open with the latest Visual Studio Code release no
 ???
 **Let's take a moment to move in and get comfortable. You can click on this little gear icon in the lower left corner to access your settings. Pick a color theme and font size that are easy on the eyes. You can also adjust your icons. I like the vscode-icons set, which has an icon for almost every type of file you can imagine.**
 
-I like to demo this part for the students. My personal favorites are Dracula and vscode-icons. Be sure and reload if you add any new extensions or themes. Remember that some of these folks have never used Visual Studio Code before. Know where the font, color, and icon settings are and show them how to change these.
+I like to demo this part for the students. My personal favorites are Dracula and vscode-icons. Remember that some of these folks have never used Visual Studio Code before. Know where the font, color, and icon settings are and show them how to change these.
 
 ---
 name: tfe-workstation-setup-5
@@ -297,7 +304,9 @@ Open the Integrated Terminal
 -------------------------
 .center[![:scale 70%](images/open_terminal.png)]
 
-Open the integrated VSC terminal using the menu or keyboard shortcut. You'll be asked to choose a default shell the first time you do this. Select Powershell as your default shell. You can change this later in your settings if you wish.
+Open the integrated VSC terminal using the menu or keyboard shortcut. Powershell is set as your default shell.
+
+You can change this anytime using the pulldown menu on the Terminal where it says **powershell**.
 
 ???
 We've seen this popup sometimes take two tries to save properly. It might be a bug. In any case it shouldn't matter because the default is Powershell which is what we want. You can also try git bash although it hasn't been tested with *all* the exercises in the lab. YMMV.
@@ -439,12 +448,14 @@ Outputs:
 catapp_url = http://seanclab-meow.centralus.cloudapp.azure.com
 ```
 
-**Note**: There is a [known bug](https://github.com/hashicorp/terraform/issues/12596) with the null_provisioner that *may* cause your run to hang if you're using Terraform 0.11.x.
-
 ???
 **We've built some terraform here that you probably wouldn't use in the real world.  It's been customized so that you can finish a run in 15 seconds instead of five to ten minutes. Some of what we did here is a bit unorthodox, for the sake of speed.**
 
-When this happens (terminal hangs for more than 30 seconds), have your student simply click on the little trash can icon in VSC, then reopen the terminal and run `terraform apply` again.  The problem should be gone, as the run did complete successfully.  NOTE: This issue appears to be fixed with Terraform 0.12
+**Note**: There is a [known bug](https://github.com/hashicorp/terraform/issues/12596) with the null_provisioner that *may* cause your run to hang if you're using Terraform 0.11.x.
+
+When this happens (terminal hangs for more than 30 seconds), have your student simply click on the little trash can icon in VSC, then reopen the terminal and run `terraform apply` again.  The problem should be gone, as the run did complete successfully.  
+
+This issue appears to be fixed with Terraform 0.12
 
 ---
 name: unleash-the-felis-catus
@@ -488,6 +499,8 @@ Point out that we're doing some things here that you shouldn't do in production 
 
 https://www.terraform.io/docs/configuration/variables.html#variable-definition-precedence
 
+It can be helpful to have your own lab workstation to demonstrate some of the solutions. You can flip back and forth between your lab workstation and the slide deck in full-screen mode.
+
 ---
 name: tfe-chapter-2-review
 📝 Chapter 2 Review
@@ -525,6 +538,8 @@ Terraform Cloud or Terraform Enterprise?
 The feature list for these two offerings is nearly identical. We will be using Terraform Cloud accounts for our lab exercises today.*
 
 ???
+**All the skills you learn today on our Terraform Cloud platform will translate directly to Terraform Enterprise because the feature set is the same.**
+
 At the instructor's discretion, this course can also be taught with an on-prem Terraform Enterprise server. We highly recommend sticking to the cloud based training though, to avoid any blockers or issues in the enterprise...
 
 ---
@@ -539,6 +554,8 @@ Sign Up for a Free Account
 
 ???
 **Go ahead and sign up for a new account if you don't have one already. Once you've signed up wait for more instructions.**
+
+**Instructor Note:** You'll want to gather a list of all your students TF cloud usernames. Make a spreadsheet or list on the whiteboard with their username, and the name of their sandbox organization. You'll be using both of these for lab setup.
 
 ---
 name: tfe-join-a-team
