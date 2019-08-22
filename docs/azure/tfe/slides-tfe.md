@@ -1303,7 +1303,9 @@ Under **Policy Sets** select **Create a New Policy Set**.
 name: create-policy-set-1
 Create a Policy Set
 -------------------------
-.center[![:scale 60%](images/policy_set_settings.png)]
+.center[![:scale 58%](images/policy_set_settings.png)]
+Click on **Create a policy set with individually managed policies**
+
 Name your policy set **global_restrict_vm_size**.
 
 Make sure **Policies enforced on all workspaces** is selected.
