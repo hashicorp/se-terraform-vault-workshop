@@ -28,7 +28,7 @@ control 'terraform-version' do
   impact 1.0
   desc 'Checks to see that Terraform is installed and working.'
   describe powershell('terraform --version') do
-    its('stdout') { should match(/0.12.1/) }
+    its('stdout') { should match(/0.12.6/) }
   end
 end
 
@@ -37,7 +37,7 @@ control 'vault-version' do
   impact 1.0
   desc 'Checks to see that Vault is installed and working.'
   describe powershell('vault --version') do
-    its('stdout') { should match(/v1.1.3/) }
+    its('stdout') { should match(/v1.2.2/) }
   end
 end
 
