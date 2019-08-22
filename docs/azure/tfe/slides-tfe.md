@@ -31,8 +31,8 @@ Table of Contents
 3. Terraform Enterprise
 4. Remote State
 5. Protecting Sensitive Variables
-6. Sentinel Policy Enforcement
-7. Version Control Systems (VCS) and Terraform
+6. Version Control Systems (VCS) and Terraform
+7. Sentinel Policy Enforcement
 8. VCS Collaboration for Teams
 9. Access Controls
 10. Private Module Registry
