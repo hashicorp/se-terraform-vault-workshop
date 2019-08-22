@@ -1,4 +1,4 @@
-# Terraform and Vault Workshop Repo
+# HashiCorp Workshop Repo
 
 [![CircleCI](https://circleci.com/gh/hashicorp/se-terraform-vault-workshop.svg?style=svg)](https://circleci.com/gh/hashicorp/se-terraform-vault-workshop)
 
