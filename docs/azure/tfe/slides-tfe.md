@@ -827,24 +827,6 @@ Protecting Sensitive Variables
 ]
 
 ---
-name: why-storing-creds-bad
-Plain Text API Keys Are Dangerous!
--------------------------
-.center[![:scale 60%](images/sophos_headline.png)]
-
-Sensitive credentials like Azure Service Principal API keys should always be protected. Storing admin-level credentials on employee laptops is a risky proposition. These credentials could accidentally be leaked or stolen. 
-
-Instead of storing credentials locally you can encrypt them and store them safely in your Terraform Enterprise workspace. This feature is enabled when we turn on Remote Execution.
-
-Remote execution runs in a secure container on the Terraform Enterprise server cluster. Let's enable Remote Execution now.
-
-.tinytext[https://nakedsecurity.sophos.com/2019/03/25/thousands-of-coders-are-leaving-their-crown-jewels-exposed-on-github/]
-
-???
-**With Remote Execution enabled all terraform runs now happen on the TFE server inside of a secure container. Sensitive variables are provided to the container at runtime and never exposed in plain text.**
-
-
----
 name: where-are-your-creds
 Where Are Your API Keys?
 -------------------------
@@ -869,6 +851,23 @@ ARM_CLIENT_ID                  91299f64-f951-4462-8e97-9efb1d215501
 
 ???
 **Note how our API keys are just sitting there in plain text. This isn't the most secure way to build cloud resources.**
+
+---
+name: why-storing-creds-bad
+Plain Text API Keys Are Dangerous!
+-------------------------
+.center[![:scale 60%](images/sophos_headline.png)]
+
+Sensitive credentials like Azure Service Principal API keys should always be protected. Storing admin-level credentials on employee laptops is a risky proposition. These credentials could accidentally be leaked or stolen. 
+
+Instead of storing credentials locally you can encrypt them and store them safely in your Terraform Enterprise workspace. This feature is enabled when we turn on Remote Execution.
+
+Remote execution runs in a secure container on the Terraform Enterprise server cluster. 
+
+.tinytext[https://nakedsecurity.sophos.com/2019/03/25/thousands-of-coders-are-leaving-their-crown-jewels-exposed-on-github/]
+
+???
+**With Remote Execution enabled all terraform runs now happen on the TFE server inside of a secure container. Sensitive variables are provided to the container at runtime and never exposed in plain text.**
 
 ---
 name: enable-remote-execution
@@ -1061,6 +1060,7 @@ Talk about Sentinel and some other things you can do with it.
 name: policy-as-code
 HashiCorp Sentinel - Policy As Code
 -------------------------
+<br><br>
 ```hcl
 allowed_machine_types = [
   "n1-standard-1",
@@ -1074,13 +1074,8 @@ With programmatic policy as code, custom governance can be enforced at the same 
 * Policy checks built into the provisioning workflow
 * Use policy to enforce best-practices, security measures, or compliance  
 
-#### Enforcement Levels
-* Advisory: Warns when a policy breaks
-* Soft Mandatory: Provision needs to override policy to break it
-* Hard Mandatory: Provisioning not allowed to break policy
 
-
-Here are some example policies you can use for discussion:
+Here are some example policies:
 https://www.terraform.io/docs/cloud/sentinel/examples.html
 
 ---
@@ -2017,6 +2012,9 @@ name: shall-we-play-a-game
 .center[![:scale 80%](images/welcome_arcade.png)]
 
 .center[**Congratulations! You made it to the end of the workshop.**]
+
+???
+The arcade games aren't playable from your cloud workstation. You need to open the URL on your laptop for them to load properly.
 
 ---
 name: tfe-chapter-10-review
