@@ -1077,7 +1077,7 @@ TODO: Add an image to this slide.
 
 ---
 name: chapter-6a-tfe-lab
-.center[.lab-header[👩🏼‍🔧 Lab Exercise 7a: Integrate with Github]]
+.center[.lab-header[👩🏼‍🔧 Lab Exercise 6a: Integrate with Github]]
 <br><br>
 .center[![:scale 70%](images/integrate_github.png)]
 During this lab you'll follow the instructions on the Terraform docs site for connecting to Github. Visit the link below and carefully follow the instructions to integrate your Terraform Enterprise organization with your Github account.
@@ -1086,7 +1086,7 @@ During this lab you'll follow the instructions on the Terraform docs site for co
 
 ---
 name: chapter-6a-tfe-lab-solution
-.center[.lab-header[👩🏼‍🔧 Lab Exercise 7a: Solution]]
+.center[.lab-header[👩🏼‍🔧 Lab Exercise 6a: Solution]]
 <br><br>
 .center[![:scale 100%](images/vcs_success.png)]
 If you successfully connected your Terraform Enterprise organization to Github, you'll see the above text in the VCS Providers section of your organization settings. 
@@ -1245,7 +1245,7 @@ Now you are ready to use the **`tfh`** command line tool. Proceed to the next sl
 
 ---
 name: chapter-6b-tfe-lab
-.center[.lab-header[⚗️ Lab Exercise 7b: Upload Variables]]
+.center[.lab-header[⚗️ Lab Exercise 6b: Upload Variables]]
 <br><br>
 You'll need to recreate the environment variables and terraform variables in your workspace. This is fairly easy to do with the Terraform Helper tool. Run the following command, and _don't forget to change **yourprefix** to your own prefix_. The rest of the command can remain the same.
 
@@ -1273,14 +1273,14 @@ Instructors: You must have the jq tool installed on your workstation to use the 
 
 ---
 name: chapter-6b-tfe-lab-solution
-.center[.lab-header[⚗️ Lab Exercise 7b: Solution]]
+.center[.lab-header[⚗️ Lab Exercise 6b: Solution]]
 <br><br>
 .center[![:scale 100%](images/encrypted_vars.png)]
 You should now see all your variables stored safely in the Terraform Enterprise console.
 
 ---
 name: chapter-6c-tfe-lab-part-3
-.center[.lab-header[🐱 Lab 7c: Add More Variables]]
+.center[.lab-header[🐱 Lab 6c: Add More Variables]]
 <br><br><br>
 **Extra Credit Lab:**
 
@@ -1290,7 +1290,7 @@ Read up on the **`-overwrite-all`** and **`-dry-run`** flags in the [TF Helper d
 
 ---
 name: chapter-6c-tfe-lab-solution
-.center[.lab-header[🐱 Lab 7c: Solution]]
+.center[.lab-header[🐱 Lab 6c: Solution]]
 <br><br><br>
 Simply add more **`-var`** flags at the end of the command to update your variables.
 
@@ -1358,7 +1358,7 @@ git config --global user.name "Ada Lovelace"
 
 ---
 name: chapter-6d-tfe-lab
-.center[.lab-header[💾 Lab Exercise 7d: Push Change to VCS]]
+.center[.lab-header[💾 Lab Exercise 6d: Push Change to VCS]]
 <br><br>
 Your boss has asked you to update the content on the website. Edit the **files/deploy_app.sh** script and add your own content between the BEGIN and END tags.
 
@@ -1376,7 +1376,7 @@ Trigger a new Terraform run from the UI. This must be done manually (or via the 
 
 ---
 name: chapter-6d-tfe-lab-solution-1
-.center[.lab-header[💾 Lab Exercise 7d: Solution Part 1]]
+.center[.lab-header[💾 Lab Exercise 6d: Solution Part 1]]
 <br>
 You can click the source code button on the left side of VSC, enter a comment, commit your changes, then push them to the remote repo. You will be prompted on whether you wish to **stage** your changes first. This is part of the git workflow.
 
@@ -1395,7 +1395,7 @@ Instructors:  Depending upon your students' familiarity with git, you may need t
 
 ---
 name: chapter-6d-tfe-lab-solution-2
-.center[.lab-header[💾 Lab Exercise 7d: Solution Part 2]]
+.center[.lab-header[💾 Lab Exercise 6d: Solution Part 2]]
 <br>
 .center[![:scale 80%](images/git_commit_gui.png)]
  Most git commands can be run from the VSC menu. Click the branch icon and then click on the triple dot menu.
@@ -1420,10 +1420,10 @@ In this chapter we:
 ]
 
 ---
-name: TFE-chapter-6
+name: TFE-chapter-7
 class: center,middle
 .section[
-Chapter 6  
+Chapter 7   
 Sentinel Policy Enforcement
 ]
 
@@ -1560,8 +1560,8 @@ Result: false
 Oh no! Our **`terraform apply`** failed. How can we fix our code?
 
 ---
-name: chapter-6-tfe-lab
-.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Secure the App]]
+name: chapter-7-tfe-lab
+.center[.lab-header[👮🏿‍♀️ Lab Exercise 7: Secure the App]]
 <br><br>
 The security team has a new requirement: Development applications should not be exposed to the public Internet.
 
@@ -1582,8 +1582,8 @@ You may also simply type "What is my IP address?" into your browser search bar.
 Instructors: Have fun with this exercise. Pull up your organization's homepage on the projector screen. You can make a game out of it, see who gets their code compliant first.
 
 ---
-name: chapter-6-tfe-lab-solution
-.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Solution]]
+name: chapter-7-tfe-lab-solution
+.center[.lab-header[👮🏿‍♀️ Lab Exercise 7: Solution]]
 <br><br>
 Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace the asterisk below with your own source IP, then run **`terraform apply`**.
 
@@ -1758,8 +1758,8 @@ Click on the **Policy Sets** menu option to view your configuration. It should l
 
 
 ---
-name: tfe-chapter-6-review
-📝 Chapter 6 Review
+name: tfe-chapter-7-review
+📝 Chapter 7 Review
 -------------------------
 <br>
 .contents[
