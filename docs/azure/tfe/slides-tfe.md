@@ -1035,6 +1035,35 @@ name: chapter-5b-tfe-lab-solution
 The local variables on your workstation are no longer used. Variables are now all stored in your workspace.
 
 ---
+name: enable-workspace-destroy
+Appetite for Destruction
+-------------------------
+For the next lab we'll need to destroy and recreate your lab environment. Terraform Enterprise requires a special environment variable to enable destruction of infrastructure.
+
+.center[![:scale 100%](images/confirm_destroy.png)]
+
+Create a new Environment Variable named **`CONFIRM_DESTROY`** and set the value to **`1`**.
+
+???
+**This is a safety switch, it's there to prevent us from shooting ourselves in the foot and deleting production.**
+
+---
+name: destroy-your-application
+Destroy Your Application
+-------------------------
+Either from the command line, or the GUI, destroy your web application. We're going to rebuild it from our code repo in the next chapter.
+
+Command Line:
+```powershell
+terraform destroy -force
+```
+
+GUI:
+.center[![:scale 100%](images/destroy_gui.png)]
+
+Do not click the red Destroy from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
+
+---
 name: tfe-chapter-5-review
 📝 Chapter 5 Review
 -------------------------
@@ -1046,6 +1075,7 @@ In this chapter we:
 * Moved our Azure Creds to TF Cloud
 * Created a prefix variable
 * Ran Terraform Apply from the GUI
+* Destroyed our Workspace
 ]
 
 ---
@@ -1074,6 +1104,15 @@ Until now all our code changes have been done on our workstation. Let's upgrade 
 
 ???
 TODO: Add an image to this slide.
+
+---
+name: switch-back-to-sandbox
+Change to Your Sandbox Org
+-------------------------
+<br>
+.center[![:scale 70%](images/choose_org.png)]
+
+Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Enterprise. You need to be in your own organization to connect to your VCS (github.com).
 
 ---
 name: chapter-6a-tfe-lab
@@ -1127,9 +1166,9 @@ Update your **remote_backend.tf** file so that the organization matches your san
 terraform {
   backend "remote" {
     hostname = "app.terraform.io"
-*   organization = "YOURNAME-sandbox"
+*    organization = "yourname-sandbox"
     workspaces {
-      name = "YOURNAME-catapp"
+      name = "hashicat"
     }
   }
 }
@@ -1169,15 +1208,13 @@ Switch to Git Bash
 <br>
 For the next lab we're going to change our local shell to Git Bash.
 
-Hold down the **CTRL** and **SHIFT** keys and press **P**.
+Click on the pulldown menu at the top of your terminal where it says:
 
-**CTRL-SHIFT-P** is the Visual Studio Code shortcut for the **Command Palette**.
+**`1: powershell`**
 
-You can also click **View** >> **Command Palette...**
+Click on **Select Default Shell**.
 
-.center[![:scale 100%](images/command_shift_p.png)]
-
-When the Command Palette opens up type in "terminal default shell". This will bring you to the options page for your Terminal shell.
+.center[![:scale 30%](images/select_default_shell.png)]
 
 ---
 name: switch-to-git-bash
@@ -1404,6 +1441,17 @@ name: chapter-6d-tfe-lab-solution-2
 You can see which git commit triggered the run in the Terraform Enterprise UI.
 
 ---
+name: destroy-your-app
+Destroy Your Application
+-------------------------
+We need to destroy our application before the next lab.
+
+.center[![:scale 100%](images/queue_destroy_plan.png)]
+
+1. Go into the **Destruction and Deletion** settings for your workspace.
+2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
+
+---
 name: tfe-chapter-6-review
 📝 Chapter 6 Review
 -------------------------
@@ -1411,11 +1459,9 @@ name: tfe-chapter-6-review
 In this chapter we:
 * Connected our Organization to VCS
 * Created a New Workspace
-* Added a Sentinel Policy
 * Migrated Terraform State
 * Installed the TFH Tool
 * Uploaded Environment Variables
-* Tested the Sentinel Policy
 * Re-Deployed our Application from VCS
 ]
 
@@ -1480,36 +1526,60 @@ With programmatic policy as code, custom governance can be enforced at the same 
 
 
 Here are some example policies:
-https://www.terraform.io/docs/cloud/sentinel/examples.html
+https://www.terraform.io/docs/cloud/sentinel/examples.html 
 
 ---
-name: enable-workspace-destroy
-Appetite for Destruction
+name: enable-sentinel-for-org
+🤖 Enable Sentinel in Your Org
 -------------------------
-For the next lab we'll need to destroy and recreate your lab environment. Terraform Enterprise requires a special environment variable to enable destruction of infrastructure.
+<br><br>
+Let's implement a simple Sentinel policy Set for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
 
-.center[![:scale 100%](images/confirm_destroy.png)]
+We'll tackle this in two steps:
 
-Create a new Environment Variable named **`CONFIRM_DESTROY`** and set the value to **`1`**.
-
-???
-**This is a safety switch, it's there to prevent us from shooting ourselves in the foot and deleting production.**
+1. Fork a repo that contains a Sentinel Policy Set
+2. Add the policy set from our new repo
 
 ---
-name: destroy-your-application
-Destroy Your Application
+name: fork-sentinel-repo
+Fork the Sentinel Repo
 -------------------------
-Either from the command line, or the GUI, destroy your web application. 
+.center[![:scale 100%](images/create_sentinel_repo_fork.png)]
 
-Command Line:
-```powershell
-terraform destroy -force
-```
+Visit this URL in your web browser:
 
-GUI:
-.center[![:scale 100%](images/destroy_gui.png)]
+https://github.com/scarolan/tfe-workshop-sentinel
 
-Do not click the red Destroy from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
+Use the 'Fork' button in the upper right corner to create your own copy of the repo.
+
+---
+name: create-policy-set-1
+Create a Policy Set
+-------------------------
+.center[![:scale 90%](images/create_a_new_policy_set_gui.png)]
+Back in TFE, under your Organization Settings, click on **Policy Sets** and then **Create a New Policy Set**.
+
+---
+name: create-policy-set-2
+Select the Sentinel Repo
+-------------------------
+.center[![:scale 90%](images/your_fork.png)]
+Scroll down a bit to the **Repository** box. If you click on it you'll get a pulldown menu of available git repos. Select your fork of the tfe-workshop-sentinel repo.
+
+---
+name: create-policy-set-3
+Select the Sentinel Repo
+-------------------------
+.center[![:scale 90%](images/create_policy_set.png)]
+Scroll down some more and click on the **Create Policy Set** button at the bottom. You can leave everything else with the default settings.
+
+---
+name: create-policy-set-4
+Confirm Your Work
+-------------------------
+.center[![:scale 90%](images/policy_sets_confirm.png)]
+<br><br>
+You should now see a new policy set in the UI, along with the latest commit hash for the repository. Congratulations, you've configured policy enforcement as code!
 
 ---
 name: instructor-enable-sentinel
@@ -1518,46 +1588,11 @@ name: instructor-enable-sentinel
 <br><br>
 .center[![:scale 100%](images/kitt_scanner.gif)]
 
-Your instructor will enable a Sentinel policy across the entire organization.  
+You have now enabled Sentinel policy enforcement across the entire organization.  
 
-A robot now stands guard between your Terraform code and the Azure APIs.  
+A robot stands guard between your Terraform code and the Azure APIs.  
 
-Take a break or discuss Sentinel testing while **`terraform destroy`** is running.  
-
-Don't forget to confirm the destroy if you don't have Auto-Apply enabled.  
-
-???
-Instructor - go into your training org settings and set your global block_allow_all_http policy to 
-hard-mandatory.
-
----
-name: create-your-application
-Re-deploy Your Application
--------------------------
-Command Line:
-```powershell
-terraform apply -auto-approve
-```
-
-Output:
-```tex
-Organization policy check:
-
-Sentinel Result: false
-
-Sentinel evaluated to false because one or more Sentinel policies evaluated
-to false. This false was not due to an undefined value or runtime error.
-
-1 policies evaluated.
-
-## Policy 1: block_allow_all_http.sentinel (hard-mandatory)
-
-Result: false
-
-  FALSE - block_allow_all_http.sentinel:23:70 - sr.access == "Deny"
-*Error: Organization policy check hard failed.
-```
-Oh no! Our **`terraform apply`** failed. How can we fix our code?
+Are you ready for the next lab?
 
 ---
 name: chapter-7-tfe-lab
@@ -1567,7 +1602,7 @@ The security team has a new requirement: Development applications should not be 
 
 We have implemented a policy that disallows **`0.0.0.0`** or **`*`** as the **`source_address_prefix`** in Azure network security group rules that apply to port 80.
 
-Fix the code on your local workstation so that it passes the Sentinel check. Run Terraform apply to limit dev environment access to your workstation's source IP address.
+Fix the code in your repo so that it passes the Sentinel check. Run Terraform apply to limit dev environment access to your workstation's source IP address.
 
 **HINT:** You can use this Powershell command to get your workstation's public IP address:
 ```powershell
@@ -1602,160 +1637,6 @@ Solution:
   }
 ```
 Now try loading the app from your workstation. Try it from a different workstation.
-
----
-name: migrate-to-sandbox-org
-🏖️ Migrate to Your Sandbox
--------------------------
-<br><br>
-Until now we've experienced TFE from the point of view of a user or developer.
-
-Next we're going to move our workspace out of the instructor's training organization and into our own sandbox organization. 
-
-In the next few chapters you'll learn more about the admin controls of Terraform Enterprise.  
-
-You'll also learn about Version Control Systems and how to collaborate on Infrastructure as Code.
-
-???
-**NOTE TO INSTRUCTOR:** You may have to turn off your sentinel policy at this point. We encountered an error with destroy that hasn't been fixed yet:
-
-```
-An error occurred: block_allow_all_http.sentinel:18:13: unsupported type for looping: undefined
-```
-
----
-name: delete-your-app
-Delete Your Application
--------------------------
-In order to ensure a smooth migration we're going to destroy our application and recreate it.
-
-.center[![:scale 100%](images/queue_destroy_plan.png)]
-
-1. Go into the **Destruction and Deletion** settings for your workspace.
-2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
-
-Move on to the next slides while the destroy run proceeds.
-
-???
-Instructors: if anyone's workspace fails to delete, revert your sentinel policy back to 'advisory' and have them run it again. This was observed with Terraform 0.12 when trying to delete.
-
-```
-An error occurred: block_allow_all_http.sentinel:22:10: unsupported type for looping: undefined
-```
-
----
-name: switch-back-to-sandbox
-Change to Your Sandbox Org
--------------------------
-<br>
-.center[![:scale 70%](images/choose_org.png)]
-
-Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Enterprise.
-
----
-name: enable-sentinel-for-org
-🤖 Enable Sentinel in Your Org
--------------------------
-<br><br>
-Let's implement a simple Sentinel policy for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
-
-We'll tackle this in two steps:
-
-1. Create a policy set for the entire organization.
-2. Create a Sentinel policy and add it to our policy set.
-
----
-name: create-policy-set-0
-Create a Policy Set
--------------------------
-.center[![:scale 80%](images/create_a_new_policy_set_gui.png)]
-<br>
-**Policy Sets** determine where your policies are applied. Policies can be applied to groups of workspaces, or to your entire organization.
-
-Under **Policy Sets** select **Create a New Policy Set**.
-
----
-name: create-policy-set-1
-Create a Policy Set
--------------------------
-.center[![:scale 60%](images/policy_set_settings.png)]
-Name your policy set **global_restrict_vm_size**.
-
-Make sure **Policies enforced on all workspaces** is selected.
-
----
-name: create-a-new-policy-0
-Create a New Sentinel Policy
--------------------------
-.center[![:scale 90%](images/create_a_new_policy.png)]
-Let's implement a simple Sentinel policy for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
-
-Under your **Organization** settings select **Policies** and then **Create a New Policy**. 
-
----
-name: create-a-new-policy-1
-Create a New Sentinel Policy
--------------------------
-.center[![:scale 60%](images/policy_name_and_mode.png)]
-
-Name it **restrict_allowed_vm_types**. You can put whatever you like in the description.
-
-The Sentinel code for your policy is on the next slide. Copy and paste it into the **Policy Code** field.
-
----
-name: create-a-new-policy-2
-Sentinel Policy Code - Copy & Paste
--------------------------
-```hcl
-import "tfplan"
-
-get_vms = func() {
-    vms = []
-    for tfplan.module_paths as path {
-        vms += values(tfplan.module(path).resources.azurerm_virtual_machine) else []
-    }
-    return vms
-}
-
-allowed_vm_sizes = [
-  "Standard_A0",
-  "Standard_A1",
-]
-
-vms = get_vms()
-vm_size_allowed = rule {
-    all vms as _, instances {
-      all instances as index, r {
-  	   r.applied.vm_size in allowed_vm_sizes
-      }
-    }
-}
-
-main = rule {
-  (vm_size_allowed) else true
-}
-```
-
----
-name: create-a-new-policy-3
-Create a New Sentinel Policy
--------------------------
-.center[![:scale 60%](images/add_policy_to_policy_set.png)]
-<br><br>
-You can select the policy set you created in the previous step from the drop-down menu. Make sure this is set to **global_restrict_vm_size**.  
-
-**Don't forget to click the Add Policy Set button!**
-
-Click **Create Policy** to proceed.
-
----
-name: create-a-new-policy-4
-Confirm Your Work
--------------------------
-.center[![:scale 90%](images/policy_sets_confirm.png)]
-<br><br>
-Click on the **Policy Sets** menu option to view your configuration. It should look like the screenshot above.
-
 
 ---
 name: tfe-chapter-7-review
