@@ -11,6 +11,14 @@ On Microsoft Azure]
 ???
 TODO: Pretty this slide up a bit.
 
+Instructors - make sure you have read the instructor notes and setup instructions before presenting this workshop:
+
+Classroom Lab Setup  
+https://github.com/hashicorp/workshops/blob/master/INSTRUCTOR_NOTES.md
+
+TFE Organization Setup  
+https://github.com/hashicorp/workshops/blob/master/azure-tfe/README.md
+
 ---
 name: Table-of-Contents
 class: center,middle
@@ -492,7 +500,7 @@ Commands:
 terraform apply -var placeholder=www.fillmurray.com -var height=500 -var width=500
 ```
 
-Try some different placeholder image sites. Here are some examples: [placedog.net](http://placedog.net), [placebear.com](http://placebear.com), [www.fillmurray.com](http://www.fillmurray.com), [placecage.com](http://placecage.com), [placebeard.it](http://placebeard.it), [loremflickr.com](http://loremflickr.com), [baconmockup.com](http://baconmockup.com), and [placeimg.com](http://placeimg.com).
+Try some different placeholder image sites. Here are some examples: [placedog.net](http://placedog.net), [placebear.com](http://placebear.com), [www.fillmurray.com](http://www.fillmurray.com), [www.placecage.com](http://www.placecage.com), [placebeard.it](http://placebeard.it), [loremflickr.com](http://loremflickr.com), [baconmockup.com](http://baconmockup.com), and [placeimg.com](http://placeimg.com).
 
 ???
 Point out that we're doing some things here that you shouldn't do in production (like using null_resource for our provisioner.) You can also review the different ways to set variables:
@@ -568,9 +576,9 @@ Before you go further, provide your username to your instructor. This is so you 
 ???
 **Now I need you all to write your TFE username on the whiteboard. This is so I can invite you to our shared training organization.**
 
-Instructor - you should have an organization ready for training. Invite all your students to your organization. You can put them all on a team called "students" and give them "Manage Workspaces" permissions. You should also create a global sentinel policy called `block_allow_all_http` and populate it with the following Sentinel code. The policy enforcement mode should be set to advisory at the beginning of the training.
+Instructor - you should have an organization ready for training. Instructions for setting up this organization and team are located here:
 
-There is a copy of this Sentinel policy in the `policy` subdirectory of the tfe code directory.
+https://github.com/hashicorp/workshops/blob/master/azure-tfe/README.md
 
 ---
 name: tfe-create-an-org
@@ -578,7 +586,9 @@ Create an Organization
 -------------------------
 .center[![:scale 70%](images/sandbox.png)]
 
-Create a new organization for your own development work. Name it **yourname-sandbox**. We'll be using this later in the training.
+Create a new organization for your own development work. We'll be using this later in the training.
+
+Replace **yourname** with your own name please!
 
 ???
 **Okay, now everybody should create a new sandbox organization. Write those down too so I can upgrade them to trial organizations. This will just take a moment.**
@@ -590,7 +600,7 @@ name: tfe-choose-an-org
 Select the Workshop Organization
 -------------------------
 .center[![:scale 70%](images/choose_training_org.png)]
-Your instructor will invite you to the workshop organization. Once you've been invited you'll see a second organization in the org pull-down menu. Change from your sandbox organization into the workshop organization.
+Your instructor will invite you to the workshop organization. Once you've been invited you'll see a second organization in the org pull-down menu. Change from your sandbox organization into the workshop organization. The organization name may be different than what you see on the slide.
 
 ???
 **For the first portion of this workshop we'll all be sharing the same sandbox. I've invited you all to this $TRAININGORG where you have the ability to create your own workspaces.**
@@ -638,6 +648,9 @@ Terraform stores information about the resources it has built in a **state file*
 * No centralized record keeping
 
 Let's migrate our local state file into Terraform Enterprise where it will be encrypted and protected from unauthorized access.
+
+???
+TODO: Maybe an image slide or more explanation about Remote State?
 
 ---
 name: create-a-workspace-gui
@@ -731,6 +744,8 @@ Use the examples on the previous slide for reference.
 ???
 %APPDATA% is a shortcut on Windows to your application data directory. You can also go directly to `C:\Users\hashicorp\AppData\Roaming`.
 
+We've provided a sample remote_backend.tf file that you can use to get started. It's called remote_backend.tf.disabled.
+
 ---
 name: chapter-4-tfe-lab-solution-1
 .center[.lab-header[👩🏽‍🔬 Lab Exercise 4: Solution Part 1]]
@@ -768,6 +783,7 @@ Run a **`terraform init`** command to migrate to remote state.  You should see o
 
 Command:
 ```powershell
+cd ~/Desktop/hashicat
 terraform init
 ```
 
@@ -907,7 +923,7 @@ A Better Way to Store Sensitive Data
 Terraform Enterprise can safely store your credentials and encrypt them for you. In the next lab we'll store your Azure credentials as sensitive TFE variables.
 
 ???
-**Before we store our sensitive variables in Terraform Enterprise, we must enable Remote Execution.**
+**This is our target state. When you are done all your credentials should be stored safely like this.**
 
 ---
 name: chapter-5-tfe-lab
@@ -1001,7 +1017,7 @@ https://app.terraform.io/app/hashicorp-workshop/seanc-catapp/runs/run-1F94Y1fTNs
 Remote execution is now enabled. The results of your apply will still stream back into your console window, but Terraform is now running in the cloud. You can also watch the Terraform apply output in the GUI.
 
 ???
-**Now you can run terraform either from the command line or from the GUI.**
+**Now you can run terraform either from the command line or from the GUI. You may notice that there are some Sentinel policies running now as well. We'll cover those in a moment.**
 
 ---
 name: chapter-5b-tfe-lab
@@ -1194,7 +1210,7 @@ Instructors: Have fun with this exercise. Pull up your organization's homepage o
 name: chapter-6-tfe-lab-solution
 .center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Solution]]
 <br><br>
-Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace 127.0.0.1 below with your own source IP, then run **`terraform apply`**.
+Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace the asterisk below with your own source IP, then run **`terraform apply`**.
 
 Solution:
 ```hcl
@@ -1206,7 +1222,7 @@ Solution:
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "80"
-*   source_address_prefix      = "127.0.0.1"
+*   source_address_prefix      = "<YOURIPHERE>"
     destination_address_prefix = "*"
   }
 ```
