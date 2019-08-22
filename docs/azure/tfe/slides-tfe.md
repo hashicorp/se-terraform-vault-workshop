@@ -1049,359 +1049,10 @@ In this chapter we:
 ]
 
 ---
-name: TFE-Chapter-6
+name: TFE-chapter-6
 class: center,middle
 .section[
 Chapter 6  
-Sentinel Policy Enforcement
-]
-
----
-name: what-is-sentinel
-What is Sentinel?
--------------------------
-```hcl
-# Restricting region in AWS
-aws_region_valid = rule {
-  all region_values as rv {
-	rv == "us-east-1"
-  }
-}
-# Restricting machine types in GCP
-allowed_machine_types = [
-  "n1-standard-1",
-  "n1-standard-2",
-  "n1-standard-4",
-]
-# Restricting publisher in Azure
-allowed_publishers = [
-  "MicrosoftWindowsServer",
-  "RedHat",
-]
-```
-
-Sentinel is HashiCorp's policy enforcement language. Sentinel policies are checked after **`terraform plan`** is run. Sentinel will intercept bad configurations *before* they go to production, not after. 
-
-Sentinel rules help enforce compliance and security requirements in the cloud. Sentinel is a feature of Terraform Enterprise.
-
-???
-**Think of all the dos and do-nots that you want to enforce in your cloud environments. Maybe you want to limit the sizes of virtual machines, or to force web applications to always use SSL. Sentinel rules can be customized for most common security and compliance requirements.**
-
-Talk about Sentinel and some other things you can do with it.
-
----
-name: policy-as-code
-HashiCorp Sentinel - Policy As Code
--------------------------
-<br><br>
-```hcl
-allowed_machine_types = [
-  "n1-standard-1",
-  "n1-standard-2",
-  "n1-standard-4",
-]
-```
-
-With programmatic policy as code, custom governance can be enforced at the same rate as infrastructure is provisioned.  
-* Codifying policies automates guardrails around provisioning 
-* Policy checks built into the provisioning workflow
-* Use policy to enforce best-practices, security measures, or compliance  
-
-
-Here are some example policies:
-https://www.terraform.io/docs/cloud/sentinel/examples.html
-
----
-name: enable-workspace-destroy
-Appetite for Destruction
--------------------------
-For the next lab we'll need to destroy and recreate your lab environment. Terraform Enterprise requires a special environment variable to enable destruction of infrastructure.
-
-.center[![:scale 100%](images/confirm_destroy.png)]
-
-Create a new Environment Variable named **`CONFIRM_DESTROY`** and set the value to **`1`**.
-
-???
-**This is a safety switch, it's there to prevent us from shooting ourselves in the foot and deleting production.**
-
----
-name: destroy-your-application
-Destroy Your Application
--------------------------
-Either from the command line, or the GUI, destroy your web application. 
-
-Command Line:
-```powershell
-terraform destroy -force
-```
-
-GUI:
-.center[![:scale 100%](images/destroy_gui.png)]
-
-Do not click the red Destroy from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
-
----
-name: instructor-enable-sentinel
-.center[🤖 Sentinel Policy Enforcement 🤖 
--------------------------]
-<br><br>
-.center[![:scale 100%](images/kitt_scanner.gif)]
-
-Your instructor will enable a Sentinel policy across the entire organization.  
-
-A robot now stands guard between your Terraform code and the Azure APIs.  
-
-Take a break or discuss Sentinel testing while **`terraform destroy`** is running.  
-
-Don't forget to confirm the destroy if you don't have Auto-Apply enabled.  
-
----
-name: create-your-application
-Re-deploy Your Application
--------------------------
-Command Line:
-```powershell
-terraform apply -auto-approve
-```
-
-Output:
-```tex
-Organization policy check:
-
-Sentinel Result: false
-
-Sentinel evaluated to false because one or more Sentinel policies evaluated
-to false. This false was not due to an undefined value or runtime error.
-
-1 policies evaluated.
-
-## Policy 1: block_allow_all_http.sentinel (hard-mandatory)
-
-Result: false
-
-  FALSE - block_allow_all_http.sentinel:23:70 - sr.access == "Deny"
-*Error: Organization policy check hard failed.
-```
-Oh no! Our **`terraform apply`** failed. How can we fix our code?
-
----
-name: chapter-6-tfe-lab
-.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Secure the App]]
-<br><br>
-The security team has a new requirement: Development applications should not be exposed to the public Internet.
-
-We have implemented a policy that disallows **`0.0.0.0`** or **`*`** as the **`source_address_prefix`** in Azure network security group rules that apply to port 80.
-
-Fix the code on your local workstation so that it passes the Sentinel check. Run Terraform apply to limit dev environment access to your workstation's source IP address.
-
-**HINT:** You can use this Powershell command to get your workstation's public IP address:
-```powershell
-(Invoke-WebRequest -UseBasicParsing http://icanhazip.com).content
-```
-
-You may also simply type "What is my IP address?" into your browser search bar.
-
-???
-**I'm going to keep the organization view up here on the projector screen. Let's see how fast everyone can get their code compliant and have a clean terraform apply.**
-
-Instructors: Have fun with this exercise. Pull up your organization's homepage on the projector screen. You can make a game out of it, see who gets their code compliant first.
-
----
-name: chapter-6-tfe-lab-solution
-.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Solution]]
-<br><br>
-Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace the asterisk below with your own source IP, then run **`terraform apply`**.
-
-Solution:
-```hcl
-  security_rule {
-    name                       = "HTTP"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-*   source_address_prefix      = "<YOURIPHERE>"
-    destination_address_prefix = "*"
-  }
-```
-Now try loading the app from your workstation. Try it from a different workstation.
-
----
-name: migrate-to-sandbox-org
-🏖️ Migrate to Your Sandbox
--------------------------
-<br><br>
-Until now we've experienced TFE from the point of view of a user or developer.
-
-Next we're going to move our workspace out of the instructor's training organization and into our own sandbox organization. 
-
-In the next few chapters you'll learn more about the admin controls of Terraform Enterprise.  
-
-You'll also learn about Version Control Systems and how to collaborate on Infrastructure as Code.
-
-???
-NOTE TO INSTRUCTOR: You may have to turn off your sentinel policy at this point. We encountered an error with destroy that hasn't been fixed yet:
-
-```
-An error occurred: block_allow_all_http.sentinel:18:13: unsupported type for looping: undefined
-```
-
----
-name: delete-your-app
-Delete Your Application
--------------------------
-In order to ensure a smooth migration we're going to destroy our application and recreate it.
-
-.center[![:scale 100%](images/queue_destroy_plan.png)]
-
-1. Go into the **Destruction and Deletion** settings for your workspace.
-2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
-
-Move on to the next slides while the destroy run proceeds.
-
-???
-Instructors: if anyone's workspace fails to delete, revert your sentinel policy back to 'advisory' and have them run it again. This was observed with Terraform 0.12 when trying to delete.
-
-```
-An error occurred: block_allow_all_http.sentinel:22:10: unsupported type for looping: undefined
-```
-
----
-name: switch-back-to-sandbox
-Change to Your Sandbox Org
--------------------------
-<br>
-.center[![:scale 70%](images/choose_org.png)]
-
-Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Enterprise.
-
----
-name: enable-sentinel-for-org
-🤖 Enable Sentinel in Your Org
--------------------------
-<br><br>
-Let's implement a simple Sentinel policy for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
-
-We'll tackle this in two steps:
-
-1. Create a policy set for the entire organization.
-2. Create a Sentinel policy and add it to our policy set.
-
----
-name: create-policy-set-0
-Create a Policy Set
--------------------------
-.center[![:scale 80%](images/create_a_new_policy_set_gui.png)]
-<br>
-**Policy Sets** determine where your policies are applied. Policies can be applied to groups of workspaces, or to your entire organization.
-
-Under **Policy Sets** select **Create a New Policy Set**.
-
----
-name: create-policy-set-1
-Create a Policy Set
--------------------------
-.center[![:scale 60%](images/policy_set_settings.png)]
-Name your policy set **global_restrict_vm_size**.
-
-Make sure **Policies enforced on all workspaces** is selected.
-
----
-name: create-a-new-policy-0
-Create a New Sentinel Policy
--------------------------
-.center[![:scale 90%](images/create_a_new_policy.png)]
-Let's implement a simple Sentinel policy for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
-
-Under your **Organization** settings select **Policies** and then **Create a New Policy**. 
-
----
-name: create-a-new-policy-1
-Create a New Sentinel Policy
--------------------------
-.center[![:scale 60%](images/policy_name_and_mode.png)]
-
-Name it **restrict_allowed_vm_types**. You can put whatever you like in the description.
-
-The Sentinel code for your policy is on the next slide. Copy and paste it into the **Policy Code** field.
-
----
-name: create-a-new-policy-2
-Sentinel Policy Code - Copy & Paste
--------------------------
-```hcl
-import "tfplan"
-
-get_vms = func() {
-    vms = []
-    for tfplan.module_paths as path {
-        vms += values(tfplan.module(path).resources.azurerm_virtual_machine) else []
-    }
-    return vms
-}
-
-allowed_vm_sizes = [
-  "Standard_A0",
-  "Standard_A1",
-]
-
-vms = get_vms()
-vm_size_allowed = rule {
-    all vms as _, instances {
-      all instances as index, r {
-  	   r.applied.vm_size in allowed_vm_sizes
-      }
-    }
-}
-
-main = rule {
-  (vm_size_allowed) else true
-}
-```
-
----
-name: create-a-new-policy-3
-Create a New Sentinel Policy
--------------------------
-.center[![:scale 60%](images/add_policy_to_policy_set.png)]
-<br><br>
-You can select the policy set you created in the previous step from the drop-down menu. Make sure this is set to **global_restrict_vm_size**.  
-
-**Don't forget to click the Add Policy Set button!**
-
-Click **Create Policy** to proceed.
-
----
-name: create-a-new-policy-4
-Confirm Your Work
--------------------------
-.center[![:scale 90%](images/policy_sets_confirm.png)]
-<br><br>
-Click on the **Policy Sets** menu option to view your configuration. It should look like the screenshot above.
-
-
----
-name: tfe-chapter-6-review
-📝 Chapter 6 Review
--------------------------
-<br>
-.contents[
-In this chapter we:
-* Destroyed our Application
-* Enabled a Sentinel Policy
-* Watched our Terraform Code Fail
-* Fixed the Code to Pass Sentinel Tests
-* Verified the New Policy
-* Created a Sentinel Policy in our Org
-]
-
----
-name: TFE-Chapter-7
-class: center,middle
-.section[
-Chapter 7  
 Version Control Systems and Terraform
 ]
 
@@ -1425,7 +1076,7 @@ Until now all our code changes have been done on our workstation. Let's upgrade 
 TODO: Add an image to this slide.
 
 ---
-name: chapter-7a-tfe-lab
+name: chapter-6a-tfe-lab
 .center[.lab-header[👩🏼‍🔧 Lab Exercise 7a: Integrate with Github]]
 <br><br>
 .center[![:scale 70%](images/integrate_github.png)]
@@ -1434,7 +1085,7 @@ During this lab you'll follow the instructions on the Terraform docs site for co
 .center[https://www.terraform.io/docs/enterprise/vcs/github.html]
 
 ---
-name: chapter-7a-tfe-lab-solution
+name: chapter-6a-tfe-lab-solution
 .center[.lab-header[👩🏼‍🔧 Lab Exercise 7a: Solution]]
 <br><br>
 .center[![:scale 100%](images/vcs_success.png)]
@@ -1593,7 +1244,7 @@ Output:
 Now you are ready to use the **`tfh`** command line tool. Proceed to the next slide.
 
 ---
-name: chapter-7b-tfe-lab
+name: chapter-6b-tfe-lab
 .center[.lab-header[⚗️ Lab Exercise 7b: Upload Variables]]
 <br><br>
 You'll need to recreate the environment variables and terraform variables in your workspace. This is fairly easy to do with the Terraform Helper tool. Run the following command, and _don't forget to change **yourprefix** to your own prefix_. The rest of the command can remain the same.
@@ -1621,14 +1272,14 @@ Updating ARM_CLIENT_SECRET type:env hcl:false sensitive:true value:REDACTED
 Instructors: You must have the jq tool installed on your workstation to use the tfh tool.
 
 ---
-name: chapter-7b-tfe-lab-solution
+name: chapter-6b-tfe-lab-solution
 .center[.lab-header[⚗️ Lab Exercise 7b: Solution]]
 <br><br>
 .center[![:scale 100%](images/encrypted_vars.png)]
 You should now see all your variables stored safely in the Terraform Enterprise console.
 
 ---
-name: chapter-7c-tfe-lab-part-3
+name: chapter-6c-tfe-lab-part-3
 .center[.lab-header[🐱 Lab 7c: Add More Variables]]
 <br><br><br>
 **Extra Credit Lab:**
@@ -1638,7 +1289,7 @@ See if you can add your **height**, **width**, and **placeholder** variables to 
 Read up on the **`-overwrite-all`** and **`-dry-run`** flags in the [TF Helper docs](https://github.com/hashicorp-community/tf-helper/blob/master/tfh/usr/share/doc/tfh/tfh_pushvars.md).
 
 ---
-name: chapter-7c-tfe-lab-solution
+name: chapter-6c-tfe-lab-solution
 .center[.lab-header[🐱 Lab 7c: Solution]]
 <br><br><br>
 Simply add more **`-var`** flags at the end of the command to update your variables.
@@ -1706,7 +1357,7 @@ git config --global user.name "Ada Lovelace"
 ```
 
 ---
-name: chapter-7d-tfe-lab
+name: chapter-6d-tfe-lab
 .center[.lab-header[💾 Lab Exercise 7d: Push Change to VCS]]
 <br><br>
 Your boss has asked you to update the content on the website. Edit the **files/deploy_app.sh** script and add your own content between the BEGIN and END tags.
@@ -1724,7 +1375,7 @@ When you are done editing the file save it and push the change to your remote re
 Trigger a new Terraform run from the UI. This must be done manually (or via the API) once. Future commits to the git repo will trigger builds automatically.
 
 ---
-name: chapter-7d-tfe-lab-solution-1
+name: chapter-6d-tfe-lab-solution-1
 .center[.lab-header[💾 Lab Exercise 7d: Solution Part 1]]
 <br>
 You can click the source code button on the left side of VSC, enter a comment, commit your changes, then push them to the remote repo. You will be prompted on whether you wish to **stage** your changes first. This is part of the git workflow.
@@ -1743,7 +1394,7 @@ git push origin master
 Instructors:  Depending upon your students' familiarity with git, you may need to review some basic git commands here like `git add`, `git commit`, and `git push`.
 
 ---
-name: chapter-7d-tfe-lab-solution-2
+name: chapter-6d-tfe-lab-solution-2
 .center[.lab-header[💾 Lab Exercise 7d: Solution Part 2]]
 <br>
 .center[![:scale 80%](images/git_commit_gui.png)]
@@ -1753,8 +1404,8 @@ name: chapter-7d-tfe-lab-solution-2
 You can see which git commit triggered the run in the Terraform Enterprise UI.
 
 ---
-name: tfe-chapter-7-review
-📝 Chapter 7 Review
+name: tfe-chapter-6-review
+📝 Chapter 6 Review
 -------------------------
 .contents[
 In this chapter we:
@@ -1766,6 +1417,359 @@ In this chapter we:
 * Uploaded Environment Variables
 * Tested the Sentinel Policy
 * Re-Deployed our Application from VCS
+]
+
+---
+name: TFE-chapter-6
+class: center,middle
+.section[
+Chapter 6  
+Sentinel Policy Enforcement
+]
+
+---
+name: what-is-sentinel
+What is Sentinel?
+-------------------------
+```hcl
+# Restricting region in AWS
+aws_region_valid = rule {
+  all region_values as rv {
+	rv == "us-east-1"
+  }
+}
+# Restricting machine types in GCP
+allowed_machine_types = [
+  "n1-standard-1",
+  "n1-standard-2",
+  "n1-standard-4",
+]
+# Restricting publisher in Azure
+allowed_publishers = [
+  "MicrosoftWindowsServer",
+  "RedHat",
+]
+```
+
+Sentinel is HashiCorp's policy enforcement language. Sentinel policies are checked after **`terraform plan`** is run. Sentinel will intercept bad configurations *before* they go to production, not after. 
+
+Sentinel rules help enforce compliance and security requirements in the cloud. Sentinel is a feature of Terraform Enterprise.
+
+???
+**Think of all the dos and do-nots that you want to enforce in your cloud environments. Maybe you want to limit the sizes of virtual machines, or to force web applications to always use SSL. Sentinel rules can be customized for most common security and compliance requirements.**
+
+Talk about Sentinel and some other things you can do with it.
+
+---
+name: policy-as-code
+HashiCorp Sentinel - Policy As Code
+-------------------------
+<br>
+```hcl
+allowed_machine_types = [
+  "n1-standard-1",
+  "n1-standard-2",
+  "n1-standard-4",
+]
+```
+
+With programmatic policy as code, custom governance can be enforced at the same rate as infrastructure is provisioned.  
+* Codifying policies automates guardrails around provisioning 
+* Policy checks built into the provisioning workflow
+* Use policy to enforce best-practices, security measures, or compliance  
+
+
+Here are some example policies:
+https://www.terraform.io/docs/cloud/sentinel/examples.html
+
+---
+name: enable-workspace-destroy
+Appetite for Destruction
+-------------------------
+For the next lab we'll need to destroy and recreate your lab environment. Terraform Enterprise requires a special environment variable to enable destruction of infrastructure.
+
+.center[![:scale 100%](images/confirm_destroy.png)]
+
+Create a new Environment Variable named **`CONFIRM_DESTROY`** and set the value to **`1`**.
+
+???
+**This is a safety switch, it's there to prevent us from shooting ourselves in the foot and deleting production.**
+
+---
+name: destroy-your-application
+Destroy Your Application
+-------------------------
+Either from the command line, or the GUI, destroy your web application. 
+
+Command Line:
+```powershell
+terraform destroy -force
+```
+
+GUI:
+.center[![:scale 100%](images/destroy_gui.png)]
+
+Do not click the red Destroy from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
+
+---
+name: instructor-enable-sentinel
+.center[🤖 Sentinel Policy Enforcement 🤖 
+-------------------------]
+<br><br>
+.center[![:scale 100%](images/kitt_scanner.gif)]
+
+Your instructor will enable a Sentinel policy across the entire organization.  
+
+A robot now stands guard between your Terraform code and the Azure APIs.  
+
+Take a break or discuss Sentinel testing while **`terraform destroy`** is running.  
+
+Don't forget to confirm the destroy if you don't have Auto-Apply enabled.  
+
+???
+Instructor - go into your training org settings and set your global block_allow_all_http policy to 
+hard-mandatory.
+
+---
+name: create-your-application
+Re-deploy Your Application
+-------------------------
+Command Line:
+```powershell
+terraform apply -auto-approve
+```
+
+Output:
+```tex
+Organization policy check:
+
+Sentinel Result: false
+
+Sentinel evaluated to false because one or more Sentinel policies evaluated
+to false. This false was not due to an undefined value or runtime error.
+
+1 policies evaluated.
+
+## Policy 1: block_allow_all_http.sentinel (hard-mandatory)
+
+Result: false
+
+  FALSE - block_allow_all_http.sentinel:23:70 - sr.access == "Deny"
+*Error: Organization policy check hard failed.
+```
+Oh no! Our **`terraform apply`** failed. How can we fix our code?
+
+---
+name: chapter-6-tfe-lab
+.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Secure the App]]
+<br><br>
+The security team has a new requirement: Development applications should not be exposed to the public Internet.
+
+We have implemented a policy that disallows **`0.0.0.0`** or **`*`** as the **`source_address_prefix`** in Azure network security group rules that apply to port 80.
+
+Fix the code on your local workstation so that it passes the Sentinel check. Run Terraform apply to limit dev environment access to your workstation's source IP address.
+
+**HINT:** You can use this Powershell command to get your workstation's public IP address:
+```powershell
+(Invoke-WebRequest -UseBasicParsing http://icanhazip.com).content
+```
+
+You may also simply type "What is my IP address?" into your browser search bar.
+
+???
+**I'm going to keep the organization view up here on the projector screen. Let's see how fast everyone can get their code compliant and have a clean terraform apply.**
+
+Instructors: Have fun with this exercise. Pull up your organization's homepage on the projector screen. You can make a game out of it, see who gets their code compliant first.
+
+---
+name: chapter-6-tfe-lab-solution
+.center[.lab-header[👮🏿‍♀️ Lab Exercise 6: Solution]]
+<br><br>
+Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace the asterisk below with your own source IP, then run **`terraform apply`**.
+
+Solution:
+```hcl
+  security_rule {
+    name                       = "HTTP"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+*   source_address_prefix      = "<YOURIPHERE>"
+    destination_address_prefix = "*"
+  }
+```
+Now try loading the app from your workstation. Try it from a different workstation.
+
+---
+name: migrate-to-sandbox-org
+🏖️ Migrate to Your Sandbox
+-------------------------
+<br><br>
+Until now we've experienced TFE from the point of view of a user or developer.
+
+Next we're going to move our workspace out of the instructor's training organization and into our own sandbox organization. 
+
+In the next few chapters you'll learn more about the admin controls of Terraform Enterprise.  
+
+You'll also learn about Version Control Systems and how to collaborate on Infrastructure as Code.
+
+???
+**NOTE TO INSTRUCTOR:** You may have to turn off your sentinel policy at this point. We encountered an error with destroy that hasn't been fixed yet:
+
+```
+An error occurred: block_allow_all_http.sentinel:18:13: unsupported type for looping: undefined
+```
+
+---
+name: delete-your-app
+Delete Your Application
+-------------------------
+In order to ensure a smooth migration we're going to destroy our application and recreate it.
+
+.center[![:scale 100%](images/queue_destroy_plan.png)]
+
+1. Go into the **Destruction and Deletion** settings for your workspace.
+2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
+
+Move on to the next slides while the destroy run proceeds.
+
+???
+Instructors: if anyone's workspace fails to delete, revert your sentinel policy back to 'advisory' and have them run it again. This was observed with Terraform 0.12 when trying to delete.
+
+```
+An error occurred: block_allow_all_http.sentinel:22:10: unsupported type for looping: undefined
+```
+
+---
+name: switch-back-to-sandbox
+Change to Your Sandbox Org
+-------------------------
+<br>
+.center[![:scale 70%](images/choose_org.png)]
+
+Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Enterprise.
+
+---
+name: enable-sentinel-for-org
+🤖 Enable Sentinel in Your Org
+-------------------------
+<br><br>
+Let's implement a simple Sentinel policy for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
+
+We'll tackle this in two steps:
+
+1. Create a policy set for the entire organization.
+2. Create a Sentinel policy and add it to our policy set.
+
+---
+name: create-policy-set-0
+Create a Policy Set
+-------------------------
+.center[![:scale 80%](images/create_a_new_policy_set_gui.png)]
+<br>
+**Policy Sets** determine where your policies are applied. Policies can be applied to groups of workspaces, or to your entire organization.
+
+Under **Policy Sets** select **Create a New Policy Set**.
+
+---
+name: create-policy-set-1
+Create a Policy Set
+-------------------------
+.center[![:scale 60%](images/policy_set_settings.png)]
+Name your policy set **global_restrict_vm_size**.
+
+Make sure **Policies enforced on all workspaces** is selected.
+
+---
+name: create-a-new-policy-0
+Create a New Sentinel Policy
+-------------------------
+.center[![:scale 90%](images/create_a_new_policy.png)]
+Let's implement a simple Sentinel policy for our organization. This will ensure that newly created workspaces will be compliant with our security policies.
+
+Under your **Organization** settings select **Policies** and then **Create a New Policy**. 
+
+---
+name: create-a-new-policy-1
+Create a New Sentinel Policy
+-------------------------
+.center[![:scale 60%](images/policy_name_and_mode.png)]
+
+Name it **restrict_allowed_vm_types**. You can put whatever you like in the description.
+
+The Sentinel code for your policy is on the next slide. Copy and paste it into the **Policy Code** field.
+
+---
+name: create-a-new-policy-2
+Sentinel Policy Code - Copy & Paste
+-------------------------
+```hcl
+import "tfplan"
+
+get_vms = func() {
+    vms = []
+    for tfplan.module_paths as path {
+        vms += values(tfplan.module(path).resources.azurerm_virtual_machine) else []
+    }
+    return vms
+}
+
+allowed_vm_sizes = [
+  "Standard_A0",
+  "Standard_A1",
+]
+
+vms = get_vms()
+vm_size_allowed = rule {
+    all vms as _, instances {
+      all instances as index, r {
+  	   r.applied.vm_size in allowed_vm_sizes
+      }
+    }
+}
+
+main = rule {
+  (vm_size_allowed) else true
+}
+```
+
+---
+name: create-a-new-policy-3
+Create a New Sentinel Policy
+-------------------------
+.center[![:scale 60%](images/add_policy_to_policy_set.png)]
+<br><br>
+You can select the policy set you created in the previous step from the drop-down menu. Make sure this is set to **global_restrict_vm_size**.  
+
+**Don't forget to click the Add Policy Set button!**
+
+Click **Create Policy** to proceed.
+
+---
+name: create-a-new-policy-4
+Confirm Your Work
+-------------------------
+.center[![:scale 90%](images/policy_sets_confirm.png)]
+<br><br>
+Click on the **Policy Sets** menu option to view your configuration. It should look like the screenshot above.
+
+
+---
+name: tfe-chapter-6-review
+📝 Chapter 6 Review
+-------------------------
+<br>
+.contents[
+In this chapter we:
+* Destroyed our Application
+* Enabled a Sentinel Policy
+* Watched our Terraform Code Fail
+* Fixed the Code to Pass Sentinel Tests
+* Verified the New Policy
+* Created a Sentinel Policy in our Org
 ]
 
 ---
