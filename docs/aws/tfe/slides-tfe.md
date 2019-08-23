@@ -749,16 +749,19 @@ AWS_SECRET_ACCESS_KEY wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 name: a-better-way-creds
 A Better Way to Store Sensitive Data
 -------------------------
-.center[![:scale 100%](images/aws_encrypted_vars.png)]
 
 Terraform Cloud can safely store your credentials and encrypt them for you. You can use this encrypted storage for passwords, TLS Certificates, SSH keys or anything else that should not be lying around in plain text.
+
+.center[![:scale 100%](images/aws_encrypted_vars.png)]
+
+.red[**NOTE:** _Don't worry if you don't recognize the varibles in the UI above, we'll be adding them in the upcoming lab._]
 
 ???
 **Before we store our sensitive variables in Terraform Enterprise, we must enable Remote Execution.**
 
 ---
 name: chapter-5-tfe-lab-enable-remote-execution
-.center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Sensitive Variables]]
+.center[.lab-header[👩🏻‍🏫 Lab Exercise 5a: Remote Execution]]
 <br><br><br>
 Before we migrate our sensitive API credentials into the application we need to enable remote execution. Under the **General** settings for your workspace, change the Execution Mode to **Remote**. Click the **Save Settings** button at the bottom of the page.
 
@@ -1035,77 +1038,6 @@ resource "aws_vpc" "se_training_workstation" {
   enable_dns_hostnames = true
 }
 ```
-
----
-name: tfe-chapter-6-review
-📝 Chapter 6 Review
--------------------------
-<br>
-.contents[
-In this chapter we:
-* Destroyed our Application
-* Enabled a Sentinel Policy
-* Watched our Terraform Code Fail
-* Fixed the Code to Pass Sentinel Tests
-* Verified the New Policy
-]
-
----
-name: TFE-Chapter-7
-class: center,middle
-.section[
-Chapter 7
-Version Control Systems and Terraform
-]
-
----
-name: whats-a-vcs
-What is a Version Control System (VCS)?
--------------------------
-.center[![:scale 80%](images/tfe-vcs.webp)]
-Version control systems are applications that allow users to store, track, test, and collaborate on changes to their infrastructure and applications. Terraform Enterprise integrates with most common Version Control Systems.
-
----
-name: tfe-infra-as-code-workflow
-Infrastructure as Code
--------------------------
-<br><br>
-Terraform Enterprise can directly integrate with source code repos in GitHub Enteprise, Gitlab, and Bitbucket. This allows you to build simple DevOps workflows with code reviews, testing and approvals.
-
-Until now all our code changes have been done on our workstation. Let's upgrade our workspace to use the repository fork we created earlier.
-
-???
-TODO: Add an image to this slide.
-
----
-name: delete-the-app
-Delete the App
--------------------------
-.center[![:scale 100%](images/queue_destroy_plan.png)]
-
-First we need to move our workspace out of the training organization and into our sandbox organization.
-
-1. Go into the **Destruction and Deletion** settings for your workspace.
-2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
-
-Move on to the next slides while the destroy run proceeds.
-
-???
-Instructors: if anyone's workspace fails to delete, revert your sentinel policy back to 'advisory' and have them run it again. This was observed with Terraform 0.12 when trying to delete.
-
-```
-An error occurred: block_allow_all_http.sentinel:22:10: unsupported type for looping: undefined
-```
-
----
-name: switch-back-to-sandbox
-Change to Your Sandbox Org
--------------------------
-<br>
-.center[![:scale 70%](images/choose_org.png)]
-
-Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Cloud.
-
 ---
 name: create-a-new-policy-0
 Create a New Sentinel Policy
@@ -1121,7 +1053,7 @@ Create a New Sentinel Policy
 -------------------------
 .center[![:scale 45%](images/aws_policy_name_and_mode.png)]
 
-Name it **restrict_allowed_instance_types**. You can put whatever you like in the description.
+Name it **`restrict_allowed_instance_types`**. You can put whatever you like in the description.
 
 The Sentinel code for your policy is on the next slide. Copy and paste it into the **Policy Code** field.
 
@@ -1183,11 +1115,82 @@ Create a Policy Set
 -------------------------
 .center[![:scale 60%](images/aws_add_policy_to_policy_set.png)]
 <br>
-Add the **restrict_allowed_instance_types** policy you created in the previous step to your policy set.
+Add the **`restrict_allowed_instance_types`** policy you created in the previous step to your policy set.
 
 Click **Create Policy Set** at the bottom to save and activate your new policy.
 
 Now your policy will be enforced for all workspaces across your sandbox organization.
+
+---
+name: tfe-chapter-6-review
+📝 Chapter 6 Review
+-------------------------
+<br>
+.contents[
+In this chapter we:
+* Destroyed our Application
+* Enabled a Sentinel Policy
+* Watched our Terraform Code Fail
+* Fixed the Code to Pass Sentinel Tests
+* Verified the New Policy
+* Created our own Sentinel policy
+]
+
+---
+name: TFE-Chapter-7
+class: center,middle
+.section[
+Chapter 7
+Version Control Systems and Terraform
+]
+
+---
+name: whats-a-vcs
+What is a Version Control System (VCS)?
+-------------------------
+.center[![:scale 80%](images/tfe-vcs.webp)]
+Version control systems are applications that allow users to store, track, test, and collaborate on changes to their infrastructure and applications. Terraform Enterprise integrates with most common Version Control Systems.
+
+---
+name: tfe-infra-as-code-workflow
+Infrastructure as Code
+-------------------------
+<br><br>
+Terraform Enterprise can directly integrate with source code repos in GitHub Enteprise, Gitlab, and Bitbucket. This allows you to build simple DevOps workflows with code reviews, testing and approvals.
+
+Until now all our code changes have been done on our workstation. Let's upgrade our workspace to use the repository fork we created earlier.
+
+???
+TODO: Add an image to this slide.
+
+---
+name: delete-the-app
+Delete the App
+-------------------------
+.center[![:scale 100%](images/queue_destroy_plan.png)]
+
+First we need to move our workspace out of the training organization and into our sandbox organization.
+
+1. Go into the **Destruction and Deletion** settings for your workspace.
+2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
+
+Move on to the next slides while the destroy run proceeds.
+
+???
+Instructors: if anyone's workspace fails to delete, revert your sentinel policy back to 'advisory' and have them run it again. This was observed with Terraform 0.12 when trying to delete.
+
+```
+An error occurred: block_allow_all_http.sentinel:22:10: unsupported type for looping: undefined
+```
+
+---
+name: switch-back-to-sandbox
+Change to Your Sandbox Org
+-------------------------
+<br>
+.center[![:scale 70%](images/choose_org.png)]
+
+Use the Organization pull-down menu to go back to your sandbox organization. This is a clean development environment where you can experiment with Terraform Cloud.
 
 ---
 name: chapter-7a-tfe-lab
@@ -1322,7 +1325,7 @@ Command:
 ```bash
 tfh pushvars -overwrite-all -dry-run false \
   -senv-var "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
-  -env-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
+  -senv-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
   -var "prefix=yourprefix"
 ```
 
@@ -1363,35 +1366,12 @@ Command:
 ```bash
 tfh pushvars -overwrite-all -dry-run false \
   -senv-var "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
-  -env-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
+  -senv-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
   -var "prefix=yourprefix" -var "height=600" -var "width=800" \
   -var "placeholder=fillmurray.com"
 ```
 
 NOTE: The **`\`** characters indicate that the command should continue on the next line. This entire block of text should be copied and pasted into the terminal all at once.
-
----
-name: run-terraform-apply-vcs
-Run Terraform Apply
--------------------------
-Command:
-```bash
-terraform apply -auto-approve
-```
-
-Output:
-```tex
-Error: Apply not allowed for workspaces with a VCS connection
-
-A workspace that is connected to a VCS requires the VCS-driven workflow to
-ensure that the VCS remains the single source of truth.
-```
-
-Now that we have migrated to a VCS-backed configuration, the **`terraform apply`** command no longer works. This is to ensure that the VCS is the single source of truth, and that all changes to your infrastructure must be recorded and approved.
-
-You may still trigger runs on-demand via the GUI or API.
-
-???
 
 ---
 name: enable-auto-apply
@@ -1463,7 +1443,6 @@ name: tfe-chapter-7-review
 In this chapter we:
 * Connected our Organization to VCS
 * Created a New Workspace
-* Added a Sentinel Policy
 * Migrated Terraform State
 * Installed the TFH Tool
 * Uploaded Environment Variables
@@ -1926,7 +1905,7 @@ name: chapter-11-tfe-lab-3
 export TFH_name=webapp-uat
 tfh pushvars -overwrite-all -dry-run false \
   -senv-var "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
-  -env-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
+  -senv-var "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
   -var "prefix=yourprefix"
 ```
 3. In Visual Studio Code clone a copy of your **partner's** repository:
