@@ -1,6 +1,6 @@
 # HashiCorp Workshop Repo
 
-[![CircleCI](https://circleci.com/gh/hashicorp/se-terraform-vault-workshop.svg?style=svg)](https://circleci.com/gh/hashicorp/se-terraform-vault-workshop)
+[![CircleCI](https://circleci.com/gh/hashicorp/workshops.svg?style=svg)](https://circleci.com/gh/hashicorp/workshops)
 
 This repository contains training curriculum for Vault and Terraform on various cloud platforms.
 

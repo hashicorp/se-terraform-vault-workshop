@@ -23,7 +23,7 @@ control 'training-user' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#42
+# https://hashicorp.github.io/workshops/azure/terraform/#42
 control 'terraform-version' do
   impact 1.0
   desc 'Checks to see that Terraform is installed and working.'
@@ -61,7 +61,7 @@ end
 
 # Will the setup script run cleanly? This script contains a while loop that
 # will wait until the credentials become valid before writing them to env vars
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#32
+# https://hashicorp.github.io/workshops/azure/terraform/#32
 control 'run-setup-script' do
   impact 1.0
   desc 'Run the setup_azure.ps1 script'

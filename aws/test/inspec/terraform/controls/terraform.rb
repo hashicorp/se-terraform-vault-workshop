@@ -2,7 +2,7 @@
 # Terraform Workshop Tests - AWS version
 #################################################
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#31
+# https://hashicorp.github.io/workshops/aws/terraform/#31
 control 'cd-desktop' do
   impact 1.0
   desc 'Change directory to the user desktop'
@@ -15,15 +15,15 @@ control 'cd-desktop' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#38
+# https://hashicorp.github.io/workshops/aws/terraform/#38
 control 'git-clone' do
   impact 1.0
   desc 'Clone the training repository'
   describe powershell(
     "cd C:\\Users\\hashicorp\\Desktop;
     Remove-Item -force -recurse -path C:\\Users\\hashicorp\\Desktop\\aws-tf-vault-workshop
-    git clone --single-branch --branch #{ENV['CIRCLE_BRANCH']} https://github.com/hashicorp/se-terraform-vault-workshop.git aws-tf-vault-workshop
-    # git clone https://github.com/hashicorp/se-terraform-vault-workshop.git aws-tf-vault-workshop
+    git clone --single-branch --branch #{ENV['CIRCLE_BRANCH']} https://github.com/hashicorp/workshops.git aws-tf-vault-workshop
+    # git clone https://github.com/hashicorp/workshops.git aws-tf-vault-workshop
     Get-ChildItem C:\\Users\\hashicorp\\Desktop\\aws-tf-vault-workshop\\aws"
   ) do
     its('exit_status') { should eq 0 }
@@ -43,7 +43,7 @@ control 'verify-git-line-endings' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#45
+# https://hashicorp.github.io/workshops/aws/terraform/#45
 control 'terraform-init' do
   impact 1.0
   desc 'Run terraform init.'
@@ -58,7 +58,7 @@ control 'terraform-init' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#46
+# https://hashicorp.github.io/workshops/aws/terraform/#46
 control 'terraform-plan' do
   impact 1.0
   desc 'Run terraform plan.'
@@ -72,7 +72,7 @@ control 'terraform-plan' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#60
+# https://hashicorp.github.io/workshops/aws/terraform/#60
 control 'terraform-apply' do
   impact 1.0
   desc 'Run terraform apply.'
@@ -86,7 +86,7 @@ control 'terraform-apply' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#62
+# https://hashicorp.github.io/workshops/aws/terraform/#62
 control 'terraform-destroy-one' do
   impact 1.0
   desc 'Run terraform destroy'
@@ -100,7 +100,7 @@ control 'terraform-destroy-one' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#69
+# https://hashicorp.github.io/workshops/aws/terraform/#69
 control 'terraform-build-vault-lab' do
   impact 1.0
   desc 'Build the rest of the Vault lab'
@@ -116,7 +116,7 @@ control 'terraform-build-vault-lab' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#78
+# https://hashicorp.github.io/workshops/aws/terraform/#78
 control 'terraform-refresh' do
   impact 1.0
   desc 'Run terraform refresh to show outputs'
@@ -132,7 +132,7 @@ control 'terraform-refresh' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#79
+# https://hashicorp.github.io/workshops/aws/terraform/#79
 control 'terraform-output' do
   impact 1.0
   desc 'Run terraform output to show outputs'
@@ -160,7 +160,7 @@ control 'terraform-output-singlevalue' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#83
+# https://hashicorp.github.io/workshops/aws/terraform/#83
 control 'terraform-fmt' do
   impact 1.0
   desc 'Run terraform fmt to format code'
@@ -173,7 +173,7 @@ control 'terraform-fmt' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/aws/terraform/#93
+# https://hashicorp.github.io/workshops/aws/terraform/#93
 control 'terraform-taint-provisioner' do
   impact 1.0
   desc 'Run terraform taint and re-build virtual machine'

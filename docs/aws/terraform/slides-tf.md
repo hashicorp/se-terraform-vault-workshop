@@ -20,7 +20,7 @@ HTML comments like this one will show up in the source code, but not in the slid
 
 Welcome to the beginner's guide to Terraform on AWS. This slide deck is written entirely in Markdown language, which means you can make edits or additions, then submit a pull request to add your changes to the master copy. To make edits to the slide deck simply fork this repository:  
 
-https://github.com/hashicorp/se-terraform-vault-workshop  
+https://github.com/hashicorp/workshops  
 
 edit the Markdown files, and submit a pull request with your changes.
 
@@ -597,8 +597,8 @@ Run the following commands to clone the training repository from GitHub. Run the
 Windows Workstation Commands
 ```powershell
 cd ~/Desktop
-git clone https://github.com/hashicorp/se-terraform-vault-workshop
-cd se-terraform-vault-workshop/aws
+git clone https://github.com/hashicorp/workshops
+cd workshops/aws
 code -r .
 ```
 

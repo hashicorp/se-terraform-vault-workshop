@@ -2,7 +2,7 @@
 # Terraform Workshop Tests
 #################################################
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#31
+# https://hashicorp.github.io/workshops/azure/terraform/#31
 control 'cd-desktop' do
   impact 1.0
   desc 'Change directory to the user desktop'
@@ -15,16 +15,16 @@ control 'cd-desktop' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#38
+# https://hashicorp.github.io/workshops/azure/terraform/#38
 control 'git-clone' do
   impact 1.0
   desc 'Clone the training repository'
   describe powershell(
     "cd C:\\Users\\hashicorp\\Desktop;
-    Remove-Item -force -recurse -path C:\\Users\\hashicorp\\Desktop\\se-terraform-vault-workshop
-    git clone --single-branch --branch #{ENV['CIRCLE_BRANCH']} https://github.com/hashicorp/se-terraform-vault-workshop.git
-    # git clone https://github.com/hashicorp/se-terraform-vault-workshop.git
-    Get-ChildItem C:\\Users\\hashicorp\\Desktop\\se-terraform-vault-workshop\\azure"
+    Remove-Item -force -recurse -path C:\\Users\\hashicorp\\Desktop\\workshops
+    git clone --single-branch --branch #{ENV['CIRCLE_BRANCH']} https://github.com/hashicorp/workshops.git
+    # git clone https://github.com/hashicorp/workshops.git
+    Get-ChildItem C:\\Users\\hashicorp\\Desktop\\workshops\\azure"
   ) do
     its('exit_status') { should eq 0 }
     its('stdout') { should match(/main.tf/) }
@@ -63,12 +63,12 @@ control 'az-group-delete' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#45
+# https://hashicorp.github.io/workshops/azure/terraform/#45
 control 'terraform-init' do
   impact 1.0
   desc 'Run terraform init.'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform init'
   ) do
     its('exit_status') { should eq 0 }
@@ -78,12 +78,12 @@ control 'terraform-init' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#46
+# https://hashicorp.github.io/workshops/azure/terraform/#46
 control 'terraform-plan' do
   impact 1.0
   desc 'Run terraform plan.'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform plan -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
@@ -92,12 +92,12 @@ control 'terraform-plan' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#61
+# https://hashicorp.github.io/workshops/azure/terraform/#61
 control 'terraform-apply' do
   impact 1.0
   desc 'Run terraform apply.'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
@@ -106,12 +106,12 @@ control 'terraform-apply' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#64
+# https://hashicorp.github.io/workshops/azure/terraform/#64
 control 'terraform-change-variable' do
   impact 1.0
   desc 'Re-run terraform apply with a different variable.'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab" -var "location=eastus"'
   ) do
     its('exit_status') { should eq 0 }
@@ -120,12 +120,12 @@ control 'terraform-change-variable' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#65
+# https://hashicorp.github.io/workshops/azure/terraform/#65
 control 'terraform-destroy' do
   impact 1.0
   desc 'Run terraform destroy'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform destroy -force -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
@@ -134,12 +134,12 @@ control 'terraform-destroy' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#66
+# https://hashicorp.github.io/workshops/azure/terraform/#66
 control 'terraform-rebuild' do
   impact 1.0
   desc 'Run terraform apply again'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
     its('exit_status') { should eq 0 }
@@ -148,12 +148,12 @@ control 'terraform-rebuild' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#72
+# https://hashicorp.github.io/workshops/azure/terraform/#72
 control 'terraform-build-vault-lab' do
   impact 1.0
   desc 'Build the rest of the Vault lab'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     Copy-Item -Force "main.tf.completed" -Destination "main.tf"
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do
@@ -163,12 +163,12 @@ control 'terraform-build-vault-lab' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#81
+# https://hashicorp.github.io/workshops/azure/terraform/#81
 control 'terraform-refresh' do
   impact 1.0
   desc 'Run terraform refresh to show outputs'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     Copy-Item -Force "outputs.tf.completed" -Destination "outputs.tf"
     terraform refresh -var "prefix=uat-tf-vault-lab"'
   ) do
@@ -179,12 +179,12 @@ control 'terraform-refresh' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#82
+# https://hashicorp.github.io/workshops/azure/terraform/#82
 control 'terraform-output' do
   impact 1.0
   desc 'Run terraform output to show outputs'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform output'
   ) do
     its('exit_status') { should eq 0 }
@@ -194,12 +194,12 @@ control 'terraform-output' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#83
+# https://hashicorp.github.io/workshops/azure/terraform/#83
 control 'terraform-output-singlevalue' do
   impact 1.0
   desc 'Run terraform output to show a single value'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform output Vault_Server_URL'
   ) do
     its('exit_status') { should eq 0 }
@@ -208,12 +208,12 @@ control 'terraform-output-singlevalue' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#86
+# https://hashicorp.github.io/workshops/azure/terraform/#86
 control 'terraform-fmt' do
   impact 1.0
   desc 'Run terraform fmt to format code'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
     terraform fmt'
   ) do
     its('exit_status') { should eq 0 }
@@ -221,14 +221,14 @@ control 'terraform-fmt' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#96
+# https://hashicorp.github.io/workshops/azure/terraform/#96
 # This step emulates a student adding 'cowsay Moooooo!' to their provisioner.
 control 'terraform-taint-provisioner' do
   impact 1.0
   desc 'Run terraform taint and re-build virtual machine'
   describe powershell(
-    'cd C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure;
-    ((Get-Content -path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf -Raw) -replace "MYSQL_HOST=\`${var.prefix}-mysql-server /home/\`${var.admin_username}/setup.sh`"","MYSQL_HOST=`${var.prefix}-mysql-server /home/`${var.admin_username}/setup.sh`",`n      `"cowsay Moooooo!`"") | Set-Content -Path C:\Users\hashicorp\Desktop\se-terraform-vault-workshop\azure\main.tf;
+    'cd C:\Users\hashicorp\Desktop\workshops\azure;
+    ((Get-Content -path C:\Users\hashicorp\Desktop\workshops\azure\main.tf -Raw) -replace "MYSQL_HOST=\`${var.prefix}-mysql-server /home/\`${var.admin_username}/setup.sh`"","MYSQL_HOST=`${var.prefix}-mysql-server /home/`${var.admin_username}/setup.sh`",`n      `"cowsay Moooooo!`"") | Set-Content -Path C:\Users\hashicorp\Desktop\workshops\azure\main.tf;
     terraform taint azurerm_virtual_machine.vault;
     terraform apply -auto-approve -var "prefix=uat-tf-vault-lab"'
   ) do

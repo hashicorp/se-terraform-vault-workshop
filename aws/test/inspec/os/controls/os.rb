@@ -23,7 +23,7 @@ control 'training-user' do
   end
 end
 
-# https://hashicorp.github.io/se-terraform-vault-workshop/azure/terraform/#42
+# https://hashicorp.github.io/workshops/azure/terraform/#42
 control 'terraform-version' do
   impact 1.0
   desc 'Checks to see that Terraform is installed and working.'
