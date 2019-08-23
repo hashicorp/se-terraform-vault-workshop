@@ -188,7 +188,7 @@ https://bit.ly/hashiazure
 .center[We'll be using the Terraform Enterprise deck for training today.]
 
 ???
-TODO:  Update this link once the TFE intro deck has it's own home. Currently it is stored as Appendix B
+TODO:  Update this link.  May have to ask Andy to update the bit.ly links
 
 ---
 name: TFE-Chapter-2
@@ -284,18 +284,6 @@ A web browser window will pop open with the latest Visual Studio Code release no
 I like to demo this part for the students. My personal favorites are Dracula and vscode-icons. Remember that some of these folks have never used Visual Studio Code before. Know where the font, color, and icon settings are and show them how to change these.
 
 ---
-name: tfe-workstation-setup-5
-Warning Message
--------------------------
-<br><br>
-.center[![:scale 70%](images/renderer.png)]
-
-If you see this warning message just select 'Yes'. Visual Studio Code works better with the DOM-based renderer on remote workstations.
-
-???
-The reason for this is VSC wants to use your graphics card on your local laptop if its available. This doesn't work so well in the cloud.
-
----
 name: tfe-workstation-setup-6
 Install the Terraform Extension
 -------------------------
@@ -331,7 +319,7 @@ Log onto your github account and navigate to this URL:
 Click on the **Fork** button in the upper right corner. This will create an exact copy of the repo in your own account. Keep the new repo open in your web browser.
 
 ???
-**You'll need your own copy of this repo for some of the labs we'll be doing today.**
+**You'll need your own copy of this repo for some of the labs we'll be doing today. It can be helpful to log onto your github account from inside your workstation. This way you never have to leave the lab environment.**
 
 ---
 name: tfe-workstation-setup-9
@@ -433,6 +421,15 @@ Terraform fetches any required providers and modules and stores them in the **.t
 **Terraform has an extendible architecture. You download the core program, terraform, then it fetches plugins and modules that are required for your code.**
 
 ---
+name: dot-terraform-directory
+The Dot Terraform Directory
+-------------------------
+.center[![:scale 90%](images/dot_terraform_directory.png)]
+
+Look in your file browser on the left side panel. You'll see a new directory called **`.terraform`**. Terraform stores its plugins and modules here.
+
+
+---
 name: tfe-terraform-apply
 Run Terraform Apply
 -------------------------
@@ -469,11 +466,11 @@ This issue appears to be fixed with Terraform 0.12
 name: unleash-the-felis-catus
 Kittens as a Service (KaaS)
 -------------------------
-.center[![:scale 80%](images/meow_world.png)]
+.center[![:scale 90%](images/meow_world.png)]
 .center[Open your application in a web browser.]
 
 ???
-This application produces different images of cats, depending on the height and width variables.
+**This application produces different images of cats, depending on the height and width variables.**
 
 ---
 name: chapter-2-tfe-lab
@@ -488,6 +485,8 @@ Redeploy your app with a different height and width and reload the page.
 If you need a refresher on variables visit the docs:
 
 https://www.terraform.io/docs/configuration/variables.html#variables-on-the-command-line
+
+HINT: Variables can be set in a config file or as command line flags.
 
 ---
 name: chapter-2-tfe-lab-solution
@@ -669,7 +668,7 @@ Create a New Workspace
 -------------------------
 .center[![:scale 80%](images/create_workspace_gui_new2.png)]
 
-Give your workspace a name and hit the **Create Workspace** button.
+Name your workspace **`yourname-hashicat`** and hit the **Create Workspace** button.
 
 ???
 **Make sure you are in the shared workshop organization, not your personal sandbox org.**
@@ -1017,7 +1016,7 @@ https://app.terraform.io/app/hashicorp-workshop/seanc-catapp/runs/run-1F94Y1fTNs
 Remote execution is now enabled. The results of your apply will still stream back into your console window, but Terraform is now running in the cloud. You can also watch the Terraform apply output in the GUI.
 
 ???
-**Now you can run terraform either from the command line or from the GUI. You may notice that there are some Sentinel policies running now as well. We'll cover those in a moment.**
+**Now you can run terraform either from the command line or from the GUI.**
 
 ---
 name: chapter-5b-tfe-lab
@@ -1063,11 +1062,40 @@ GUI:
 
 Do not click the red Destroy from Terraform Enterprise button. This will delete your entire workspace. Remember to confirm the destroy action from within the UI.
 
+
+---
+name: remove-dot-terraform
+Delete your Dot Terraform Directory
+-------------------------
+<br><br>
+Let's remove the **`.terraform`** directory as well.
+
+Command:
+```powershell
+cd ~/Desktop/hashicat
+Remove-Item -Recurse .terraform
+```
+
+You should no longer have a .terraform directory in the hashicat repo.
+
+
+---
+name: delete-from-TFE
+Delete Your Workspace from TFE
+-------------------------
+Now that all our infrastructure has been destroyed, we can delete our workspace.
+
+.center[![:scale 100%](images/delete_from_tfe.png)]
+
+Click the red button and then type the name of your workspace to confirm.
+
+???
+Instructor - go to the main page of your organization and make sure there are *no* workspaces left there.
+
 ---
 name: tfe-chapter-5-review
 📝 Chapter 5 Review
 -------------------------
-<br>
 .contents[
 In this chapter we:
 * Viewed our Azure Credentials
@@ -1076,6 +1104,7 @@ In this chapter we:
 * Created a prefix variable
 * Ran Terraform Apply from the GUI
 * Destroyed our Workspace
+* Deleted our Workspace from TFE
 ]
 
 ---
@@ -1160,21 +1189,25 @@ name: update-remote-backend
 Update the Remote Backend
 -------------------------
 <br><br>
-Update your **remote_backend.tf** file so that the organization matches your sandbox org:
+Update your **remote_backend.tf** file so that the workspace name and organization match your new settings:
 
 ```hcl
 terraform {
   backend "remote" {
     hostname = "app.terraform.io"
-*    organization = "yourname-sandbox"
+    organization = "yourname-sandbox"
     workspaces {
       name = "hashicat"
     }
   }
 }
 ```
+Note that the workspace name is now simply **hashicat**. This is fine.
 
 Save the **remote_backend.tf** file.
+
+???
+**Since we are all in different organizations now, we can all have the same workspace name.**
 
 ---
 name: migrate-remote-backend
@@ -1409,7 +1442,8 @@ Your boss has asked you to update the content on the website. Edit the **files/d
 
 When you are done editing the file save it and push the change to your remote repo. You can do this on the command line or via the VCS Branch button in Visual Studio Code. 
 
-Trigger a new Terraform run from the UI. This must be done manually (or via the API) once. Future commits to the git repo will trigger builds automatically.
+???
+Instructor Note: You may need to trigger a new Terraform run from the UI. This may no longer be an issue?
 
 ---
 name: chapter-6d-tfe-lab-solution-1
@@ -1450,6 +1484,11 @@ We need to destroy our application before the next lab.
 
 1. Go into the **Destruction and Deletion** settings for your workspace.
 2. Click on the **Queue Destroy Plan** button. When the run reaches the confirmation stage click **Confirm and Apply**.
+
+Remember you'll need a **`CONFIRM_DESTROY`** environment variable set to **`1`** to enable destroy plans.
+
+???
+Instructor Note: You can proceed all the way up through the next lab while these destroy plans run.
 
 ---
 name: tfe-chapter-6-review
@@ -1578,7 +1617,6 @@ name: create-policy-set-4
 Confirm Your Work
 -------------------------
 .center[![:scale 90%](images/policy_sets_confirm.png)]
-<br><br>
 You should now see a new policy set in the UI, along with the latest commit hash for the repository. Congratulations, you've configured policy enforcement as code!
 
 ---
@@ -1598,45 +1636,43 @@ Are you ready for the next lab?
 name: chapter-7-tfe-lab
 .center[.lab-header[👮🏿‍♀️ Lab Exercise 7: Secure the App]]
 <br><br>
-The security team has a new requirement: Development applications should not be exposed to the public Internet.
+The security team has a new requirement: All Azure VMs must be tagged with an **environment** tag. We have implemented a policy that disallows building any VMs that do not have this tag.
 
-We have implemented a policy that disallows **`0.0.0.0`** or **`*`** as the **`source_address_prefix`** in Azure network security group rules that apply to port 80.
+Figure out how to edit your Terraform code to add a tag to your virtual machine. The name of the tag should be **environment** and the value should be **production**.
 
-Fix the code in your repo so that it passes the Sentinel check. Run Terraform apply to limit dev environment access to your workstation's source IP address.
+When you are done you should see all your Sentinel tests passing in the UI:
 
-**HINT:** You can use this Powershell command to get your workstation's public IP address:
-```powershell
-(Invoke-WebRequest -UseBasicParsing http://icanhazip.com).content
-```
-
-You may also simply type "What is my IP address?" into your browser search bar.
+.center[![:scale 80%](images/policy_check_passed.png)]
 
 ???
-**I'm going to keep the organization view up here on the projector screen. Let's see how fast everyone can get their code compliant and have a clean terraform apply.**
-
-Instructors: Have fun with this exercise. Pull up your organization's homepage on the projector screen. You can make a game out of it, see who gets their code compliant first.
+Instructor Note: walk around and check on your students as they work through the lab.
 
 ---
 name: chapter-7-tfe-lab-solution
 .center[.lab-header[👮🏿‍♀️ Lab Exercise 7: Solution]]
 <br><br>
-Our new Sentinel policy looks through the Terraform plan output and searches for network security rules that allow Internet access on port 80. In order to pass the Sentinel test you must change your code to restrict access to a single IP or range of IPs. Replace the asterisk below with your own source IP, then run **`terraform apply`**.
+Our new Sentinel policy looks through the Terraform plan output and searches for any VMs that do not have an environment tag. You can fix this by adding a tag block to your virtual machine, and then running **`terraform apply`**.
+
+Note - this is *inside* the Virtual Machine block. It doesn't matter where you put it as long as it is nested in the azurerm_virtual_machine resource. Remember, you still need to commit your code to your VCS repo to trigger the change.
 
 Solution:
 ```hcl
-  security_rule {
-    name                       = "HTTP"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "80"
-*   source_address_prefix      = "<YOURIPHERE>"
-    destination_address_prefix = "*"
-  }
+tags = {
+  environment = "production"
+}
 ```
-Now try loading the app from your workstation. Try it from a different workstation.
+
+Reference:  
+https://www.terraform.io/docs/providers/azurerm/r/virtual_machine.html
+
+???
+Instructor Note: Review the basic git commands here if needbe:
+
+```bash
+git add .
+git commit -m "Add tag to VM."
+git push origin master
+```
 
 ---
 name: tfe-chapter-7-review
@@ -1645,12 +1681,11 @@ name: tfe-chapter-7-review
 <br>
 .contents[
 In this chapter we:
-* Destroyed our Application
-* Enabled a Sentinel Policy
+* Learned about HashiCorp Sentinel
+* Created a Policy Set Repo
+* Enabled a Sentinel Policy Set
 * Watched our Terraform Code Fail
 * Fixed the Code to Pass Sentinel Tests
-* Verified the New Policy
-* Created a Sentinel Policy in our Org
 ]
 
 ---
@@ -1702,7 +1737,7 @@ name: chapter-8a-tfe-lab-solution
 You can enable different pre-merge checks and options in your git repo settings. Explore the **Settings** >> **Branches** menu to learn more about Branch Protection Rules.
 
 ???
-In the real world we might run a bunch of automated tests, and require one or more approvers to do a code review before any changes are merged.
+**In the real world we might run a bunch of automated tests, and require one or more approvers to do a code review before any changes are merged.**
 
 ---
 name: tfe-chapter-8-review
@@ -1785,7 +1820,7 @@ name: chapter-9b-tfe-lab-solution
 .center[.lab-header[🔒 Lab Exercise 9b: Solution]]
 <br><br>
 .center[![:scale 100%](images/standard_a1_v2.png)]
-The Sentinel policy you created earlier checks any Azure Virtual Machines that appear in the plan, and looks at the configured vm_size. This is compared to the list of approved types which includes only **Standard_A0** and **Standard_A1**. Anything outside of these two approved sizes of VM will be flagged by Sentinel.
+One of the Sentinel policies we enabled checks any Azure Virtual Machines that appear in the plan, and looks at the configured vm_size. This is compared to the list of approved types which includes only **Standard_A0** and **Standard_A1**. Anything outside of these two approved sizes of VM will be flagged by Sentinel.
 
 There's no single correct answer to this lab. You may decide that partner 1 doesn't need such a large VM for their development work. Or partner 2 might grant an exception and use their admin powers to override the Sentinel failure. Or perhaps the new VM size could be added to the Sentinel rule to allow it as a new option.
 
@@ -1795,7 +1830,7 @@ Reset the Lab Environment
 -------------------------
 Before the next chapter we need to make some simple modifications to our **main.tf** and **outputs.tf** files. 
 
-In **main.tf** comment out everything below the first resource in the file:
+In **main.tf** delete everything below the first resource in the file:
 
 ```hcl
 resource "azurerm_resource_group" "myresourcegroup" {
@@ -1803,23 +1838,32 @@ resource "azurerm_resource_group" "myresourcegroup" {
   location = "${var.location}"
 }
 
-# EVERYTHING BELOW HERE GETS COMMENTED OUT
+# EVERYTHING BELOW HERE GETS DELETED
 # resource "azurerm_virtual_network" "vnet" {
 #   name                = "${var.prefix}-vnet"
 ```
 
-Comment out your entire **outputs.tf** file too:
+Delete your entire **outputs.tf** file too. We don't need it anymore.
 
-```hcl
-# Outputs file
-# output "catapp_url" {
-#   value = "http://${azurerm_public_ip.catapp-pip.fqdn}"
-# }
+Save your changes, commit them to git, and push to your remote repository. This will reset your environment to an empty resource group.
+
+---
+name: reset-environment
+Reset the Lab Environment - Continued
+-------------------------
+<br><br><br>Here are the git commands you'll need to run to reset your lab:
+
+```bash
+cd ~/Desktop/hashicat
+git pull
+git add .
+git commit -m "Reset lab."
+git push origin master
 ```
-Save both files, commit them to git, and push to your remote repository. This will reset your environment to an empty resource group.
 
-???
-Instructor note: The next run will get stopped by your policy. Yes, it feels a bit weird and counterintuitive. That is just the way Sentinel works right now.
+NOTE: You'll need to do a **`git pull`** first to fetch the changes your partner made in the last exercise.
+
+In the next chapter we'll deploy a containerized application instead of a VM.
 
 ---
 name: tfe-chapter-9-review
@@ -1850,14 +1894,6 @@ TFE Private Module Registry
 .center[![:scale 80%](images/pmr.png)]
 
 Terraform modules are reusable packages of Terraform code that you can use to build your infrastructure. Terraform Enterprise includes a Private Module Registry where you can store, version, and distribute modules to your organizations and teams.
-
----
-name: clean-up-workspace
-Terraform Apply
--------------------------
-<br><br><br>
-.center[![:scale 50%](images/rebuild_lab_environment.png)]
-Trigger a terraform run from the GUI. Confirm that it's actually running before you go onto the next lab. You don't need to watch it finish. This run will ensure that you have an empty resource group for the next labs.
 
 ---
 name: chapter-10a-tfe-lab
@@ -1907,18 +1943,14 @@ Commit your code and push your changes to the remote repo. This will trigger a t
 ```hcl
 container_app_url = http://yourprefix.azurewebsites.net
 ```
-???
-Instructor note: You might see a git error message when you try to push. This is because your partner pushed changes to your repo, and you need to **`git pull`** his or her changes before you proceed.
 
-If your students have any trouble with stuck state show them how to use the **`terraform state list`** and **`terraform state rm`** commands:
+???
+At this point they should have the hang of this:
 
 ```bash
-hashicorp@seanclab000 MINGW64 ~/Desktop/hashicat (master)
-$ terraform state list
-module.web_app_container.azurerm_app_service_plan.main[0]
-
-hashicorp@seanclab000 MINGW64 ~/Desktop/hashicat (master)
-$ terraform state rm module.web_app_container.azurerm_app_service_plan.main[0]
+git add .
+git commit -m "Deploy container."
+git push origin master
 ```
 
 
@@ -2032,12 +2064,16 @@ This challenging lab brings together everything you learned in previous chapters
 name: chapter-11-tfe-lab-1
 .center[.lab-header[💎 Lab Exercise 11: The Gauntlet]]
 <br>
-**Setup Part 2: Add a Sentinel Policy**
-1. Create a new Sentinel policy called **enforce_https**
-2. Copy the code in the **`files/enforce_https.sentinel`** file into the policy code field.
-3. Set the policy enforcement level to soft-mandatory.
-4. Create a policy set to apply the policy globally across all workspaces.
-5. If you need a refresher on policies and policy sets head back to [Chapter 7](#create-a-new-policy-0)
+**Setup Part 2: Enforce HTTPS Only Sentinel Policy**
+1. Go into your fork of the tfe-sentinel-policy repo. You can do this in the github.com UI.
+2. Browse to the **`sentinel.hcl`** file and click the pencil icon to edit it.
+3. Change line 6 where it says **advisory** to **hard-mandatory**.
+
+```hcl
+policy "restrict-app-service-to-https" {
+    enforcement_level = "hard-mandatory"
+}
+```
 
 .center[_Setup instructions continue on the next slide..._]
 
