@@ -1,0 +1,10 @@
+name: se-tf-vault-terraform-labs
+title: Verify Terraform Labs
+maintainer: HashiCorp
+copyright: HashiCorp
+copyright_email: team-se@hashicorp.com
+license: DWTFYW 1.0
+summary: Checks that the student workstation can run through the exercises.
+version: 1.0.0
+supports:
+  - os-family: windows
