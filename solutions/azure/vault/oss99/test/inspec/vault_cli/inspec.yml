@@ -1,0 +1,8 @@
+name: se-tf-vault-lab-cli
+title: Verify Vault CLI
+maintainer: HashiCorp
+copyright: HashiCorp
+copyright_email: team-se@hashicorp.com
+license: DWTFYW 1.0
+summary: Verifies lab vault CLI is working correctly
+version: 1.0.0
