@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2019, 2026
+
 
 # Enable userpass at mount workshop/userpass
 vault auth enable -path=userpass userpass

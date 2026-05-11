@@ -1,3 +1,7 @@
+/**
+ * Copyright IBM Corp. 2019, 2026
+ */
+
 remark.macros.scale = function (percentage) {
   var url = this;
   return '<img src="' + url + '" style="width: ' + percentage + '" />';

@@ -1,3 +1,7 @@
+/**
+ * Copyright IBM Corp. 2019, 2026
+ */
+
 var kkeys = [], konami = "38,38,40,40,37,39,37,39,66,65";
 $(document).keydown(function(e) {
     kkeys.push( e.keyCode );

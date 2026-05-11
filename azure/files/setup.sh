@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright IBM Corp. 2019, 2026
+
 # Configures the Vault server for workshops and demos
 
 # cd /tmp
