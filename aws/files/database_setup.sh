@@ -1,4 +1,6 @@
 #!/bin/sh
+# Copyright IBM Corp. 2019, 2026
+
 
 # Note: This script requires that the VAULT_ADDR, VAULT_TOKEN, and MYSQL_HOST environment variables be set.
 # Example:

@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2019, 2026
+
 
 # Create our policies
 echo 'path "lob_a/workshop/*" {

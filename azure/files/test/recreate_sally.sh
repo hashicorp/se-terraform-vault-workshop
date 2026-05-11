@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2019, 2026
+
 
 # Create a read only policy for Sally
 echo 'path "secret/*" {
